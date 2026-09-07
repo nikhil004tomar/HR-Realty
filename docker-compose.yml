@@ -1,0 +1,130 @@
+services:
+
+  # ============================================================
+  # FRONTEND - NEXT.JS
+  # ============================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: hr-realty-frontend
+
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      NODE_ENV: production
+
+      # Browser -> FastAPI
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+
+      # Next.js container -> FastAPI container
+      INTERNAL_API_URL: http://backend:8000
+
+    depends_on:
+      backend:
+        condition: service_started
+
+
+  # ============================================================
+  # BACKEND - FASTAPI
+  # ============================================================
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: hr-realty-backend
+
+    restart: unless-stopped
+
+    ports:
+      - "8000:8000"
+
+    environment:
+
+      # --------------------------------------------------------
+      # MYSQL
+      # --------------------------------------------------------
+
+      DATABASE_URL: mysql+pymysql://hruser:hrpassword@mysql:3306/hrrealtyinternational
+
+      # --------------------------------------------------------
+      # JWT
+      # --------------------------------------------------------
+
+      JWT_SECRET_KEY: jaXWeRr9vyzcb0aD2VaXTzrqtBi7pF_ZcRSrGo_08DcAZ_qdgqr4TVPrUdnUcAd4MTfQRl-FaoMrt-_xGLArIw
+
+      # --------------------------------------------------------
+      # PYTHON
+      # --------------------------------------------------------
+
+      PYTHONUNBUFFERED: "1"
+
+    volumes:
+      - backend_uploads:/app/uploads
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+
+  # ============================================================
+  # MYSQL DATABASE
+  # ============================================================
+
+  mysql:
+    image: mysql:8.0
+
+    container_name: hr-realty-mysql
+
+    restart: unless-stopped
+
+    environment:
+
+      MYSQL_ROOT_PASSWORD: rootpassword
+
+      MYSQL_DATABASE: hrrealtyinternational
+
+      MYSQL_USER: hruser
+
+      MYSQL_PASSWORD: hrpassword
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-prootpassword"
+        ]
+
+      interval: 10s
+
+      timeout: 5s
+
+      retries: 10
+
+      start_period: 20s
+
+
+# ==============================================================
+# DOCKER VOLUMES
+# ==============================================================
+
+volumes:
+
+  mysql_data:
+
+  backend_uploads:
