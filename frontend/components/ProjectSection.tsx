@@ -225,7 +225,7 @@ export default function ProjectSection() {
           >
             <h2 className="text-[clamp(4rem,9vw,9rem)] font-light leading-[0.82] tracking-[-0.075em]">
               <span className="block font-medium text-white">
-                10 Years
+                08 Years
               </span>
 
               <span className="block text-white/[0.35]">
@@ -300,7 +300,7 @@ export default function ProjectSection() {
               >
                 <div className="flex h-full flex-col items-center justify-center">
                   <span className="text-7xl font-semibold tracking-[-0.08em] sm:text-8xl">
-                    10
+                    08
                   </span>
 
                   <span className="mt-2 text-[9px] uppercase tracking-[0.4em] text-emerald-200/50">
@@ -359,7 +359,7 @@ export default function ProjectSection() {
               </div>
 
               <div className="mt-1 text-xl font-medium">
-                2016
+                2018
               </div>
             </div>
 

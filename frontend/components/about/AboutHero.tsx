@@ -5,7 +5,7 @@ export default function AboutHero() {
     <section className="relative h-[380px] w-full overflow-hidden md:h-[430px]">
       {/* Background Image */}
       <Image
-        src="/images/bulk-land/4.webp"
+        src="/images/home/about.png"
         alt="About Us"
         fill
         priority
@@ -24,7 +24,7 @@ export default function AboutHero() {
         <div className="mx-auto w-full max-w-7xl px-6 pb-14 sm:px-8 lg:px-12">
           <div className="max-w-3xl">
             <p className="mb-3 text-sm font-medium uppercase tracking-[0.28em] text-white/75">
-              SmartHomes Infrastructure
+              HR Realty International Pvt. Ltd.
             </p>
 
             <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl">

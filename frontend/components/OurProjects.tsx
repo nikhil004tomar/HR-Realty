@@ -10,7 +10,6 @@ import {
 
 import API_URL from "@/lib/api";
 
-
 // ============================================================
 // TYPES
 // ============================================================
@@ -18,29 +17,28 @@ import API_URL from "@/lib/api";
 interface ProjectImage {
   id: number;
   project_id: number;
-  image: string | null;
-  title?: string | null;
-  description?: string | null;
+  image_url: string | null;
+  alt_text?: string | null;
   sort_order?: number;
-  is_published?: boolean;
+  created_at?: string | null;
 }
 
 interface Project {
   id: number;
   title: string;
   slug: string;
-
   location?: string | null;
-
   property_type?: string | null;
-
   description?: string | null;
-
   is_published?: boolean;
-
+  updated_at?: string | null;
   images?: ProjectImage[];
 }
 
+interface ProjectsResponse {
+  value?: Project[];
+  Count?: number;
+}
 
 // ============================================================
 // FALLBACK IMAGE
@@ -49,16 +47,13 @@ interface Project {
 const FALLBACK_IMAGE =
   "/images/bulk-land/index5.webp";
 
-
 // ============================================================
 // COMPONENT
 // ============================================================
 
 export default function OurProjects() {
-
   const sectionRef =
     useRef<HTMLElement>(null);
-
 
   // ==========================================================
   // STATE
@@ -79,97 +74,94 @@ export default function OurProjects() {
       y: 0,
     });
 
-
   // ==========================================================
   // LOAD PROJECTS
   // ==========================================================
 
   useEffect(() => {
+    let mounted = true;
 
     async function loadProjects() {
-
       try {
-
         setLoading(true);
 
-        const response =
-          await fetch(
-            `${API_URL}/api/projects`,
-            {
-              cache: "no-store",
-            }
-          );
-
+        const response = await fetch(
+          `${API_URL}/api/projects`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control":
+                "no-cache",
+              Pragma: "no-cache",
+            },
+          }
+        );
 
         if (!response.ok) {
-
           throw new Error(
-            "Failed to load projects"
+            `Failed to load projects: ${response.status}`
           );
         }
 
-
-        const data =
+        const result:
+          | Project[]
+          | ProjectsResponse =
           await response.json();
 
+        // ====================================================
+        // SUPPORT BOTH API RESPONSE FORMATS
+        // ====================================================
 
-        if (!Array.isArray(data)) {
+        const data: Project[] =
+          Array.isArray(result)
+            ? result
+            : Array.isArray(result.value)
+              ? result.value
+              : [];
 
-          setProjects([]);
-
-          return;
-        }
-
-
-        /*
-         * Only published projects.
-         *
-         * Homepage intentionally shows
-         * maximum 4 projects.
-         */
+        // ====================================================
+        // ONLY PUBLISHED PROJECTS
+        // ====================================================
 
         const publishedProjects =
           data
             .filter(
-              (project: Project) =>
-                project.is_published === true
+              (item) =>
+                item.is_published === true
             )
             .slice(0, 4);
 
+        if (!mounted) {
+          return;
+        }
 
         setProjects(
           publishedProjects
         );
 
-
-        /*
-         * Reset active project
-         * after loading new data.
-         */
-
         setActive(0);
-
-
       } catch (error) {
-
         console.error(
           "OurProjects load error:",
           error
         );
 
-        setProjects([]);
-
+        if (mounted) {
+          setProjects([]);
+        }
       } finally {
-
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     }
 
-
     loadProjects();
 
+    return () => {
+      mounted = false;
+    };
   }, []);
-
 
   // ==========================================================
   // ACTIVE PROJECT
@@ -178,18 +170,22 @@ export default function OurProjects() {
   const project =
     projects[active];
 
-
   // ==========================================================
   // MOUSE MOVE
   // ==========================================================
 
   const handleMouseMove = (
-    e: React.MouseEvent<HTMLDivElement>
+    e: React.MouseEvent<HTMLElement>
   ) => {
-
     const rect =
       e.currentTarget.getBoundingClientRect();
 
+    if (
+      rect.width === 0 ||
+      rect.height === 0
+    ) {
+      return;
+    }
 
     const x =
       (
@@ -198,7 +194,6 @@ export default function OurProjects() {
         0.5
       ) * 2;
 
-
     const y =
       (
         (e.clientY - rect.top) /
@@ -206,19 +201,38 @@ export default function OurProjects() {
         0.5
       ) * 2;
 
-
     setMouse({
       x,
       y,
     });
   };
 
-
   // ==========================================================
   // MOUSE LEAVE
   // ==========================================================
 
   const handleMouseLeave = () => {
+    setMouse({
+      x: 0,
+      y: 0,
+    });
+  };
+
+  // ==========================================================
+  // NEXT PROJECT
+  // ==========================================================
+
+  const nextProject = () => {
+    if (projects.length === 0) {
+      return;
+    }
+
+    setActive((previous) =>
+      previous ===
+      projects.length - 1
+        ? 0
+        : previous + 1
+    );
 
     setMouse({
       x: 0,
@@ -226,112 +240,156 @@ export default function OurProjects() {
     });
   };
 
-
-  // ==========================================================
-  // NEXT PROJECT
-  // ==========================================================
-
-  const nextProject = () => {
-
-    if (projects.length === 0) {
-      return;
-    }
-
-
-    setActive((prev) =>
-      prev === projects.length - 1
-        ? 0
-        : prev + 1
-    );
-  };
-
-
   // ==========================================================
   // PREVIOUS PROJECT
   // ==========================================================
 
   const previousProject = () => {
-
     if (projects.length === 0) {
       return;
     }
 
-
-    setActive((prev) =>
-      prev === 0
+    setActive((previous) =>
+      previous === 0
         ? projects.length - 1
-        : prev - 1
+        : previous - 1
     );
+
+    setMouse({
+      x: 0,
+      y: 0,
+    });
   };
 
-
   // ==========================================================
-  // IMAGE URL
+  // GET PROJECT IMAGE
   // ==========================================================
 
   function getProjectImage(
-    project: Project
-  ) {
+    currentProject: Project
+  ): string {
+    // --------------------------------------------------------
+    // Get first valid project image
+    // --------------------------------------------------------
 
     const image =
-      project.images?.find(
-        (item) => item.image
-      )?.image;
+      currentProject.images
+        ?.filter(
+          (item) =>
+            typeof item.image_url ===
+              "string" &&
+            item.image_url.trim()
+              .length > 0
+        )
+        .sort(
+          (a, b) =>
+            (a.sort_order ?? 0) -
+            (b.sort_order ?? 0)
+        )[0]
+        ?.image_url;
 
+    // --------------------------------------------------------
+    // No image
+    // --------------------------------------------------------
 
     if (!image) {
-
       return FALLBACK_IMAGE;
     }
 
-
-    /*
-     * Already absolute URL
-     */
+    // --------------------------------------------------------
+    // Already absolute URL
+    // --------------------------------------------------------
 
     if (
-      image.startsWith("http://") ||
-      image.startsWith("https://")
+      image.startsWith(
+        "http://"
+      ) ||
+      image.startsWith(
+        "https://"
+      )
     ) {
-
       return image;
     }
 
-
-    /*
-     * Backend relative upload path
-     *
-     * Example:
-     * /uploads/projects/abc/image.jpg
-     */
+    // --------------------------------------------------------
+    // Relative backend image
+    //
+    // Example:
+    // /uploads/projects/dvsdbf/dvsdbf-1.jpg
+    // --------------------------------------------------------
 
     if (image.startsWith("/")) {
-
       return `${API_URL}${image}`;
     }
 
-
-    /*
-     * Safety fallback for malformed
-     * database values.
-     */
+    // --------------------------------------------------------
+    // Invalid path
+    // --------------------------------------------------------
 
     return FALLBACK_IMAGE;
   }
 
+  // ==========================================================
+  // GET CACHE-BUSTED IMAGE
+  // ==========================================================
+
+  function getProjectImageWithCacheBust(
+    currentProject: Project
+  ): string {
+    const image =
+      getProjectImage(
+        currentProject
+      );
+
+    // --------------------------------------------------------
+    // Don't modify local fallback
+    // --------------------------------------------------------
+
+    if (
+      image === FALLBACK_IMAGE
+    ) {
+      return image;
+    }
+
+    // --------------------------------------------------------
+    // Use project updated_at as image version
+    // --------------------------------------------------------
+
+    const version =
+      currentProject.updated_at
+        ? encodeURIComponent(
+            currentProject.updated_at
+          )
+        : Date.now();
+
+    return `${image}${
+      image.includes("?")
+        ? "&"
+        : "?"
+    }v=${version}`;
+  }
+
+  // ==========================================================
+  // CURRENT IMAGE
+  // ==========================================================
+
+  const projectImage =
+    project
+      ? getProjectImageWithCacheBust(
+          project
+        )
+      : FALLBACK_IMAGE;
 
   // ==========================================================
   // LOADING
   // ==========================================================
 
   if (loading) {
-
     return (
       <section
         ref={sectionRef}
         className="relative flex min-h-[600px] items-center justify-center overflow-hidden bg-[#043927] text-white"
       >
-
         <div className="text-center">
 
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-emerald-300" />
@@ -341,21 +399,20 @@ export default function OurProjects() {
           </p>
 
         </div>
-
       </section>
     );
   }
-
 
   // ==========================================================
   // NO PROJECTS
   // ==========================================================
 
-  if (projects.length === 0) {
-
+  if (
+    projects.length === 0 ||
+    !project
+  ) {
     return null;
   }
-
 
   // ==========================================================
   // MAIN
@@ -387,6 +444,7 @@ export default function OurProjects() {
           }}
         />
 
+        {/* Second glow */}
 
         <div
           className="absolute bottom-[-20%] right-[-10%] h-[600px] w-[600px] rounded-full bg-teal-300/[0.06] blur-[170px]"
@@ -399,7 +457,6 @@ export default function OurProjects() {
               "transform .6s ease-out",
           }}
         />
-
 
         {/* Grid */}
 
@@ -422,7 +479,6 @@ export default function OurProjects() {
           }}
         />
 
-
         {/* Giant PROJECTS text */}
 
         <div
@@ -443,20 +499,17 @@ export default function OurProjects() {
 
       </div>
 
-
       {/* =====================================================
           OUTER FRAME
       ====================================================== */}
 
       <div className="pointer-events-none absolute inset-4 rounded-[2rem] border border-white/[0.09] sm:inset-6 lg:inset-10 lg:rounded-[3rem]" />
 
-
       {/* =====================================================
           CONTENT
       ====================================================== */}
 
       <div className="relative z-10 mx-auto max-w-[1500px] px-8 py-28 sm:px-12 lg:px-20 lg:py-36">
-
 
         {/* =================================================
             HEADER
@@ -478,13 +531,11 @@ export default function OurProjects() {
 
               </span>
 
-
               <span className="text-[10px] uppercase tracking-[0.4em] text-white/45 sm:text-xs">
                 Our Portfolio
               </span>
 
             </div>
-
 
             <h2 className="max-w-4xl text-[clamp(3.5rem,8vw,8rem)] font-light leading-[0.85] tracking-[-0.07em]">
 
@@ -492,21 +543,16 @@ export default function OurProjects() {
                 Our
               </span>
 
-
               <span className="block text-white/[0.35]">
-
                 Projects
-
                 <span className="text-emerald-300">
                   .
                 </span>
-
               </span>
 
             </h2>
 
           </div>
-
 
           <div className="max-w-sm">
 
@@ -518,25 +564,20 @@ export default function OurProjects() {
 
         </div>
 
-
         {/* =================================================
             MAIN PROJECT SHOWCASE
         ================================================= */}
 
         <div className="grid gap-8 lg:grid-cols-[1.45fr_0.55fr]">
 
-
           {/* =================================================
               3D PROJECT CARD
           ================================================= */}
 
-          <div
-            onMouseMove={
-              handleMouseMove
-            }
-            onMouseLeave={
-              handleMouseLeave
-            }
+          <Link
+            href={`/projects/${project.slug}`}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
             className="group relative min-h-[500px] cursor-pointer overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-[0_30px_100px_rgba(0,0,0,.25)] sm:min-h-[600px] lg:min-h-[680px]"
             style={{
               perspective:
@@ -544,8 +585,9 @@ export default function OurProjects() {
             }}
           >
 
-
-            {/* IMAGE */}
+            {/* =================================================
+                IMAGE
+            ================================================= */}
 
             <div
               className="absolute inset-0"
@@ -564,31 +606,32 @@ export default function OurProjects() {
             >
 
               <Image
-                src={getProjectImage(
-                  project
-                )}
+                key={`${project.id}-${projectImage}`}
+                src={projectImage}
                 alt={
                   project.title ||
                   "Project"
                 }
                 fill
                 priority
+                unoptimized
                 sizes="(max-width: 1024px) 100vw, 70vw"
                 className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
               />
 
             </div>
 
-
-            {/* Dark overlay */}
+            {/* =================================================
+                DARK OVERLAY
+            ================================================= */}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/10" />
 
-
-            {/* Green atmospheric overlay */}
+            {/* =================================================
+                GREEN ATMOSPHERIC OVERLAY
+            ================================================= */}
 
             <div className="absolute inset-0 bg-gradient-to-br from-[#043927]/40 via-transparent to-emerald-950/40 mix-blend-multiply" />
-
 
             {/* =================================================
                 3D FLOATING NUMBER
@@ -608,13 +651,10 @@ export default function OurProjects() {
                   "transform .2s ease-out",
               }}
             >
-
               {String(
                 active + 1
               ).padStart(2, "0")}
-
             </div>
-
 
             {/* =================================================
                 TOP BADGE
@@ -642,7 +682,6 @@ export default function OurProjects() {
 
             </div>
 
-
             {/* =================================================
                 PROJECT INFORMATION
             ================================================= */}
@@ -668,9 +707,7 @@ export default function OurProjects() {
                     "Real Estate"}
                 </span>
 
-
                 <span className="h-px w-8 bg-white/30" />
-
 
                 <span className="text-[9px] uppercase tracking-[0.2em] text-white/40">
                   {project.location ||
@@ -679,24 +716,20 @@ export default function OurProjects() {
 
               </div>
 
-
               <h3 className="max-w-3xl text-4xl font-medium tracking-[-0.05em] sm:text-5xl lg:text-6xl">
                 {project.title}
               </h3>
-
 
               <p className="mt-4 max-w-xl text-sm leading-6 text-white/55 sm:text-base">
                 {project.description ||
                   "A thoughtfully planned destination designed for modern living, investment and long-term growth."}
               </p>
 
-
-              
-
             </div>
 
-
-            {/* CARD CORNER */}
+            {/* =================================================
+                CARD CORNER
+            ================================================= */}
 
             <div className="absolute bottom-7 right-7 hidden h-16 w-16 items-center justify-center rounded-full border border-white/15 bg-black/20 backdrop-blur-xl sm:flex">
 
@@ -706,8 +739,7 @@ export default function OurProjects() {
 
             </div>
 
-          </div>
-
+          </Link>
 
           {/* =================================================
               PROJECT LIST
@@ -715,13 +747,11 @@ export default function OurProjects() {
 
           <div className="flex flex-col">
 
-
             <div className="mb-5 flex items-center justify-between">
 
               <span className="text-[9px] uppercase tracking-[0.35em] text-white/30">
                 Select Project
               </span>
-
 
               <span className="text-[9px] tracking-[0.3em] text-white/20">
 
@@ -739,8 +769,9 @@ export default function OurProjects() {
 
             </div>
 
-
-            {/* Project buttons */}
+            {/* =================================================
+                PROJECT BUTTONS
+            ================================================= */}
 
             <div className="flex flex-col">
 
@@ -753,16 +784,12 @@ export default function OurProjects() {
                   const isActive =
                     active === index;
 
-
                   return (
-
                     <button
                       key={item.id}
                       type="button"
                       onClick={() =>
-                        setActive(
-                          index
-                        )
+                        setActive(index)
                       }
                       className={`group relative overflow-hidden border-b border-white/10 py-6 text-left transition-all duration-500 sm:py-8 ${
                         isActive
@@ -774,25 +801,19 @@ export default function OurProjects() {
                       {/* Active glow */}
 
                       {isActive && (
-
                         <div className="absolute left-0 top-0 h-full w-1 bg-emerald-300 shadow-[0_0_25px_rgba(110,231,183,.8)]" />
-
                       )}
-
 
                       <div className="flex items-start gap-5 pl-4 sm:pl-6">
 
                         <span className="pt-1 text-[9px] tracking-[0.3em]">
-
                           {String(
                             index + 1
                           ).padStart(
                             2,
                             "0"
                           )}
-
                         </span>
-
 
                         <div className="flex-1">
 
@@ -800,14 +821,12 @@ export default function OurProjects() {
                             {item.title}
                           </h4>
 
-
                           <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/25">
                             {item.location ||
                               "Dholera, Gujarat"}
                           </p>
 
                         </div>
-
 
                         <span
                           className={`text-xl transition-all duration-500 ${
@@ -822,13 +841,11 @@ export default function OurProjects() {
                       </div>
 
                     </button>
-
                   );
                 }
               )}
 
             </div>
-
 
             {/* =================================================
                 NAVIGATION
@@ -847,7 +864,6 @@ export default function OurProjects() {
                 ←
               </button>
 
-
               <button
                 type="button"
                 onClick={
@@ -858,7 +874,6 @@ export default function OurProjects() {
               >
                 →
               </button>
-
 
               <div className="ml-auto flex items-center gap-3">
 
@@ -879,7 +894,6 @@ export default function OurProjects() {
 
         </div>
 
-
         {/* =================================================
             BOTTOM LINE
         ================================================= */}
@@ -896,7 +910,6 @@ export default function OurProjects() {
 
           </div>
 
-
           <span className="hidden text-[9px] uppercase tracking-[0.35em] text-white/20 sm:block">
             Vision • Design • Growth
           </span>
@@ -904,7 +917,6 @@ export default function OurProjects() {
         </div>
 
       </div>
-
     </section>
   );
 }

@@ -8,22 +8,23 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-
-    container_name: hr-realty-frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        INTERNAL_API_URL: ${INTERNAL_API_URL}
 
     restart: unless-stopped
 
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
 
     environment:
       NODE_ENV: production
 
       # Browser -> FastAPI
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
 
       # Next.js container -> FastAPI container
-      INTERNAL_API_URL: http://backend:8000
+      INTERNAL_API_URL: ${INTERNAL_API_URL}
 
     depends_on:
       backend:
@@ -39,12 +40,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
 
-    container_name: hr-realty-backend
-
     restart: unless-stopped
 
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
 
     environment:
 
@@ -52,13 +51,13 @@ services:
       # MYSQL
       # --------------------------------------------------------
 
-      DATABASE_URL: mysql+pymysql://hruser:hrpassword@mysql:3306/hrrealtyinternational
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
 
       # --------------------------------------------------------
       # JWT
       # --------------------------------------------------------
 
-      JWT_SECRET_KEY: jaXWeRr9vyzcb0aD2VaXTzrqtBi7pF_ZcRSrGo_08DcAZ_qdgqr4TVPrUdnUcAd4MTfQRl-FaoMrt-_xGLArIw
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
 
       # --------------------------------------------------------
       # PYTHON
@@ -81,19 +80,17 @@ services:
   mysql:
     image: mysql:8.0
 
-    container_name: hr-realty-mysql
-
     restart: unless-stopped
 
     environment:
 
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
-      MYSQL_DATABASE: hrrealtyinternational
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
-      MYSQL_USER: hruser
+      MYSQL_USER: ${MYSQL_USER}
 
-      MYSQL_PASSWORD: hrpassword
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
     volumes:
       - mysql_data:/var/lib/mysql
@@ -107,7 +104,7 @@ services:
           "-h",
           "localhost",
           "-uroot",
-          "-prootpassword"
+          "-p${MYSQL_ROOT_PASSWORD}"
         ]
 
       interval: 10s
@@ -116,7 +113,7 @@ services:
 
       retries: 10
 
-      start_period: 20s
+      start_period: 30s
 
 
 # ==============================================================
@@ -126,5 +123,7 @@ services:
 volumes:
 
   mysql_data:
+    name: hrrealty_mysql_data
 
   backend_uploads:
+    name: hrrealty_backend_uploads

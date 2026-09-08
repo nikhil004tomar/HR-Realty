@@ -13,7 +13,7 @@ export default function FoundedSection() {
 
               <h2 className="text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
                 Founded in{" "}
-                <span className="text-[#b2965d]">2015</span>
+                <span className="text-[#b2965d]">2018</span>
               </h2>
 
               <div className="mt-6 h-[2px] w-16 bg-[#b2965d]" />
@@ -23,18 +23,14 @@ export default function FoundedSection() {
           {/* Content */}
           <div className="space-y-7">
             <p className="text-lg leading-8 text-[#394b45] sm:text-xl sm:leading-9">
-              SmartHomes Infrastructure Pvt. Ltd. has established itself as a
-              leading real estate conglomerate in Dholera Smart City —
-              India's first planned, futuristic smart city and one of the
-              world's most dynamic markets.
+              HR Realty International Pvt. Ltd. has established itself as a
+              leading real estate conglomerate in Dholera SIR —
+              India's first Greenfield Smart City planned.
             </p>
 
             <p className="text-base leading-8 text-[#68736f] sm:text-lg sm:leading-9">
-              A vision to redefine the real estate industry, we take pride in
-              being your trusted partner in creating a legacy in Dholera.
-              Recognised as a pioneer in Commercial, Industrial, and
-              Residential land development, we operate with a unique blend of
-              expertise, education, &amp; international experience.
+             A vision to create an economically and socially balanced, new-age Greenfield smart city with world 
+             class Infrastructure leading to stable economic growth and sustainable high-quality life, &amp; international experience.
             </p>
 
             <p className="text-base leading-8 text-[#68736f] sm:text-lg sm:leading-9">

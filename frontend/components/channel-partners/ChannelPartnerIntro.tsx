@@ -15,7 +15,7 @@ export default function ChannelPartnerIntro() {
           <div className="mx-auto mt-6 h-[2px] w-16 bg-[#b2965d]" />
 
           <p className="mt-7 text-base leading-8 text-white sm:text-lg">
-            At SmartHomes Infrastructure, we believe that everyone can earn a
+            At HR Realty International Pvt. Ltd. , we believe that everyone can earn a
             steady income by partnering with us. Whether you're an individual
             looking for financial stability, a real estate agent aiming to
             expand, or an institutional channel sales business planning

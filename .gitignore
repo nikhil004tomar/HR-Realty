@@ -3,6 +3,8 @@
 .env.local
 .env.production
 .env.development
+.env.*
+!.env.example
 
 # Node
 node_modules/
@@ -18,10 +20,20 @@ backend/**/*.pyc
 backend/.pytest_cache/
 backend/venv/
 backend/.venv/
+.venv/
+venv/
+__pycache__/
+*.pyc
 
 # Uploaded files
 backend/uploads/
 uploads/
+
+# Database backups / dumps
+*.sql
+*.sql.gz
+*.dump
+*.bak
 
 # Logs
 *.log

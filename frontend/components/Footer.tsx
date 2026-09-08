@@ -19,7 +19,7 @@ export default function Footer() {
             <p className="mt-5 max-w-sm text-sm leading-7 text-white/65">
               Building a smarter future through thoughtfully planned
               residential, commercial, and industrial developments in
-              Dholera Smart City.
+              Dholera SIR.
             </p>
 
 
@@ -73,13 +73,13 @@ export default function Footer() {
 
             <div className="mt-6 space-y-5 text-sm text-white/65">
               <a
-                href="tel:+91xxxxxxxxxx"
+                href="tel:+91 97738 92312"
                 className="block transition hover:text-white"
               >
                 <span className="mb-1 block text-xs uppercase tracking-wider text-white/40">
                   Phone
                 </span>
-                +91 xxxxxxxxxx
+                +91 97738 92312
               </a>
 
               <a

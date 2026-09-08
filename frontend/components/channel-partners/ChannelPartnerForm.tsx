@@ -487,10 +487,8 @@ export default function ChannelPartnerForm() {
               htmlFor="agree_tandc_display"
               className="text-sm leading-6 text-gray-600"
             >
-              I confirm that the information provided is
-              accurate and true. I agree to abide by the
-              terms and conditions of SmartHomes
-              Infrastructure Pvt. Ltd. as a Channel Partner.
+              I confirm that the information provided by me is true, accurate, and complete. I acknowledge and agree to comply with all applicable terms and conditions, policies, and guidelines of HR Realty International Pvt. Ltd. as a Channel Partner.
+
             </label>
 
           </div>

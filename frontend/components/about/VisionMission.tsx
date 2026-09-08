@@ -20,9 +20,9 @@ export default function VisionMission() {
             <div className="mt-6 h-px w-12 bg-white/30" />
 
             <p className="mt-6 max-w-xl text-base leading-8 text-white/65">
-              Our vision at Smart Homes begins with embracing transparency,
-              a fundamental element of our commitment to excellence. We are
-              creating wealth and prosperity for generations.
+              
+             A vision to create an economically and socially balanced, new-age Greenfield smart city with world 
+             class Infrastructure leading to stable economic growth and sustainable high-quality life, &amp; international experience.
             </p>
           </div>
 
@@ -42,10 +42,13 @@ export default function VisionMission() {
             <div className="mt-6 h-px w-12 bg-neutral-300" />
 
             <p className="mt-6 max-w-xl text-base leading-8 text-neutral-600">
-              SmartHomes is not just a company; it is a promise to redefine
-              real estate by harmonising cutting-edge technology,
-              environmentally friendly practices, architectural excellence,
-              legal compliance and fair real estate practices.
+             HR Realty is to adopt a futuristic and sustainability approach across key components to create a new-age Smart City.
+            </p>
+            <p className="mt-6 max-w-xl text-base leading-8 text-neutral-600">
+             To become a global high-tech manufacturing hub.
+            </p>
+            <p className="mt-6 max-w-xl text-base leading-8 text-neutral-600">
+             To create huge employment opportunities across sectors and contribute to the economic and social develpoment of the Gujarat and India.
             </p>
           </div>
 
