@@ -8,6 +8,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         INTERNAL_API_URL: ${INTERNAL_API_URL}
@@ -48,10 +49,22 @@ services:
     environment:
 
       # --------------------------------------------------------
-      # MYSQL
+      # DATABASE
       # --------------------------------------------------------
 
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+
+      # --------------------------------------------------------
+      # CORS
+      # --------------------------------------------------------
+
+      CORS_ORIGINS: ${CORS_ORIGINS}
+
+      # --------------------------------------------------------
+      # UPLOADS
+      # --------------------------------------------------------
+
+      UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
 
       # --------------------------------------------------------
       # JWT
@@ -108,11 +121,8 @@ services:
         ]
 
       interval: 10s
-
       timeout: 5s
-
       retries: 10
-
       start_period: 30s
 
 
