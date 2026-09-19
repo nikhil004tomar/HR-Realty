@@ -46,10 +46,23 @@ services:
       - "8000"
 
     environment:
+
+      # --------------------------------------------------------
+      # MYSQL
+      # --------------------------------------------------------
+
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+
+      # --------------------------------------------------------
+      # JWT
+      # --------------------------------------------------------
+
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      CORS_ORIGINS: ${CORS_ORIGINS}
-      UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
+
+      # --------------------------------------------------------
+      # PYTHON
+      # --------------------------------------------------------
+
       PYTHONUNBUFFERED: "1"
 
     volumes:
@@ -70,9 +83,13 @@ services:
     restart: unless-stopped
 
     environment:
+
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+
       MYSQL_USER: ${MYSQL_USER}
+
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
     volumes:
@@ -91,8 +108,11 @@ services:
         ]
 
       interval: 10s
+
       timeout: 5s
+
       retries: 10
+
       start_period: 30s
 
 
