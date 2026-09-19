@@ -35,42 +35,29 @@ services:
   # BACKEND - FASTAPI
   # ============================================================
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+backend:
+  build:
+    context: ./backend
+    dockerfile: Dockerfile
 
-    restart: unless-stopped
+  restart: unless-stopped
 
-    expose:
-      - "8000"
+  expose:
+    - "8000"
 
-    environment:
+  environment:
+    DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+    JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    CORS_ORIGINS: ${CORS_ORIGINS}
+    UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
+    PYTHONUNBUFFERED: "1"
 
-      # --------------------------------------------------------
-      # MYSQL
-      # --------------------------------------------------------
+  volumes:
+    - backend_uploads:/app/uploads
 
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
-
-      # --------------------------------------------------------
-      # JWT
-      # --------------------------------------------------------
-
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-
-      # --------------------------------------------------------
-      # PYTHON
-      # --------------------------------------------------------
-
-      PYTHONUNBUFFERED: "1"
-
-    volumes:
-      - backend_uploads:/app/uploads
-
-    depends_on:
-      mysql:
-        condition: service_healthy
+  depends_on:
+    mysql:
+      condition: service_healthy
 
 
   # ============================================================
