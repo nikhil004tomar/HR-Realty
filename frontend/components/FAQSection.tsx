@@ -1,6 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import {
+  ArrowRight,
+  ChevronDown,
+  HelpCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 const faqs = [
@@ -9,35 +14,34 @@ const faqs = [
     answer: (
       <>
         <p>
-          Dholera Smart City is India's first and largest Greenfield Smart
-          City, strategically planned under the Delhi-Mumbai Industrial
-          Corridor (DMIC) — India's most ambitious industrial infrastructure
-          program.
+          Dholera Smart City is India&apos;s first and largest Greenfield
+          Smart City, strategically planned under the Delhi-Mumbai
+          Industrial Corridor (DMIC).
         </p>
 
         <p>
-          Spread across ~920 sq. km, Dholera SIR (Special Investment Region)
-          is designed as a global manufacturing and economic hub, backed by the
-          Government of India and Government of Gujarat.
+          Spread across approximately 920 sq. km, Dholera SIR
+          (Special Investment Region) is designed as a global
+          manufacturing and economic hub.
         </p>
 
         <p className="font-semibold text-[#043927]">
           Key infrastructure includes:
         </p>
 
-        <ul>
-          <li>Dholera International Airport (DIACL)</li>
-          <li>Ahmedabad-Dholera Expressway (~109 km)</li>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>Dholera International Airport</li>
+          <li>Ahmedabad-Dholera Expressway</li>
           <li>
-            Industrial zones (Electronics, Semiconductor, EV, Renewables)
+            Industrial zones including Electronics, Semiconductor,
+            EV and Renewable Energy
           </li>
-          <li>Rail & multimodal logistics connectivity</li>
+          <li>Rail and multimodal logistics connectivity</li>
         </ul>
 
         <p>
-          It is being developed as a self-sustainable smart city with global
-          standards, making it one of the most strategically important regions
-          in India.
+          It is being developed as a planned smart city with modern
+          infrastructure and global standards.
         </p>
       </>
     ),
@@ -48,25 +52,26 @@ const faqs = [
     answer: (
       <>
         <p>
-          Yes, Dholera is widely considered a high-conviction,
-          infrastructure-led investment opportunity in 2026.
+          Dholera is considered an infrastructure-led development
+          opportunity, with major investments and projects being
+          developed across the region.
         </p>
 
         <p>
-          With ₹1 lakh+ crore infrastructure investments, ongoing execution of
-          airport, expressway, and industrial zones, and major players like Tata
-          Electronics (Semiconductor Fab) entering the ecosystem — Dholera is
-          transitioning from planning to execution phase.
+          The development of the airport, expressway, industrial
+          zones and other infrastructure is expected to influence
+          the region&apos;s future growth.
         </p>
 
-        <blockquote>
-          “Maximum wealth creation happens during the infrastructure execution
-          stage.”
+        <blockquote className="my-5 border-l-2 border-[#C9A45C] pl-4 font-medium italic text-[#043927]">
+          &ldquo;Maximum wealth creation happens during the
+          infrastructure execution stage.&rdquo;
         </blockquote>
 
         <p>
-          This positions 2026 as a strategic entry window before full-scale
-          habitation and price maturity.
+          Investors should evaluate individual projects, locations,
+          legal documentation and development status before making
+          an investment decision.
         </p>
       </>
     ),
@@ -76,23 +81,23 @@ const faqs = [
     question: "What is the price of residential plots in Dholera?",
     answer: (
       <>
-        <p>Plot prices in Dholera vary depending on:</p>
+        <p>
+          Plot prices in Dholera vary depending on several factors,
+          including:
+        </p>
 
-        <ul>
-          <li>Location (TP schemes, proximity to airport/expressway)</li>
-          <li>Legal status (NA / Non-NA / Zoning)</li>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>Location and connectivity</li>
+          <li>Proximity to major infrastructure</li>
+          <li>Legal status and zoning</li>
           <li>Development stage</li>
+          <li>Plot size and project specifications</li>
         </ul>
 
         <p>
-          Currently, Dholera offers one of the lowest entry prices among
-          upcoming smart cities globally, with strong appreciation potential as
-          infrastructure progresses.
-        </p>
-
-        <p>
-          Early-stage markets typically see multi-fold growth over 5–10 years,
-          especially in government-backed zones.
+          For current pricing, it is important to evaluate the
+          specific project, documentation and location rather than
+          relying on a general market price.
         </p>
       </>
     ),
@@ -103,19 +108,20 @@ const faqs = [
     answer: (
       <>
         <p>
-          Yes. Dholera SIR is a fully government-notified and planned project
-          under:
+          Dholera SIR is a government-notified and planned
+          development in Gujarat.
         </p>
 
-        <ul>
-          <li>Government of Gujarat (DSIRDA authority)</li>
-          <li>Government of India (DMICDC)</li>
-        </ul>
+        <p>
+          The region is supported by government planning and
+          development authorities associated with the Dholera SIR
+          and Delhi-Mumbai Industrial Corridor.
+        </p>
 
         <p>
-          It is one of the few regions in India with a dedicated development
-          authority, ensuring structured planning, zoning, and infrastructure
-          execution.
+          Individual land parcels and real estate projects should
+          still be independently verified for title, approvals,
+          zoning and other applicable documentation before purchase.
         </p>
       </>
     ),
@@ -126,374 +132,287 @@ const faqs = [
     answer: (
       <>
         <p className="font-semibold text-[#043927]">
-          Recent developments include:
+          Major areas of development include:
         </p>
 
-        <ul>
+        <ul className="list-disc space-y-2 pl-5">
           <li>
-            ✈️ Dholera International Airport - under advanced construction
-            phase
+            Dholera International Airport development
           </li>
 
           <li>
-            🛣️ Ahmedabad-Dholera Expressway nearing completion phases
+            Ahmedabad-Dholera Expressway development
           </li>
 
           <li>
-            🏭 Tata Semiconductor Fab Unit announced (₹90,000+ Cr investment)
+            Semiconductor and electronics ecosystem
           </li>
 
           <li>
-            ⚡ Large-scale renewable energy parks operational
+            Renewable energy development
           </li>
 
           <li>
-            🚧 Activation Area infrastructure (roads, drainage, utilities)
-            already developed
+            Activation Area infrastructure including roads,
+            drainage and utilities
           </li>
         </ul>
 
         <p>
-          👉 These developments are direct demand drivers for residential,
-          commercial, and rental markets.
+          These infrastructure developments are expected to
+          contribute to the long-term development of residential,
+          commercial and industrial opportunities in the region.
         </p>
       </>
     ),
   },
 ];
 
+// ============================================================
+// COMPONENT
+// ============================================================
+
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
+  // ==========================================================
+  // TOGGLE
+  // ==========================================================
+
   const toggleFAQ = (index: number) => {
-    setOpenIndex((current) => (current === index ? null : index));
+    setOpenIndex((current) =>
+      current === index ? null : index
+    );
   };
 
   return (
     <section
-      className="
-        relative
-        overflow-hidden
-        bg-[#043927]
-        py-16
-        sm:py-20
-        lg:py-24
-      "
+      id="faq"
+      className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24"
     >
-      {/* Decorative background */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          -right-40
-          -top-40
-          h-[500px]
-          w-[500px]
-          rounded-full
-          bg-[#d8c9a3]/5
-          blur-3xl
-        "
-      />
+      {/* ======================================================
+          TOP BORDER
+      ======================================================= */}
 
-      <div
-        className="
-          pointer-events-none
-          absolute
-          -bottom-40
-          -left-40
-          h-[450px]
-          w-[450px]
-          rounded-full
-          bg-black/20
-          blur-3xl
-        "
-      />
+      <div className="absolute left-0 top-0 h-[2px] w-full bg-[#043927]" />
 
-      <div
-        className="
-          relative
-          mx-auto
-          max-w-[1500px]
-          px-5
-          sm:px-8
-          lg:px-12
-        "
-      >
-        {/* Header */}
-        <div
-          className="
-            mb-12
-            flex
-            flex-col
-            justify-between
-            gap-8
-            lg:mb-16
-            lg:flex-row
-            lg:items-end
-          "
-        >
+      {/* ======================================================
+          CONTAINER
+      ======================================================= */}
+
+      <div className="relative mx-auto max-w-[1250px] px-5 sm:px-8 lg:px-12">
+        {/* ====================================================
+            HEADER
+        ===================================================== */}
+
+        <div className="mb-10 flex flex-col gap-6 sm:mb-12 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+          {/* LEFT */}
+
           <div className="max-w-3xl">
-            {/* Eyebrow */}
-            <div className="mb-5 flex items-center gap-3">
-              <span className="h-px w-10 bg-[#d8c9a3]" />
+            {/* Label */}
 
-              <span
-                className="
-                  text-[10px]
-                  font-medium
-                  uppercase
-                  tracking-[0.28em]
-                  text-[#d8c9a3]
-                  sm:text-xs
-                "
-              >
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-[2px] w-10 bg-[#C9A45C]" />
+
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#043927]">
                 Investor Guide
               </span>
             </div>
 
             {/* Heading */}
-            <h2
-              className="
-                sfpro-bold
-                text-4xl
-                leading-[0.95]
-                tracking-[-0.04em]
-                text-[#d8c9a3]
-                sm:text-5xl
-                md:text-6xl
-                lg:text-7xl
-              "
-            >
-              Frequently{" "}
-              <span className="canela-reg-font font-normal text-[#d8c9a3]">
-                Asked Questions
+
+            <h2 className="text-4xl font-black leading-[1] tracking-tight text-[#111111] sm:text-5xl lg:text-6xl">
+              Frequently Asked{" "}
+              <span className="text-[#043927]">
+                Questions
+              </span>
+              <span className="text-[#C9A45C]">
+                .
               </span>
             </h2>
 
-            <p
-              className="
-                mt-5
-                max-w-2xl
-                text-sm
-                leading-7
-                text-white/60
-                sm:text-base
-              "
-            >
-              Everything you need to know about Dholera Smart City investment.
+            {/* Gold line */}
+
+            <div className="mt-5 h-[2px] w-16 bg-[#C9A45C]" />
+
+            {/* Description */}
+
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[#111111]/60 sm:text-base">
+              Everything you need to know about Dholera Smart City,
+              real estate opportunities and the investment process.
             </p>
           </div>
 
-          {/* Question Count */}
-          <div
-            className="
-              flex
-              items-center
-              gap-4
-              lg:pb-1
-            "
-          >
-            <span
-              className="
-                text-4xl
-                font-light
-                tracking-tight
-                text-[#d8c9a3]
-              "
-            >
-              {String(faqs.length).padStart(2, "0")}
-            </span>
+          {/* ==================================================
+              QUESTION COUNT
+          =================================================== */}
 
-            <div className="h-8 w-px bg-white/15" />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#043927]/5">
+              <HelpCircle
+                size={22}
+                className="text-[#043927]"
+              />
+            </div>
 
-            <span
-              className="
-                max-w-[100px]
-                text-[10px]
-                uppercase
-                leading-4
-                tracking-[0.2em]
-                text-white/40
-              "
-            >
-              Investment
-              <br />
-              Questions
-            </span>
+            <div>
+              <p className="text-2xl font-black text-[#043927]">
+                {String(faqs.length).padStart(2, "0")}
+              </p>
+
+              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#111111]/40">
+                Questions
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* FAQ Grid */}
-        <div className="grid gap-4 lg:grid-cols-2 lg:gap-x-5 lg:gap-y-4">
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
+        {/* ====================================================
+            FAQ LIST
+        ===================================================== */}
 
-            return (
-              <div
-                key={faq.question}
-                className={`
-                  group
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                  transition-all
-                  duration-500
-                  ${
+        <div className="mx-auto max-w-5xl">
+          <div className="space-y-3">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
+
+              return (
+                <div
+                  key={faq.question}
+                  className={`overflow-hidden rounded-xl border transition-all duration-300 sm:rounded-2xl ${
                     isOpen
-                      ? "border-[#d8c9a3]/40 bg-[#f7f4eb]"
-                      : "border-white/10 bg-white/[0.045] hover:border-[#d8c9a3]/30 hover:bg-white/[0.07]"
-                  }
-                `}
-              >
-                {/* Question */}
-                <button
-                  type="button"
-                  onClick={() => toggleFAQ(index)}
-                  aria-expanded={isOpen}
-                  aria-controls={`faq-answer-${index}`}
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    gap-4
-                    px-5
-                    py-5
-                    text-left
-                    sm:px-6
-                    sm:py-6
-                  "
+                      ? "border-[#043927]/20 bg-[#f9faf9] shadow-[0_10px_30px_rgba(4,57,39,0.05)]"
+                      : "border-[#111111]/10 bg-white hover:border-[#C9A45C]/50"
+                  }`}
                 >
-                  {/* Number */}
-                  <span
-                    className={`
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-full
-                      border
-                      text-[10px]
-                      font-medium
-                      tracking-[0.12em]
-                      transition-all
-                      duration-500
-                      ${
-                        isOpen
-                          ? "border-[#043927] bg-[#043927] text-[#d8c9a3]"
-                          : "border-white/15 bg-transparent text-white/40 group-hover:border-[#d8c9a3]/40 group-hover:text-[#d8c9a3]"
-                      }
-                    `}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                  {/* =================================================
+                      QUESTION BUTTON
+                  ================================================== */}
 
-                  {/* Question */}
-                  <span
-                    className={`
-                      flex-1
-                      text-sm
-                      font-medium
-                      leading-6
-                      transition-colors
-                      duration-300
-                      sm:text-base
-                      ${
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleFAQ(index)
+                    }
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${index}`}
+                    className="flex w-full items-center gap-4 px-4 py-5 text-left sm:px-6 sm:py-6"
+                  >
+                    {/* Number */}
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold tracking-wider transition-all duration-300 ${
+                        isOpen
+                          ? "border-[#043927] bg-[#043927] text-white"
+                          : "border-[#111111]/10 bg-[#fafafa] text-[#111111]/40"
+                      }`}
+                    >
+                      {String(index + 1).padStart(
+                        2,
+                        "0"
+                      )}
+                    </span>
+
+                    {/* Question */}
+
+                    <span
+                      className={`flex-1 text-sm font-semibold leading-6 transition-colors duration-300 sm:text-base ${
                         isOpen
                           ? "text-[#043927]"
-                          : "text-white group-hover:text-[#d8c9a3]"
-                      }
-                    `}
-                  >
-                    {faq.question}
-                  </span>
-
-                  {/* Icon */}
-                  <span
-                    className={`
-                      flex
-                      h-9
-                      w-9
-                      shrink-0
-                      items-center
-                      justify-center
-                      rounded-full
-                      transition-all
-                      duration-500
-                      ${
-                        isOpen
-                          ? "rotate-45 bg-[#043927] text-[#d8c9a3]"
-                          : "bg-white/5 text-white/60 group-hover:bg-[#d8c9a3] group-hover:text-[#043927]"
-                      }
-                    `}
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
+                          : "text-[#111111]"
+                      }`}
                     >
-                      <path
-                        d="M12 5V19M5 12H19"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                </button>
+                      {faq.question}
+                    </span>
 
-                {/* Answer */}
-                <div
-                  id={`faq-answer-${index}`}
-                  className={`
-                    grid
-                    transition-[grid-template-rows,opacity]
-                    duration-500
-                    ease-[cubic-bezier(0.22,1,0.36,1)]
-                    ${
+                    {/* Chevron */}
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                        isOpen
+                          ? "bg-[#C9A45C] text-[#111111]"
+                          : "bg-[#043927]/5 text-[#043927]"
+                      }`}
+                    >
+                      <ChevronDown
+                        size={17}
+                        className={`transition-transform duration-300 ${
+                          isOpen
+                            ? "rotate-180"
+                            : "rotate-0"
+                        }`}
+                      />
+                    </span>
+                  </button>
+
+                  {/* =================================================
+                      ANSWER
+                  ================================================== */}
+
+                  <div
+                    id={`faq-answer-${index}`}
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
                       isOpen
                         ? "grid-rows-[1fr] opacity-100"
                         : "grid-rows-[0fr] opacity-0"
-                    }
-                  `}
-                >
-                  <div className="overflow-hidden">
-                    <div
-                      className="
-                        faq-answer-content
-                        border-t
-                        border-[#043927]/10
-                        px-5
-                        pb-6
-                        pt-5
-                        sm:px-6
-                        sm:pb-7
-                      "
-                    >
-                      <div
-                        className="
-                          max-w-3xl
-                          text-sm
-                          leading-7
-                          text-[#043927]/70
-                          sm:text-[15px]
-                        "
-                      >
-                        {faq.answer}
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-[#043927]/10 px-4 pb-6 pt-5 sm:px-6 sm:pb-7">
+                        <div className="max-w-4xl space-y-4 text-sm leading-7 text-[#111111]/65 sm:text-[15px]">
+                          {faq.answer}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-10 flex justify-center lg:mt-12">
-          
+        {/* ====================================================
+            BOTTOM CTA
+        ===================================================== */}
+
+        <div className="mx-auto mt-10 max-w-5xl border-t border-[#111111]/10 pt-7 sm:mt-12 sm:pt-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-base font-bold text-[#111111] sm:text-lg">
+                Still have questions?
+              </p>
+
+              <p className="mt-1 text-sm text-[#111111]/50">
+                Our team is happy to help you understand the
+                opportunities.
+              </p>
+            </div>
+
+            <Link
+              href="#contact"
+              className="group inline-flex w-fit items-center gap-3 rounded-full bg-[#043927] px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:bg-[#111111]"
+            >
+              <span>Talk to Our Team</span>
+
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C9A45C] text-[#111111] transition-transform duration-300 group-hover:translate-x-1">
+                <ArrowRight size={16} />
+              </span>
+            </Link>
+          </div>
+        </div>
+
+        {/* ====================================================
+            BOTTOM BRAND LINE
+        ===================================================== */}
+
+        <div className="mt-10 flex items-center justify-center gap-3 sm:mt-12">
+          <span className="h-px w-10 bg-[#111111]/10" />
+
+          <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#111111]/30">
+            Dholera SIR • Gujarat
+          </span>
+
+          <span className="h-px w-10 bg-[#111111]/10" />
         </div>
       </div>
     </section>

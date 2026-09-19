@@ -416,3 +416,389 @@ class Testimonial(Base):
         onupdate=datetime.utcnow,
         nullable=False
     )
+
+
+# ============================================================
+# TEAM MEMBER
+# ============================================================
+
+class TeamMember(Base):
+    __tablename__ = "team_members"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    name: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+
+    designation: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+
+    bio: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    profile_image: Mapped[str | None] = mapped_column(
+        String(1000),
+        nullable=True,
+    )
+
+    phone: Mapped[str | None] = mapped_column(
+        String(30),
+        nullable=True,
+    )
+
+    email: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    linkedin_url: Mapped[str | None] = mapped_column(
+        String(1000),
+        nullable=True,
+    )
+
+    display_order: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+        index=True,
+    )
+
+    is_published: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+        index=True,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
+
+class SiteMap(Base):
+    __tablename__ = "site_maps"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True
+    )
+
+    title: Mapped[str] = mapped_column(
+        String(200),
+        nullable=False
+    )
+
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True
+    )
+
+    image: Mapped[str | None] = mapped_column(
+        String(1000),
+        nullable=True
+    )
+
+    display_order: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+        index=True
+    )
+
+    is_published: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+        index=True
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False
+    )
+
+
+class CareerApplication(Base):
+    __tablename__ = "career_applications"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    position: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+        index=True,
+    )
+
+    full_name: Mapped[str] = mapped_column(
+        String(150),
+        nullable=False,
+    )
+
+    email: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    phone: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+    )
+
+    whatsapp: Mapped[str | None] = mapped_column(
+        String(30),
+        nullable=True,
+    )
+
+    city: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    state: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    experience: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    current_company: Mapped[str | None] = mapped_column(
+        String(200),
+        nullable=True,
+    )
+
+    designation: Mapped[str | None] = mapped_column(
+        String(150),
+        nullable=True,
+    )
+
+    qualification: Mapped[str | None] = mapped_column(
+        String(200),
+        nullable=True,
+    )
+
+    expected_salary: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    notice_period: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    linkedin: Mapped[str | None] = mapped_column(
+        String(1000),
+        nullable=True,
+    )
+
+    portfolio: Mapped[str | None] = mapped_column(
+        String(1000),
+        nullable=True,
+    )
+
+    source: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    why_join: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    cover_letter: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    resume_url: Mapped[str] = mapped_column(
+        String(1000),
+        nullable=False,
+    )
+
+    resume_original_name: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(50),
+        default="New",
+        nullable=False,
+        index=True,
+    )
+
+    admin_notes: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    consent: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
+
+
+    # ============================================================
+# CONNECTIVITY
+# ============================================================
+
+class Connectivity(Base):
+    __tablename__ = "connectivity"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    slug: Mapped[str] = mapped_column(
+        String(200),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+
+    title: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    display_order: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+        index=True,
+    )
+
+    is_published: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        nullable=False,
+        index=True,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+        nullable=False,
+    )
+
+    # One Connectivity Section -> Many Images
+    images: Mapped[list["ConnectivityImage"]] = relationship(
+        "ConnectivityImage",
+        back_populates="connectivity",
+        cascade="all, delete-orphan",
+        order_by="ConnectivityImage.display_order",
+    )
+
+
+# ============================================================
+# CONNECTIVITY IMAGE
+# ============================================================
+
+class ConnectivityImage(Base):
+    __tablename__ = "connectivity_images"
+
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    connectivity_id: Mapped[int] = mapped_column(
+        ForeignKey(
+            "connectivity.id",
+            ondelete="CASCADE",
+        ),
+        nullable=False,
+        index=True,
+    )
+
+    image_url: Mapped[str] = mapped_column(
+        String(1000),
+        nullable=False,
+    )
+
+    original_name: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    display_order: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+        index=True,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )
+
+    connectivity: Mapped["Connectivity"] = relationship(
+        "Connectivity",
+        back_populates="images",
+    )

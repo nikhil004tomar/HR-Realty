@@ -1,601 +1,301 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { ArrowRight, MapPin } from "lucide-react";
+import { gsap } from "gsap";
 
 export default function Hero() {
-  const heroRef = useRef<HTMLElement>(null);
-
-  const [mouse, setMouse] = useState({
-    x: 0,
-    y: 0,
-  });
+  const heroRef = useRef<HTMLElement | null>(null);
+  const imageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
 
-      setMouse({ x, y });
-    };
+      tl.fromTo(
+        ".hero-badge",
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.5 }
+      )
+        .fromTo(
+          ".hero-title-line",
+          { opacity: 0, y: 22 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.08,
+          },
+          "-=0.2"
+        )
+        .fromTo(
+          ".hero-description",
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          "-=0.25"
+        )
+        .fromTo(
+          ".hero-buttons",
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          "-=0.2"
+        )
+        .fromTo(
+          ".hero-stat",
+          { opacity: 0, y: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.08,
+          },
+          "-=0.2"
+        )
+        .fromTo(
+          imageRef.current,
+          {
+            opacity: 0,
+            x: 40,
+            scale: 0.97,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 0.8,
+          },
+          "-=0.5"
+        );
+    }, heroRef);
 
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen overflow-hidden bg-[#043927] text-white"
+      className="relative overflow-hidden bg-white text-[#111111]"
     >
-      {/* BACKGROUND GLOW */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          left-1/2
-          top-1/2
-          h-[700px]
-          w-[700px]
-          -translate-x-1/2
-          -translate-y-1/2
-          rounded-full
-          bg-emerald-400/10
-          blur-[140px]
-        "
-      />
+      {/* Top green line */}
+      <div className="absolute left-0 top-0 h-1 w-full bg-[#043927]" />
 
-      {/* GRID */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          opacity-[0.07]
-          [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)]
-          [background-size:70px_70px]
-        "
-      />
+      {/* Very subtle background details */}
+      <div className="pointer-events-none absolute -right-40 top-10 h-[500px] w-[500px] rounded-full bg-[#043927]/[0.025] blur-3xl" />
 
-      {/* FLOATING ORB */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          left-[8%]
-          top-[28%]
-          h-24
-          w-24
-          rounded-full
-          bg-emerald-300/10
-          blur-xl
-        "
-      />
-
-      <div
-        className="
-          pointer-events-none
-          absolute
-          right-[8%]
-          top-[18%]
-          h-32
-          w-32
-          rounded-full
-          bg-lime-200/10
-          blur-2xl
-        "
-      />
-
-      {/* HERO CONTENT */}
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1500px] items-center px-6 pb-20 pt-32 sm:px-10 lg:px-16">
-        <div className="grid w-full items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
-          
-          {/* LEFT */}
-          <div className="relative z-20 max-w-2xl">
-            {/* BADGE */}
-            <div
-              className="
-                mb-7
-                inline-flex
-                items-center
-                gap-3
-                rounded-full
-                border
-                border-white/15
-                bg-white/[0.06]
-                px-4
-                py-2
-                backdrop-blur-xl
-              "
-            >
+      <div className="mx-auto max-w-[1550px] px-5 pb-14 pt-24 sm:px-8 sm:pb-18 sm:pt-28 lg:px-12 lg:pb-20 lg:pt-32">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-12 xl:gap-16">
+          {/* =====================================================
+              LEFT CONTENT
+          ====================================================== */}
+          <div className="max-w-xl">
+            {/* Badge */}
+            <div className="hero-badge mb-6 inline-flex items-center gap-3 rounded-full border border-[#043927]/15 bg-[#043927]/[0.035] px-4 py-2">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C9A45C] opacity-40" />
+                <span className="relative h-2.5 w-2.5 rounded-full bg-[#C9A45C]" />
               </span>
 
-              <span className="text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#043927] sm:text-xs">
                 Premium Real Estate
               </span>
             </div>
 
-            {/* HEADING */}
-            <h1
-              className="
-                text-[clamp(3.5rem,8vw,8.5rem)]
-                font-semibold
-                leading-[0.88]
-                tracking-[-0.065em]
-              "
-            >
-              <span className="block">BUILD</span>
-
-              <span className="block text-white/40">
-                YOUR
+            {/* =================================================
+                CLEANER HEADING
+            ================================================== */}
+            <h1 className="text-[clamp(2.15rem,4.3vw,4.25rem)] font-black uppercase leading-[0.94] tracking-[-0.045em]">
+              <span className="hero-title-line block text-[#111111]">
+                Building India&apos;s
               </span>
 
-              <span className="relative block">
-                FUTURE
-                <span
-                  className="
-                    absolute
-                    -right-2
-                    top-1/2
-                    hidden
-                    h-4
-                    w-4
-                    -translate-y-1/2
-                    rounded-full
-                    bg-emerald-300
-                    shadow-[0_0_35px_rgba(110,231,183,.8)]
-                    sm:block
-                  "
-                />
+              <span className="hero-title-line mt-1 block text-[#043927]">
+                Largest Channel Partner
+              </span>
+
+              <span className="hero-title-line mt-1 flex items-center gap-3 text-[#111111]">
+                Network in Real Estate
+
+                {/*<span className="h-4 w-4 shrink-0 rounded-full bg-[#C9A45C] sm:h-5 sm:w-5" />*/}
               </span>
             </h1>
 
-            {/* DESCRIPTION */}
-            <p
-              className="
-                mt-8
-                max-w-lg
-                text-base
-                leading-7
-                text-white/60
-                sm:text-lg
-              "
-            >
-              DHOLERA SIR 
-              INDIA'S FIRST GREENFIELD SMART CITY.
-              A CITY DESIGNED FOR TOMORROW, TAKING SHAPE TODAY.
+            {/* Accent */}
+            <div className="mt-6 flex items-center gap-2">
+              <span className="h-[3px] w-14 rounded-full bg-[#C9A45C]" />
+              <span className="h-[3px] w-7 rounded-full bg-[#043927]" />
+              <span className="h-[3px] w-2 rounded-full bg-black/15" />
+            </div>
+
+            {/* Description */}
+            <p className="hero-description mt-6 max-w-lg text-sm leading-7 text-black/55 sm:text-base sm:leading-8">
+              Dholera SIR — India&apos;s emerging greenfield smart city.
+              A city designed for tomorrow, taking shape today.
             </p>
 
-            {/* BUTTONS */}
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            {/* Buttons */}
+            <div className="hero-buttons mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/projects"
-                className="
-                  group
-                  inline-flex
-                  items-center
-                  justify-center
-                  gap-3
-                  rounded-full
-                  bg-white
-                  px-7
-                  py-4
-                  text-sm
-                  font-semibold
-                  text-[#043927]
-                  transition-all
-                  duration-300
-                  hover:scale-[1.03]
-                  hover:shadow-[0_15px_50px_rgba(255,255,255,.15)]
-                "
+                className="group inline-flex w-fit items-center gap-3 rounded-full bg-[#043927] px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:bg-[#111111]"
               >
-                Explore Projects
+                <span>Explore Projects</span>
 
-                <span
-                  className="
-                    flex
-                    h-7
-                    w-7
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-[#043927]
-                    text-white
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-1
-                  "
-                >
-                  →
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C9A45C] text-[#111111] transition-transform duration-300 group-hover:translate-x-1">
+                  <ArrowRight size={16} />
                 </span>
               </Link>
 
-             
+              <Link
+                href="/#contact"
+                className="inline-flex w-fit items-center justify-center rounded-full border border-black/15 bg-white px-6 py-3 text-sm font-bold text-[#111111] transition-all duration-300 hover:border-[#043927] hover:bg-[#043927] hover:text-white"
+              >
+                Book Site Visit
+              </Link>
             </div>
 
-            {/* STATS */}
-            <div className="mt-12 flex flex-wrap gap-x-10 gap-y-5 border-t border-white/10 pt-6">
-              <div>
-                <div className="text-2xl font-semibold">
+            {/* =================================================
+                STATS
+            ================================================== */}
+            <div className="hero-stat mt-9 grid max-w-lg grid-cols-3 border-t border-black/10 pt-5">
+              <div className="pr-3">
+                <p className="text-2xl font-black text-[#043927] sm:text-3xl">
                   15+
-                </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/40">
+                </p>
+
+                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
                   Projects
-                </div>
+                </p>
               </div>
 
-              {/* <div>
-                <div className="text-2xl font-semibold">
-                  10K+
-                </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/40">
-                  Happy Clients
-                </div>
-              </div> */}
-
-              <div>
-                <div className="text-2xl font-semibold">
+              <div className="border-l border-black/10 px-3 sm:px-5">
+                <p className="text-2xl font-black text-[#043927] sm:text-3xl">
                   12+
-                </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-white/40">
+                </p>
+
+                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
                   Years Experience
-                </div>
+                </p>
+              </div>
+
+              <div className="border-l border-black/10 pl-3 sm:pl-5">
+                <p className="text-2xl font-black text-[#C9A45C] sm:text-3xl">
+                  10K+
+                </p>
+
+                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
+                  Happy Clients
+                </p>
               </div>
             </div>
           </div>
 
-          {/* RIGHT 3D SCENE */}
-          <div className="relative hidden h-[680px] items-center justify-center lg:flex">
-            
-            {/* 3D FLOOR */}
-            <div
-              className="
-                absolute
-                bottom-[8%]
-                left-1/2
-                h-[320px]
-                w-[520px]
-                -translate-x-1/2
-                rotate-x-[65deg]
-                rounded-[40px]
-                border
-                border-white/10
-                bg-white/[0.025]
-                shadow-[0_0_100px_rgba(100,255,190,.05)]
-              "
-              style={{
-                transform: `
-                  translateX(-50%)
-                  perspective(1000px)
-                  rotateX(65deg)
-                  rotateZ(-8deg)
-                  translate(
-                    ${mouse.x * -10}px,
-                    ${mouse.y * -5}px
-                  )
-                `,
-              }}
-            />
+          {/* =====================================================
+              LARGE IMAGE AREA
+          ====================================================== */}
+          <div
+            ref={imageRef}
+            className="relative mx-auto w-full max-w-[900px] lg:-mr-4 xl:-mr-8"
+          >
+            {/* Green offset shape */}
+            <div className="absolute -right-4 -top-4 h-full w-[96%] rounded-[2rem] bg-[#043927]/[0.045] sm:-right-6 sm:-top-6" />
 
-            {/* MAIN BUILDING CARD */}
-            <div
-              className="absolute left-1/2 top-1/2 z-20 w-[390px]"
-              style={{
-                transform: `
-                  translate(-50%, -50%)
-                  perspective(1200px)
-                  rotateY(${mouse.x * 8}deg)
-                  rotateX(${mouse.y * -6}deg)
-                  translate(${mouse.x * 15}px, ${mouse.y * 10}px)
-                `,
-                transition: "transform 0.15s ease-out",
-              }}
-            >
-              <div
-                className="
-                  relative
-                  overflow-hidden
-                  rounded-[35px]
-                  border
-                  border-white/20
-                  bg-white/10
-                  p-3
-                  shadow-[0_40px_100px_rgba(0,0,0,.35)]
-                  backdrop-blur-xl
-                "
-              >
-                {/* IMAGE */}
-                <div
-                  className="
-                    relative
-                    h-[480px]
-                    overflow-hidden
-                    rounded-[27px]
-                    bg-gradient-to-br
-                    from-emerald-900
-                    via-[#176148]
-                    to-[#081f17]
-                  "
-                >
-                  {/* Replace this div with your actual property image */}
-                  <div
-  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-  style={{
-    backgroundImage: "url('/Location_Map_DMC-3.jpg')",
-  }}
-/>
+            {/* Gold corner */}
+            <div className="absolute -right-2 -top-2 z-20 h-16 w-16 rounded-tr-[1.75rem] border-r-[3px] border-t-[3px] border-[#C9A45C] sm:-right-4 sm:-top-4 sm:h-24 sm:w-24" />
 
+            {/* Main image */}
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-black/10 bg-[#f7f7f5] shadow-[0_25px_70px_rgba(17,17,17,0.10)]">
+              {/* Gold top line */}
+              <div className="absolute left-0 right-0 top-0 z-20 h-1 bg-[#C9A45C]" />
 
-
-                  {/* BUILDING */}
-                   
-
-                  {/* IMAGE LABEL */}
-                  <div
-                    className="
-                      absolute
-                      left-5
-                      top-5
-                      rounded-full
-                      border
-                      border-white/20
-                      bg-black/20
-                      px-4
-                      py-2
-                      text-xs
-                      font-medium
-                      uppercase
-                      tracking-widest
-                      text-white
-                      backdrop-blur-xl
-                    "
-                  >
-                    Featured
-                  </div>
-
-                  {/* CARD INFO */}
-                  <div
-                    className="
-                      absolute
-                      bottom-5
-                      left-5
-                      right-5
-                      rounded-[22px]
-                      border
-                      border-white/15
-                      bg-black/25
-                      p-5
-                      backdrop-blur-xl
-                    "
-                  >
-                    <div className="text-xs uppercase tracking-widest text-white/50">
-                      Premium Development
-                    </div>
-
-                    <div className="mt-2 text-xl font-semibold">
-                      Your Next Address
-                    </div>
-
-                    <div className="mt-1 text-sm text-white/50">
-                      Modern living • Prime location
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* FLOATING CARD 1 */}
-            <div
-              className="
-                absolute
-                left-[2%]
-                top-[15%]
-                z-30
-                w-[180px]
-                rounded-[25px]
-                border
-                border-white/15
-                bg-white/[0.08]
-                p-4
-                shadow-[0_25px_70px_rgba(0,0,0,.25)]
-                backdrop-blur-xl
-              "
-              style={{
-                transform: `
-                  perspective(900px)
-                  rotateY(${mouse.x * -10}deg)
-                  rotateX(${mouse.y * 8}deg)
-                  translate(${mouse.x * -20}px, ${mouse.y * -15}px)
-                `,
-                transition: "transform 0.2s ease-out",
-              }}
-            >
-              <div className="text-3xl">⌂</div>
-
-              <div className="mt-4 text-sm font-semibold">
-                Premium Living
-              </div>
-
-              <div className="mt-1 text-xs leading-5 text-white/40">
-                Designed for modern lifestyles.
-              </div>
-            </div>
-
-            {/* FLOATING CARD 2 */}
-            <div
-              className="
-                absolute
-                bottom-[14%]
-                right-[2%]
-                z-30
-                w-[185px]
-                rounded-[25px]
-                border
-                border-white/15
-                bg-white/[0.08]
-                p-5
-                shadow-[0_25px_70px_rgba(0,0,0,.25)]
-                backdrop-blur-xl
-              "
-              style={{
-                transform: `
-                  perspective(900px)
-                  rotateY(${mouse.x * 10}deg)
-                  rotateX(${mouse.y * -7}deg)
-                  translate(${mouse.x * 20}px, ${mouse.y * 12}px)
-                `,
-                transition: "transform 0.2s ease-out",
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-widest text-white/40">
-                  Growth
-                </span>
-
-                <span className="text-emerald-300">
-                  ↗
-                </span>
-              </div>
-
-              <div className="mt-3 text-3xl font-semibold">
-                24.8%
-              </div>
-
-              <div className="mt-1 text-xs text-white/40">
-                Investment potential
-              </div>
-            </div>
-
-            {/* CENTER GLOW */}
-            <div
-              className="
-                pointer-events-none
-                absolute
-                left-1/2
-                top-1/2
-                h-[350px]
-                w-[350px]
-                -translate-x-1/2
-                -translate-y-1/2
-                rounded-full
-                bg-emerald-300/10
-                blur-[100px]
-              "
-            />
-          </div>
-
-          {/* MOBILE VISUAL */}
-          <div className="relative mx-auto flex w-full max-w-md justify-center lg:hidden">
-            <div
-              className="
-                relative
-                w-full
-                max-w-[390px]
-                overflow-hidden
-                rounded-[30px]
-                border
-                border-white/15
-                bg-white/10
-                p-3
-                shadow-[0_30px_80px_rgba(0,0,0,.3)]
-                backdrop-blur-xl
-              "
-            >
-              <div
-                className="
-                  relative
-                  h-[430px]
-                  overflow-hidden
-                  rounded-[24px]
-                  bg-gradient-to-br
-                  from-emerald-800
-                  via-[#176148]
-                  to-[#071c14]
-                "
-              >
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,.2),transparent_35%)]
-                  "
+              {/* Map */}
+              <div className="relative aspect-[16/9] w-full">
+                <img
+                  src="/22village.png"
+                  alt="Dholera Smart City Location Map"
+                  className="h-full w-full object-contain p-3 transition-transform duration-700 hover:scale-[1.01] sm:p-5 lg:p-7"
                 />
+              </div>
 
-                {/* MOBILE BUILDING */}
-                <div
-                  className="
-                    absolute
-                    bottom-0
-                    left-1/2
-                    h-[72%]
-                    w-[65%]
-                    -translate-x-1/2
-                    rounded-t-[25px]
-                    bg-white/15
-                    backdrop-blur-sm
-                  "
-                >
-                  <div className="grid h-full grid-cols-3 gap-3 p-5">
-                    {Array.from({ length: 15 }).map(
-                      (_, index) => (
-                        <div
-                          key={index}
-                          className="
-                            rounded-sm
-                            border
-                            border-white/10
-                            bg-emerald-100/20
-                          "
-                        />
-                      )
-                    )}
-                  </div>
-                </div>
+              {/* Image information */}
+              <div className="border-t border-black/10 bg-white px-5 py-4 sm:px-7 sm:py-5">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  {/* Location */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#043927]/5 text-[#043927]">
+                      <MapPin size={17} />
+                    </div>
 
-                <div className="absolute bottom-5 left-5 right-5 rounded-[20px] bg-black/25 p-5 backdrop-blur-xl">
-                  <div className="text-xs uppercase tracking-widest text-white/50">
-                    Featured Development
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/35">
+                        Location
+                      </p>
+
+                      <p className="mt-0.5 text-sm font-bold text-[#111111]">
+                        Dholera, Gujarat
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="mt-2 text-xl font-semibold">
-                    Your Next Address
+                  {/* Development */}
+                  <div className="flex items-center gap-3">
+                    <div className="hidden h-8 w-px bg-black/10 sm:block" />
+
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/35 sm:text-right">
+                        Development
+                      </p>
+
+                      <p className="mt-0.5 text-sm font-bold text-[#043927] sm:text-right">
+                        Dholera SIR
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* 
+            <div className="absolute -bottom-4 left-5 z-30 rounded-xl border border-[#C9A45C]/35 bg-white px-4 py-2.5 shadow-[0_12px_30px_rgba(17,17,17,0.10)] sm:left-8 sm:px-5 sm:py-3">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#C9A45C]" />
+
+                <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#043927] sm:text-[10px]">
+                  Future Ready Region
+                </span>
+              </div>
+            </div>
+            Floating label */}
           </div>
         </div>
       </div>
 
-      {/* SCROLL INDICATOR */}
-      <div
-        className="
-          absolute
-          bottom-7
-          left-1/2
-          z-20
-          hidden
-          -translate-x-1/2
-          items-center
-          gap-3
-          text-[10px]
-          uppercase
-          tracking-[0.3em]
-          text-white/30
-          sm:flex
-        "
-      >
-        <span>Scroll to explore</span>
+      {/* =====================================================
+          BOTTOM STRIP
+      ====================================================== */}
+      <div className="border-t border-black/10 bg-[#fafafa]">
+        <div className="mx-auto flex max-w-[1550px] flex-col gap-3 px-5 py-4 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+          <div className="flex items-center gap-3">
+            <span className="h-2 w-2 rounded-full bg-[#C9A45C]" />
 
-        <span className="h-px w-12 bg-white/20" />
+            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/40 sm:text-[10px]">
+              Dholera SIR • Gujarat
+            </p>
+          </div>
 
-        <span>↓</span>
+          <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.18em] text-black/30 sm:text-[10px]">
+            <span>Discover the opportunity</span>
+
+            <ArrowRight
+              size={13}
+              className="text-[#043927]"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

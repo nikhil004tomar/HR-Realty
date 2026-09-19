@@ -6,6 +6,7 @@ import ValuesSection from "@/components/about/ValuesSection";
 // import Leadership from "@/components/about/Leadership";
 import ContactCTA from "@/components/about/ContactCTA";
 import InquiryForm from "@/components/about/InquiryForm";
+import OurTeam from "@/components/about/OurTeam";
 // import OngoingProjects from "@/components/about/OngoingProjects";
 
 export default function AboutPage() {
@@ -13,6 +14,7 @@ export default function AboutPage() {
     <main className="min-h-screen bg-[#043927]">
       <AboutHero />
       <FoundedSection />
+      <OurTeam />
       <VisionMission />
       <DiscoverFuture />
       <ValuesSection />

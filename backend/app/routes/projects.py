@@ -12,8 +12,9 @@ from fastapi import (
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
+from ..auth import get_current_admin
 from ..database import get_db, UPLOAD_PATH
-from ..models import Project, ProjectImage
+from ..models import Admin, Project, ProjectImage
 from ..schemas import (
     ProjectCreate,
     ProjectImageResponse,
@@ -30,6 +31,7 @@ router = APIRouter(
 
 # ============================================================
 # GET ALL PROJECTS
+# PUBLIC
 # ============================================================
 
 @router.get(
@@ -55,6 +57,7 @@ def get_projects(
 
 # ============================================================
 # GET SINGLE PROJECT BY ID
+# PUBLIC
 # ============================================================
 
 @router.get(
@@ -88,6 +91,7 @@ def get_project_by_id(
 
 # ============================================================
 # GET SINGLE PROJECT BY SLUG
+# PUBLIC
 # ============================================================
 
 @router.get(
@@ -121,6 +125,7 @@ def get_project_by_slug(
 
 # ============================================================
 # CREATE PROJECT
+# ADMIN ONLY
 # ============================================================
 
 @router.post(
@@ -131,6 +136,7 @@ def get_project_by_slug(
 def create_project(
     project_data: ProjectCreate,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     # --------------------------------------------------------
@@ -151,7 +157,6 @@ def create_project(
             detail="Project with this slug already exists",
         )
 
-
     # --------------------------------------------------------
     # Create project
     # --------------------------------------------------------
@@ -165,7 +170,6 @@ def create_project(
     db.commit()
 
     db.refresh(project)
-
 
     # --------------------------------------------------------
     # Return project with images
@@ -186,6 +190,7 @@ def create_project(
 
 # ============================================================
 # UPDATE PROJECT
+# ADMIN ONLY
 # ============================================================
 
 @router.put(
@@ -196,6 +201,7 @@ def update_project(
     project_id: int,
     project_data: ProjectUpdate,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     # --------------------------------------------------------
@@ -214,15 +220,23 @@ def update_project(
             detail="Project not found",
         )
 
-
     # --------------------------------------------------------
     # Check duplicate slug
     # --------------------------------------------------------
 
+    data = project_data.model_dump(
+        exclude_unset=True
+    )
+
+    new_slug = data.get(
+        "slug",
+        project.slug,
+    )
+
     existing_project = db.scalar(
         select(Project)
         .where(
-            Project.slug == project_data.slug,
+            Project.slug == new_slug,
             Project.id != project_id,
         )
     )
@@ -234,14 +248,9 @@ def update_project(
             detail="Another project already uses this slug",
         )
 
-
     # --------------------------------------------------------
     # Update fields
     # --------------------------------------------------------
-
-    data = project_data.model_dump(
-        exclude_unset=True
-    )
 
     for key, value in data.items():
 
@@ -251,11 +260,9 @@ def update_project(
             value,
         )
 
-
     db.commit()
 
     db.refresh(project)
-
 
     # --------------------------------------------------------
     # Return updated project
@@ -276,6 +283,7 @@ def update_project(
 
 # ============================================================
 # DELETE PROJECT
+# ADMIN ONLY
 # ============================================================
 
 @router.delete(
@@ -285,6 +293,7 @@ def update_project(
 def delete_project(
     project_id: int,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     project = db.get(
@@ -298,7 +307,6 @@ def delete_project(
             status_code=404,
             detail="Project not found",
         )
-
 
     # --------------------------------------------------------
     # Delete physical project images
@@ -316,7 +324,6 @@ def delete_project(
             project_directory
         )
 
-
     # --------------------------------------------------------
     # Delete database project
     # --------------------------------------------------------
@@ -330,6 +337,7 @@ def delete_project(
 
 # ============================================================
 # GET PROJECT IMAGES
+# ADMIN ONLY
 # ============================================================
 
 @router.get(
@@ -339,6 +347,7 @@ def delete_project(
 def get_project_images(
     project_id: int,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     # --------------------------------------------------------
@@ -356,7 +365,6 @@ def get_project_images(
             status_code=404,
             detail="Project not found",
         )
-
 
     # --------------------------------------------------------
     # Get images
@@ -373,12 +381,12 @@ def get_project_images(
         )
     ).all()
 
-
     return images
 
 
 # ============================================================
 # UPLOAD PROJECT IMAGE
+# ADMIN ONLY
 # ============================================================
 
 @router.post(
@@ -392,6 +400,7 @@ def upload_project_image(
     alt_text: str | None = None,
     sort_order: int | None = None,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     # --------------------------------------------------------
@@ -409,7 +418,6 @@ def upload_project_image(
             status_code=404,
             detail="Project not found",
         )
-
 
     # --------------------------------------------------------
     # Check image type
@@ -432,7 +440,6 @@ def upload_project_image(
             ),
         )
 
-
     # --------------------------------------------------------
     # Check file size
     # --------------------------------------------------------
@@ -452,7 +459,6 @@ def upload_project_image(
             detail="Image must be smaller than 10MB",
         )
 
-
     # --------------------------------------------------------
     # Create project directory
     # --------------------------------------------------------
@@ -468,7 +474,6 @@ def upload_project_image(
         exist_ok=True,
     )
 
-
     # --------------------------------------------------------
     # Determine extension
     # --------------------------------------------------------
@@ -482,7 +487,6 @@ def upload_project_image(
         original_name
     ).suffix.lower()
 
-
     if extension not in {
         ".jpg",
         ".jpeg",
@@ -492,7 +496,6 @@ def upload_project_image(
     }:
 
         extension = ".webp"
-
 
     # --------------------------------------------------------
     # Determine next image number
@@ -507,11 +510,9 @@ def upload_project_image(
         )
     )
 
-
     next_number = (
         existing_count + 1
     )
-
 
     # --------------------------------------------------------
     # Create filename
@@ -523,12 +524,10 @@ def upload_project_image(
         f"{extension}"
     )
 
-
     destination = (
         project_directory
         / filename
     )
-
 
     # --------------------------------------------------------
     # Save physical file
@@ -553,7 +552,6 @@ def upload_project_image(
                 f"Failed to save image: {error}"
             ),
         )
-
 
     # --------------------------------------------------------
     # Determine sort order
@@ -583,7 +581,6 @@ def upload_project_image(
                 max_sort_order + 1
             )
 
-
     # --------------------------------------------------------
     # Save image in MySQL
     # --------------------------------------------------------
@@ -602,19 +599,18 @@ def upload_project_image(
         sort_order=sort_order,
     )
 
-
     db.add(image)
 
     db.commit()
 
     db.refresh(image)
 
-
     return image
 
 
 # ============================================================
 # DELETE PROJECT IMAGE
+# ADMIN ONLY
 # ============================================================
 
 @router.delete(
@@ -624,6 +620,7 @@ def upload_project_image(
 def delete_project_image(
     image_id: int,
     db: Session = Depends(get_db),
+    current_admin: Admin = Depends(get_current_admin),
 ):
 
     # --------------------------------------------------------
@@ -641,7 +638,6 @@ def delete_project_image(
             status_code=404,
             detail="Image not found",
         )
-
 
     # --------------------------------------------------------
     # Delete physical file
@@ -664,7 +660,6 @@ def delete_project_image(
         if image_path.exists():
 
             image_path.unlink()
-
 
     # --------------------------------------------------------
     # Delete database record

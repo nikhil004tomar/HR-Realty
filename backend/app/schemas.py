@@ -363,3 +363,265 @@ class TestimonialResponse(BaseModel):
     created_at: datetime
 
     updated_at: datetime
+
+
+# ============================================================
+# TEAM MEMBER
+# ============================================================
+
+class TeamMemberCreate(BaseModel):
+
+    name: str
+
+    designation: str
+
+    bio: str | None = None
+
+    profile_image: str | None = None
+
+    phone: str | None = None
+
+    email: str | None = None
+
+    linkedin_url: str | None = None
+
+    display_order: int = 0
+
+    is_published: bool = True
+
+
+class TeamMemberUpdate(BaseModel):
+
+    name: str | None = None
+
+    designation: str | None = None
+
+    bio: str | None = None
+
+    profile_image: str | None = None
+
+    phone: str | None = None
+
+    email: str | None = None
+
+    linkedin_url: str | None = None
+
+    display_order: int | None = None
+
+    is_published: bool | None = None
+
+
+class TeamMemberResponse(BaseModel):
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    id: int
+
+    name: str
+
+    designation: str
+
+    bio: str | None
+
+    profile_image: str | None
+
+    phone: str | None
+
+    email: str | None
+
+    linkedin_url: str | None
+
+    display_order: int
+
+    is_published: bool
+
+    created_at: datetime
+
+    updated_at: datetime
+
+class SiteMapCreate(BaseModel):
+    title: str
+    description: str | None = None
+    image: str | None = None
+    display_order: int = 0
+    is_published: bool = True
+
+
+class SiteMapUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    image: str | None = None
+    display_order: int | None = None
+    is_published: bool | None = None
+
+
+class SiteMapResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    title: str
+    description: str | None
+    image: str | None
+    display_order: int
+    is_published: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class CareerApplicationResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    id: int
+
+    position: str
+
+    full_name: str
+
+    email: str
+
+    phone: str
+
+    whatsapp: str | None
+
+    city: str | None
+
+    state: str | None
+
+    experience: str | None
+
+    current_company: str | None
+
+    designation: str | None
+
+    qualification: str | None
+
+    expected_salary: str | None
+
+    notice_period: str | None
+
+    linkedin: str | None
+
+    portfolio: str | None
+
+    source: str | None
+
+    why_join: str | None
+
+    cover_letter: str | None
+
+    resume_url: str
+
+    resume_original_name: str | None
+
+    status: str
+
+    admin_notes: str | None
+
+    consent: bool
+
+    created_at: datetime
+
+    updated_at: datetime
+
+
+class CareerApplicationUpdate(BaseModel):
+    status: str | None = None
+    admin_notes: str | None = None
+
+    # ============================================================
+# CONNECTIVITY IMAGE RESPONSE
+# ============================================================
+
+class ConnectivityImageResponse(BaseModel):
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    id: int
+
+    connectivity_id: int
+
+    image_url: str
+
+    original_name: str | None
+
+    display_order: int
+
+    created_at: datetime
+
+
+# ============================================================
+# CONNECTIVITY CREATE
+# ============================================================
+
+class ConnectivityCreate(BaseModel):
+
+    slug: str
+
+    title: str
+
+    description: str | None = None
+
+    display_order: int = 0
+
+    is_published: bool = True
+
+
+# ============================================================
+# CONNECTIVITY UPDATE
+# ============================================================
+
+class ConnectivityUpdate(BaseModel):
+
+    slug: str | None = None
+
+    title: str | None = None
+
+    description: str | None = None
+
+    display_order: int | None = None
+
+    is_published: bool | None = None
+
+
+# ============================================================
+# CONNECTIVITY IMAGE UPDATE
+# ============================================================
+
+class ConnectivityImageUpdate(BaseModel):
+
+    display_order: int | None = None
+
+
+# ============================================================
+# CONNECTIVITY RESPONSE
+# ============================================================
+
+class ConnectivityResponse(BaseModel):
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    id: int
+
+    slug: str
+
+    title: str
+
+    description: str | None
+
+    display_order: int
+
+    is_published: bool
+
+    created_at: datetime
+
+    updated_at: datetime
+
+    images: list[ConnectivityImageResponse] = []

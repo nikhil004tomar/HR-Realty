@@ -1,11 +1,7 @@
+
 "use client";
 
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 
@@ -13,10 +9,11 @@ export type PillNavItem = {
   label: string;
   href: string;
   ariaLabel?: string;
+  children?: PillNavItem[];
 };
 
 export interface PillNavProps {
-  items: PillNavItem[];
+  items?: PillNavItem[];
   activeHref?: string;
   className?: string;
   ease?: string;
@@ -28,15 +25,9 @@ export interface PillNavProps {
   initialLoadAnimation?: boolean;
 }
 
-// ============================================================
-// LOGO
-// ============================================================
-// File:
-// public/images/logo.png
-//
-// Browser URL:
-// /images/logo.png
-// ============================================================
+const GREEN = "#043927";
+const GOLD = "#C9A45C";
+const WHITE = "#FFFFFF";
 
 const LOGO_SRC = "/images/logo.png";
 
@@ -44,445 +35,161 @@ const PillNav: React.FC<PillNavProps> = ({
   items = [],
   activeHref,
   className = "",
-  ease = "power3.out",
-  baseColor = "#ffffff",
-  pillColor = "#ffffff",
-  hoveredPillTextColor = "#ffffff",
-  pillTextColor = "#111111",
+  ease = "power2.out",
+  baseColor = GREEN,
+  pillColor = "transparent",
+  hoveredPillTextColor = GOLD,
+  pillTextColor = WHITE,
   onMobileMenuClick,
   initialLoadAnimation = true,
 }) => {
-  // ==========================================================
-  // STATE
-  // ==========================================================
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] =
-    useState(false);
+  const navRef = useRef<HTMLElement | null>(null);
+  const logoRef = useRef<HTMLAnchorElement | null>(null);
+  const logoImgRef = useRef<HTMLImageElement | null>(null);
+  const navItemsRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
+  const hamburgerRef = useRef<HTMLButtonElement | null>(null);
+  const logoTweenRef = useRef<gsap.core.Tween | null>(null);
 
-  const resolvedPillTextColor =
-    pillTextColor || "#111111";
-
-  // ==========================================================
-  // REFS
-  // ==========================================================
-
-  const circleRefs =
-    useRef<Array<HTMLSpanElement | null>>([]);
-
-  const tlRefs =
-    useRef<Array<gsap.core.Timeline | null>>([]);
-
-  const activeTweenRefs =
-    useRef<Array<gsap.core.Tween | null>>([]);
-
-  const logoImgRef =
-    useRef<HTMLImageElement | null>(null);
-
-  const logoTweenRef =
-    useRef<gsap.core.Tween | null>(null);
-
-  const hamburgerRef =
-    useRef<HTMLButtonElement | null>(null);
-
-  const mobileMenuRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const navItemsRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const logoRef =
-    useRef<HTMLAnchorElement | null>(null);
-
-  // ==========================================================
-  // NAVIGATION ANIMATION
-  // ==========================================================
+  // ============================================================
+  // INITIAL ANIMATION
+  // ============================================================
 
   useEffect(() => {
-    const layout = () => {
-      circleRefs.current.forEach((circle) => {
-        if (!circle?.parentElement) {
-          return;
-        }
+    if (!initialLoadAnimation) return;
 
-        const pill =
-          circle.parentElement as HTMLElement;
+    const logo = logoRef.current;
+    const navItems = navItemsRef.current;
 
-        const rect =
-          pill.getBoundingClientRect();
-
-        const { width: w, height: h } =
-          rect;
-
-        if (!w || !h) {
-          return;
-        }
-
-        // ------------------------------------------------------
-        // Calculate hover circle
-        // ------------------------------------------------------
-
-        const R =
-          ((w * w) / 4 + h * h) /
-          (2 * h);
-
-        const D =
-          Math.ceil(2 * R) + 2;
-
-        const delta =
-          Math.ceil(
-            R -
-              Math.sqrt(
-                Math.max(
-                  0,
-                  R * R -
-                    (w * w) / 4
-                )
-              )
-          ) + 1;
-
-        const originY =
-          D - delta;
-
-        circle.style.width =
-          `${D}px`;
-
-        circle.style.height =
-          `${D}px`;
-
-        circle.style.bottom =
-          `-${delta}px`;
-
-        // ------------------------------------------------------
-        // Initial circle state
-        // ------------------------------------------------------
-
-        gsap.set(circle, {
-          xPercent: -50,
-          scale: 0,
-          transformOrigin:
-            `50% ${originY}px`,
-        });
-
-        // ------------------------------------------------------
-        // Labels
-        // ------------------------------------------------------
-
-        const label =
-          pill.querySelector<HTMLElement>(
-            ".pill-label"
-          );
-
-        const hoverLabel =
-          pill.querySelector<HTMLElement>(
-            ".pill-label-hover"
-          );
-
-        if (label) {
-          gsap.set(label, {
-            y: 0,
-          });
-        }
-
-        if (hoverLabel) {
-          gsap.set(hoverLabel, {
-            y: h + 12,
-            opacity: 0,
-          });
-        }
-
-        // ------------------------------------------------------
-        // Find index
-        // ------------------------------------------------------
-
-        const index =
-          circleRefs.current.indexOf(
-            circle
-          );
-
-        if (index === -1) {
-          return;
-        }
-
-        // Kill old timeline
-
-        tlRefs.current[index]?.kill();
-
-        // ------------------------------------------------------
-        // Create timeline
-        // ------------------------------------------------------
-
-        const tl =
-          gsap.timeline({
-            paused: true,
-          });
-
-        // Hover circle
-
-        tl.to(
-          circle,
-          {
-            scale: 1.2,
-            xPercent: -50,
-            duration: 0.7,
-            ease,
-            overwrite: "auto",
-          },
-          0
-        );
-
-        // Normal label
-
-        if (label) {
-          tl.to(
-            label,
-            {
-              y: -(h + 8),
-              duration: 0.7,
-              ease,
-              overwrite: "auto",
-            },
-            0
-          );
-        }
-
-        // Hover label
-
-        if (hoverLabel) {
-          tl.to(
-            hoverLabel,
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.7,
-              ease,
-              overwrite: "auto",
-            },
-            0
-          );
-        }
-
-        tlRefs.current[index] =
-          tl;
-      });
-    };
-
-    // ----------------------------------------------------------
-    // Initial layout
-    // ----------------------------------------------------------
-
-    layout();
-
-    // ----------------------------------------------------------
-    // Resize
-    // ----------------------------------------------------------
-
-    const resizeHandler = () => {
-      layout();
-    };
-
-    window.addEventListener(
-      "resize",
-      resizeHandler
-    );
-
-    // ----------------------------------------------------------
-    // Fonts ready
-    // ----------------------------------------------------------
-
-    if (document.fonts) {
-      document.fonts.ready
-        .then(layout)
-        .catch(() => {});
-    }
-
-    // ==========================================================
-    // MOBILE MENU INITIAL STATE
-    // ==========================================================
-
-    const menu =
-      mobileMenuRef.current;
-
-    if (menu) {
-      gsap.set(menu, {
-        visibility: "hidden",
-        opacity: 0,
-        y: -10,
-      });
-    }
-
-    // ==========================================================
-    // INITIAL LOAD ANIMATION
-    // ==========================================================
-
-    if (initialLoadAnimation) {
-      const logo =
-        logoRef.current;
-
-      const navItems =
-        navItemsRef.current;
-
-      if (logo) {
-        gsap.set(logo, {
-          scale: 0.85,
+    if (logo) {
+      gsap.fromTo(
+        logo,
+        {
           opacity: 0,
-        });
-
-        gsap.to(logo, {
-          scale: 1,
+          x: -20,
+        },
+        {
           opacity: 1,
-          duration: 0.6,
+          x: 0,
+          duration: 0.5,
           ease,
-        });
-      }
+        }
+      );
+    }
 
-      if (navItems) {
-        gsap.set(navItems, {
+    if (navItems) {
+      gsap.fromTo(
+        navItems,
+        {
           opacity: 0,
           y: -10,
-        });
-
-        gsap.to(navItems, {
+        },
+        {
           opacity: 1,
           y: 0,
-          duration: 0.6,
+          duration: 0.5,
           delay: 0.1,
           ease,
-        });
-      }
-    }
-
-    // ==========================================================
-    // CLEANUP
-    // ==========================================================
-
-    return () => {
-      window.removeEventListener(
-        "resize",
-        resizeHandler
-      );
-
-      tlRefs.current.forEach(
-        (tl) => tl?.kill()
-      );
-
-      activeTweenRefs.current.forEach(
-        (tween) => tween?.kill()
-      );
-
-      logoTweenRef.current?.kill();
-    };
-  }, [
-    items,
-    ease,
-    initialLoadAnimation,
-  ]);
-
-  // ==========================================================
-  // PILL ENTER
-  // ==========================================================
-
-  const handleEnter = (
-    index: number
-  ) => {
-    const tl =
-      tlRefs.current[index];
-
-    if (!tl) {
-      return;
-    }
-
-    activeTweenRefs.current[
-      index
-    ]?.kill();
-
-    activeTweenRefs.current[
-      index
-    ] =
-      tl.tweenTo(
-        tl.duration(),
-        {
-          duration: 0.3,
-          ease,
-          overwrite: "auto",
         }
       );
-  };
-
-  // ==========================================================
-  // PILL LEAVE
-  // ==========================================================
-
-  const handleLeave = (
-    index: number
-  ) => {
-    const tl =
-      tlRefs.current[index];
-
-    if (!tl) {
-      return;
     }
+  }, [ease, initialLoadAnimation]);
 
-    activeTweenRefs.current[
-      index
-    ]?.kill();
-
-    activeTweenRefs.current[
-      index
-    ] =
-      tl.tweenTo(
-        0,
-        {
-          duration: 0.25,
-          ease,
-          overwrite: "auto",
-        }
-      );
-  };
-
-  // ==========================================================
-  // LOGO HOVER
-  // ==========================================================
+  // ============================================================
+  // LOGO ANIMATION
+  // ============================================================
 
   const handleLogoEnter = () => {
-    const img =
-      logoImgRef.current;
+    const img = logoImgRef.current;
 
-    if (!img) {
-      return;
-    }
+    if (!img) return;
 
     logoTweenRef.current?.kill();
 
-    logoTweenRef.current =
-      gsap.to(img, {
-        rotate: 360,
-        duration: 0.5,
-        ease,
-        overwrite: "auto",
-      });
+    logoTweenRef.current = gsap.to(img, {
+      scale: 1.06,
+      duration: 0.25,
+      ease,
+      overwrite: "auto",
+    });
   };
 
-  // ==========================================================
-  // MOBILE MENU
-  // ==========================================================
+  const handleLogoLeave = () => {
+    const img = logoImgRef.current;
 
-  const toggleMobileMenu = () => {
-    const nextState =
-      !isMobileMenuOpen;
+    if (!img) return;
 
-    setIsMobileMenuOpen(
-      nextState
+    logoTweenRef.current?.kill();
+
+    logoTweenRef.current = gsap.to(img, {
+      scale: 1,
+      duration: 0.25,
+      ease,
+      overwrite: "auto",
+    });
+  };
+
+  // ============================================================
+  // LINK HELPERS
+  // ============================================================
+
+  const isExternalLink = (href: string) => {
+    if (!href) return false;
+
+    return (
+      href.startsWith("http://") ||
+      href.startsWith("https://") ||
+      href.startsWith("//") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:") ||
+      href.startsWith("#")
     );
+  };
 
-    const hamburger =
-      hamburgerRef.current;
+  const isNextLink = (href?: string) => {
+    return Boolean(href && !isExternalLink(href));
+  };
 
-    const menu =
-      mobileMenuRef.current;
+  const homeHref = items?.[0]?.href || "/";
 
-    // ========================================================
-    // HAMBURGER ANIMATION
-    // ========================================================
+  // ============================================================
+  // DROPDOWN
+  // ============================================================
+
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown((current) =>
+      current === label ? null : label
+    );
+  };
+
+  // ============================================================
+  // MOBILE MENU
+  // ============================================================
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setOpenDropdown(null);
+
+    const menu = mobileMenuRef.current;
+
+    if (menu) {
+      gsap.to(menu, {
+        opacity: 0,
+        y: -8,
+        duration: 0.2,
+        ease,
+        onComplete: () => {
+          gsap.set(menu, {
+            visibility: "hidden",
+          });
+        },
+      });
+    }
+
+    const hamburger = hamburgerRef.current;
 
     if (hamburger) {
       const lines =
@@ -491,44 +198,33 @@ const PillNav: React.FC<PillNavProps> = ({
         );
 
       if (lines.length >= 2) {
-        if (nextState) {
-          gsap.to(lines[0], {
-            rotation: 45,
-            y: 4,
-            duration: 0.25,
-            ease,
-          });
+        gsap.to(lines[0], {
+          rotation: 0,
+          y: 0,
+          duration: 0.2,
+          ease,
+        });
 
-          gsap.to(lines[1], {
-            rotation: -45,
-            y: -4,
-            duration: 0.25,
-            ease,
-          });
-        } else {
-          gsap.to(lines[0], {
-            rotation: 0,
-            y: 0,
-            duration: 0.25,
-            ease,
-          });
-
-          gsap.to(lines[1], {
-            rotation: 0,
-            y: 0,
-            duration: 0.25,
-            ease,
-          });
-        }
+        gsap.to(lines[1], {
+          rotation: 0,
+          y: 0,
+          duration: 0.2,
+          ease,
+        });
       }
     }
+  };
 
-    // ========================================================
-    // MOBILE MENU ANIMATION
-    // ========================================================
+  const toggleMobileMenu = () => {
+    const nextState = !isMobileMenuOpen;
 
-    if (menu) {
-      if (nextState) {
+    setIsMobileMenuOpen(nextState);
+
+    const menu = mobileMenuRef.current;
+    const hamburger = hamburgerRef.current;
+
+    if (nextState) {
+      if (menu) {
         gsap.set(menu, {
           visibility: "visible",
         });
@@ -537,523 +233,610 @@ const PillNav: React.FC<PillNavProps> = ({
           menu,
           {
             opacity: 0,
-            y: -10,
+            y: -8,
           },
           {
             opacity: 1,
             y: 0,
-            duration: 0.3,
+            duration: 0.25,
             ease,
           }
         );
-      } else {
-        gsap.to(menu, {
-          opacity: 0,
-          y: -10,
-          duration: 0.2,
-          ease,
-          onComplete: () => {
-            gsap.set(menu, {
-              visibility:
-                "hidden",
-            });
-          },
-        });
       }
+
+      if (hamburger) {
+        const lines =
+          hamburger.querySelectorAll<HTMLElement>(
+            ".hamburger-line"
+          );
+
+        if (lines.length >= 2) {
+          gsap.to(lines[0], {
+            rotation: 45,
+            y: 4,
+            duration: 0.2,
+            ease,
+          });
+
+          gsap.to(lines[1], {
+            rotation: -45,
+            y: -4,
+            duration: 0.2,
+            ease,
+          });
+        }
+      }
+    } else {
+      closeMobileMenu();
     }
 
     onMobileMenuClick?.();
   };
 
-  // ==========================================================
-  // LINK HELPERS
-  // ==========================================================
+  // ============================================================
+  // DESKTOP DROPDOWN
+  // ============================================================
 
-  const isExternalLink = (
-    href: string
+  const renderDesktopItem = (
+    item: PillNavItem,
+    index: number
   ) => {
-    if (!href) {
-      return false;
-    }
+    const isActive = activeHref === item.href;
+    const hasChildren =
+      Boolean(item.children && item.children.length > 0);
 
-    return (
-      href.startsWith(
-        "http://"
-      ) ||
-      href.startsWith(
-        "https://"
-      ) ||
-      href.startsWith(
-        "//"
-      ) ||
-      href.startsWith(
-        "mailto:"
-      ) ||
-      href.startsWith(
-        "tel:"
-      ) ||
-      href.startsWith("#")
-    );
-  };
+    const linkClasses = `
+      group
+      relative
+      flex
+      h-[44px]
+      items-center
+      gap-1.5
+      rounded-full
+      px-4
+      text-[13px]
+      font-semibold
+      uppercase
+      tracking-[0.2px]
+      transition-all
+      duration-200
+      hover:text-[#C9A45C]
+      ${isActive ? "text-[#C9A45C]" : ""}
+    `;
 
-  const isNextLink = (
-    href?: string
-  ) => {
-    return Boolean(
-      href &&
-        !isExternalLink(
-          href
-        )
-    );
-  };
+    const content = (
+      <>
+        <span>{item.label}</span>
 
-  // ==========================================================
-  // HOME LINK
-  // ==========================================================
-
-  const homeHref =
-    items?.[0]?.href || "/";
-
-  // ==========================================================
-  // RENDER
-  // ==========================================================
-
-  return (
-    <div
-      className={`
-        fixed
-        left-1/2
-        top-5
-        z-[1000]
-        w-[calc(100%-32px)]
-        -translate-x-1/2
-        md:w-auto
-        ${className}
-      `}
-    >
-
-      {/* ==================================================== */}
-      {/* NAVBAR */}
-      {/* ==================================================== */}
-
-      <nav
-        aria-label="Primary Navigation"
-        className="
-          flex
-          items-center
-          rounded-full
-          border
-          border-white/60
-          bg-white
-          p-2
-          shadow-[0_10px_35px_rgba(0,0,0,0.18)]
-        "
-        style={{
-          background:
-            baseColor,
-        }}
-      >
-
-        {/* ================================================== */}
-        {/* LOGO */}
-        {/* ================================================== */}
-
-        {isNextLink(
-          homeHref
-        ) ? (
-          <Link
-            href={homeHref}
-            aria-label="Home"
-            ref={logoRef}
-            onMouseEnter={
-              handleLogoEnter
-            }
+        {hasChildren && (
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
             className="
-              mr-4
-              flex
-              h-[52px]
-              w-[150px]
-              shrink-0
-              items-center
-              justify-center
-              overflow-hidden
-              rounded-full
-              bg-transparent
-              px-3
-              py-2
               transition-transform
-              duration-300
-              hover:scale-[1.03]
-              sm:mr-5
-              sm:h-[54px]
-              sm:w-[165px]
+              duration-200
+              group-hover:rotate-180
             "
           >
-            <img
-              src={LOGO_SRC}
-              alt="HR Realty International"
-              ref={logoImgRef}
-              draggable={false}
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        )}
+
+        {isActive && (
+          <span
+            className="
+              absolute
+              bottom-[5px]
+              left-1/2
+              h-[3px]
+              w-3
+              -translate-x-1/2
+              rounded-full
+              bg-[#C9A45C]
+            "
+          />
+        )}
+      </>
+    );
+
+    return (
+      <li
+        key={`${item.label}-${index}`}
+        className="group relative"
+      >
+        {hasChildren ? (
+          <>
+            <button
+              type="button"
+              className={linkClasses}
+              style={{
+                color:
+                  isActive
+                    ? GOLD
+                    : pillTextColor,
+              }}
+              onClick={() =>
+                toggleDropdown(item.label)
+              }
+              aria-expanded={
+                openDropdown === item.label
+              }
+            >
+              {content}
+            </button>
+
+            {/* DROPDOWN */}
+
+            <div
               className="
-                block
-                h-full
-                w-full
-                object-contain
+                invisible
+                absolute
+                left-1/2
+                top-[48px]
+                z-[1100]
+                w-[250px]
+                -translate-x-1/2
+                translate-y-2
+                rounded-2xl
+                border
+                border-white/10
+                bg-[#043927]
+                p-2
+                opacity-0
+                shadow-[0_15px_40px_rgba(0,0,0,0.25)]
+                transition-all
+                duration-200
+                group-hover:visible
+                group-hover:translate-y-0
+                group-hover:opacity-100
               "
-            />
+            >
+              <div className="mb-1 px-3 py-2">
+                <span
+                  className="
+                    text-[10px]
+                    font-bold
+                    uppercase
+                    tracking-[1.5px]
+                    text-[#C9A45C]
+                  "
+                >
+                  {item.label}
+                </span>
+              </div>
+
+              {item.children?.map((child) => (
+                <Link
+                  key={child.href}
+                  href={child.href}
+                  aria-label={
+                    child.ariaLabel ||
+                    child.label
+                  }
+                  className="
+                    flex
+                    items-center
+                    rounded-xl
+                    px-3
+                    py-2.5
+                    text-[12px]
+                    font-medium
+                    text-white
+                    transition-all
+                    duration-150
+                    hover:bg-[#C9A45C]
+                    hover:text-white
+                  "
+                >
+                  {child.label}
+                </Link>
+              ))}
+            </div>
+          </>
+        ) : isNextLink(item.href) ? (
+          <Link
+            href={item.href}
+            aria-label={
+              item.ariaLabel || item.label
+            }
+            className={linkClasses}
+            style={{
+              color:
+                isActive
+                  ? GOLD
+                  : pillTextColor,
+              background: pillColor,
+            }}
+          >
+            {content}
           </Link>
         ) : (
           <a
-            href={homeHref}
-            aria-label="Home"
-            ref={logoRef}
-            onMouseEnter={
-              handleLogoEnter
+            href={item.href}
+            aria-label={
+              item.ariaLabel || item.label
             }
-            className="
-              mr-4
-              flex
-              h-[52px]
-              w-[150px]
-              shrink-0
-              items-center
-              justify-center
-              overflow-hidden
-              rounded-full
-              bg-transparent
-              px-3
-              py-2
-              transition-transform
-              duration-300
-              hover:scale-[1.03]
-              sm:mr-5
-              sm:h-[54px]
-              sm:w-[165px]
-            "
+            className={linkClasses}
+            style={{
+              color:
+                isActive
+                  ? GOLD
+                  : pillTextColor,
+              background: pillColor,
+            }}
           >
-            <img
-              src={LOGO_SRC}
-              alt="HR Realty International"
-              ref={logoImgRef}
-              draggable={false}
-              className="
-                block
-                h-full
-                w-full
-                object-contain
-              "
-            />
+            {content}
           </a>
         )}
+      </li>
+    );
+  };
 
-        {/* ================================================== */}
-        {/* DESKTOP NAVIGATION */}
-        {/* ================================================== */}
+  // ============================================================
+  // MOBILE ITEM
+  // ============================================================
 
-        <div
-          ref={navItemsRef}
-          className="
-            hidden
-            items-center
-            md:flex
-          "
-        >
-          <ul
-            role="menubar"
+  const renderMobileItem = (
+    item: PillNavItem
+  ) => {
+    const hasChildren =
+      Boolean(item.children && item.children.length > 0);
+
+    const isActive = activeHref === item.href;
+
+    if (hasChildren) {
+      const isOpen =
+        openDropdown === item.label;
+
+      return (
+        <li key={item.label}>
+          <button
+            type="button"
+            onClick={() =>
+              toggleDropdown(item.label)
+            }
             className="
-              m-0
               flex
-              list-none
+              w-full
               items-center
-              gap-1
-              p-0
+              justify-between
+              rounded-xl
+              px-4
+              py-3
+              text-left
+              text-sm
+              font-semibold
+              uppercase
+              tracking-wide
+              text-white
+              transition
+              hover:bg-[#C9A45C]
             "
           >
-            {items.map(
-              (
-                item,
-                index
-              ) => {
+            <span>{item.label}</span>
 
-                const isActive =
-                  activeHref ===
-                  item.href;
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className={`
+                transition-transform
+                duration-200
+                ${isOpen ? "rotate-180" : ""}
+              `}
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
 
-                const pillContent = (
-                  <>
-                    {/* ====================================== */}
-                    {/* HOVER CIRCLE */}
-                    {/* ====================================== */}
-
-                    <span
-                      className="
-                        hover-circle
-                        pointer-events-none
-                        absolute
-                        bottom-0
-                        left-1/2
-                        z-[1]
-                        block
-                        rounded-full
-                      "
-                      style={{
-                        background:
-                          "#043927",
-                        willChange:
-                          "transform",
-                      }}
-                      aria-hidden="true"
-                      ref={(el) => {
-                        circleRefs.current[
-                          index
-                        ] = el;
-                      }}
-                    />
-
-                    {/* ====================================== */}
-                    {/* LABEL STACK */}
-                    {/* ====================================== */}
-
-                    <span
-                      className="
-                        label-stack
-                        relative
-                        z-[2]
-                        inline-block
-                        leading-none
-                      "
-                    >
-
-                      {/* Normal label */}
-
-                      <span
-                        className="
-                          pill-label
-                          relative
-                          z-[2]
-                          inline-block
-                          leading-none
-                        "
-                      >
-                        {
-                          item.label
-                        }
-                      </span>
-
-                      {/* Hover label */}
-
-                      <span
-                        className="
-                          pill-label-hover
-                          absolute
-                          left-0
-                          top-0
-                          z-[3]
-                          inline-block
-                        "
-                        style={{
-                          color:
-                            hoveredPillTextColor,
-                        }}
-                        aria-hidden="true"
-                      >
-                        {
-                          item.label
-                        }
-                      </span>
-
-                    </span>
-
-                    {/* ====================================== */}
-                    {/* ACTIVE DOT */}
-                    {/* ====================================== */}
-
-                    {isActive && (
-                      <span
-                        className="
-                          absolute
-                          bottom-[-5px]
-                          left-1/2
-                          z-[4]
-                          h-2
-                          w-2
-                          -translate-x-1/2
-                          rounded-full
-                        "
-                        style={{
-                          background:
-                            "#043927",
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
-
-                  </>
-                );
-
-                const classes = `
-                  relative
-                  inline-flex
-                  h-[38px]
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  overflow-hidden
-                  rounded-full
-                  px-4
-                  text-[13px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.3px]
-                  no-underline
-                  transition-all
-                  duration-200
-                  hover:shadow-sm
-                `;
-
-                return (
-                  <li
-                    key={`${item.href}-${index}`}
-                    role="none"
+          {isOpen && (
+            <div className="ml-3 mt-1 border-l border-[#C9A45C]/40 pl-2">
+              {item.children?.map(
+                (child) => (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="
+                      block
+                      rounded-lg
+                      px-4
+                      py-2.5
+                      text-xs
+                      font-medium
+                      text-white/90
+                      transition
+                      hover:bg-[#C9A45C]
+                      hover:text-white
+                    "
+                    onClick={
+                      closeMobileMenu
+                    }
                   >
+                    {child.label}
+                  </Link>
+                )
+              )}
+            </div>
+          )}
+        </li>
+      );
+    }
 
-                    {isNextLink(
-                      item.href
-                    ) ? (
+    const linkClass = `
+      block
+      rounded-xl
+      px-4
+      py-3
+      text-sm
+      font-semibold
+      uppercase
+      tracking-wide
+      transition
+      ${
+        isActive
+          ? "bg-[#C9A45C] text-white"
+          : "text-white hover:bg-[#C9A45C] hover:text-white"
+      }
+    `;
 
-                      <Link
-                        href={
-                          item.href
-                        }
-                        role="menuitem"
-                        className={
-                          classes
-                        }
-                        style={{
-                          background:
-                            pillColor,
-                          color:
-                            resolvedPillTextColor,
-                        }}
-                        aria-label={
-                          item.ariaLabel ||
-                          item.label
-                        }
-                        onMouseEnter={() =>
-                          handleEnter(
-                            index
-                          )
-                        }
-                        onMouseLeave={() =>
-                          handleLeave(
-                            index
-                          )
-                        }
-                      >
-                        {
-                          pillContent
-                        }
-                      </Link>
+    return (
+      <li key={item.href}>
+        {isNextLink(item.href) ? (
+          <Link
+            href={item.href}
+            className={linkClass}
+            onClick={closeMobileMenu}
+          >
+            {item.label}
+          </Link>
+        ) : (
+          <a
+            href={item.href}
+            className={linkClass}
+            onClick={closeMobileMenu}
+          >
+            {item.label}
+          </a>
+        )}
+      </li>
+    );
+  };
 
-                    ) : (
+  // ============================================================
+  // RENDER
+  // ============================================================
 
-                      <a
-                        href={
-                          item.href
-                        }
-                        role="menuitem"
-                        className={
-                          classes
-                        }
-                        style={{
-                          background:
-                            pillColor,
-                          color:
-                            resolvedPillTextColor,
-                        }}
-                        aria-label={
-                          item.ariaLabel ||
-                          item.label
-                        }
-                        onMouseEnter={() =>
-                          handleEnter(
-                            index
-                          )
-                        }
-                        onMouseLeave={() =>
-                          handleLeave(
-                            index
-                          )
-                        }
-                      >
-                        {
-                          pillContent
-                        }
-                      </a>
-
-                    )}
-
-                  </li>
-                );
-              }
-            )}
-          </ul>
-        </div>
-
-        {/* ================================================== */}
-        {/* MOBILE BUTTON */}
-        {/* ================================================== */}
-
-        <button
-          ref={hamburgerRef}
-          type="button"
-          onClick={
-            toggleMobileMenu
-          }
-          aria-label="Toggle navigation menu"
-          aria-expanded={
-            isMobileMenuOpen
-          }
+  return (
+    <header
+      ref={navRef}
+      className={`
+        fixed
+        left-0
+        right-0
+        top-0
+        z-[1000]
+        w-full
+        ${className}
+      `}
+    >
+      <nav
+        aria-label="Primary Navigation"
+        className="
+          w-full
+          border-b
+          border-white/10
+          shadow-[0_4px_20px_rgba(0,0,0,0.12)]
+        "
+        style={{
+          background: baseColor,
+        }}
+      >
+        <div
           className="
-            ml-auto
+            mx-auto
             flex
-            h-[42px]
-            w-[42px]
-            cursor-pointer
-            flex-col
+            min-h-[82px]
+            w-full
+            max-w-[1600px]
             items-center
-            justify-center
-            gap-1
-            rounded-full
-            border-0
-            bg-[#043927]
-            p-0
-            md:hidden
+            px-4
+            sm:px-6
+            lg:px-8
+            xl:px-10
           "
         >
-          <span
-            className="
-              hamburger-line
-              block
-              h-[2px]
-              w-4
-              rounded-full
-              bg-white
-            "
-          />
+          {/* ================================================== */}
+          {/* LOGO */}
+          {/* ================================================== */}
 
-          <span
-            className="
-              hamburger-line
-              block
-              h-[2px]
-              w-4
-              rounded-full
-              bg-white
-            "
-          />
-        </button>
+          {isNextLink(homeHref) ? (
+            <Link
+              href={homeHref}
+              aria-label="Home"
+              ref={logoRef}
+              onMouseEnter={handleLogoEnter}
+              onMouseLeave={handleLogoLeave}
+              className="
+                flex
+                h-[62px]
+                w-[190px]
+                shrink-0
+                items-center
+                justify-start
+                overflow-hidden
+                sm:h-[68px]
+                sm:w-[220px]
+                lg:w-[240px]
+              "
+            >
+              <img
+                ref={logoImgRef}
+                src={LOGO_SRC}
+                alt="HR Realty International"
+                draggable={false}
+                className="
+                  block
+                  h-full
+                  w-full
+                  object-contain
+                  object-left
+                "
+              />
+            </Link>
+          ) : (
+            <a
+              href={homeHref}
+              aria-label="Home"
+              ref={logoRef}
+              onMouseEnter={handleLogoEnter}
+              onMouseLeave={handleLogoLeave}
+              className="
+                flex
+                h-[62px]
+                w-[190px]
+                shrink-0
+                items-center
+                justify-start
+                overflow-hidden
+                sm:h-[68px]
+                sm:w-[220px]
+                lg:w-[240px]
+              "
+            >
+              <img
+                ref={logoImgRef}
+                src={LOGO_SRC}
+                alt="HR Realty International"
+                draggable={false}
+                className="
+                  block
+                  h-full
+                  w-full
+                  object-contain
+                  object-left
+                "
+              />
+            </a>
+          )}
 
+          {/* ================================================== */}
+          {/* DESKTOP NAV */}
+          {/* ================================================== */}
+
+          <div
+            ref={navItemsRef}
+            className="
+              ml-auto
+              hidden
+              items-center
+              md:flex
+            "
+          >
+            <ul
+              role="menubar"
+              className="
+                m-0
+                flex
+                list-none
+                items-center
+                gap-0.5
+                p-0
+                lg:gap-1
+              "
+            >
+              {items.map(
+                renderDesktopItem
+              )}
+
+              {/* ============================================ */}
+              {/* CTA */}
+              {/* ============================================ */}
+
+              <li className="ml-2">
+                <Link
+                  href="/#contact"
+                  className="
+                    inline-flex
+                    h-[44px]
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-[#C9A45C]
+                    px-5
+                    text-[12px]
+                    font-bold
+                    uppercase
+                    tracking-[0.5px]
+                    text-white
+                    shadow-[0_5px_15px_rgba(201,164,92,0.25)]
+                    transition-all
+                    duration-200
+                    hover:-translate-y-0.5
+                    hover:shadow-[0_8px_20px_rgba(201,164,92,0.35)]
+                  "
+                >
+                  Book Your Site Visit
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* ================================================== */}
+          {/* MOBILE BUTTON */}
+          {/* ================================================== */}
+
+          <button
+            ref={hamburgerRef}
+            type="button"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+            className="
+              ml-auto
+              flex
+              h-[44px]
+              w-[44px]
+              flex-col
+              items-center
+              justify-center
+              gap-1.5
+              rounded-full
+              border
+              border-[#C9A45C]
+              bg-[#C9A45C]
+              md:hidden
+            "
+          >
+            <span
+              className="
+                hamburger-line
+                block
+                h-[2px]
+                w-5
+                rounded-full
+                bg-white
+              "
+            />
+
+            <span
+              className="
+                hamburger-line
+                block
+                h-[2px]
+                w-5
+                rounded-full
+                bg-white
+              "
+            />
+          </button>
+        </div>
       </nav>
 
       {/* ==================================================== */}
@@ -1064,18 +847,21 @@ const PillNav: React.FC<PillNavProps> = ({
         ref={mobileMenuRef}
         className="
           absolute
-          left-0
-          right-0
-          top-[66px]
+          left-3
+          right-3
+          top-[90px]
+          invisible
           overflow-hidden
-          rounded-[24px]
-          bg-white
+          rounded-2xl
+          border
+          border-white/10
+          bg-[#043927]
           p-2
-          shadow-[0_15px_40px_rgba(0,0,0,0.2)]
+          opacity-0
+          shadow-[0_15px_40px_rgba(0,0,0,0.25)]
           md:hidden
         "
       >
-
         <ul
           className="
             m-0
@@ -1086,88 +872,34 @@ const PillNav: React.FC<PillNavProps> = ({
             p-0
           "
         >
+          {items.map(renderMobileItem)}
 
-          {items.map(
-            (item) => (
-              <li
-                key={item.href}
-              >
-
-                {isNextLink(
-                  item.href
-                ) ? (
-
-                  <Link
-                    href={
-                      item.href
-                    }
-                    className="
-                      block
-                      rounded-full
-                      px-5
-                      py-3
-                      text-sm
-                      font-semibold
-                      uppercase
-                      tracking-wide
-                      text-[#111]
-                      transition
-                      hover:bg-[#043927]
-                      hover:text-white
-                    "
-                    onClick={() => {
-                      setIsMobileMenuOpen(
-                        false
-                      );
-                    }}
-                  >
-                    {
-                      item.label
-                    }
-                  </Link>
-
-                ) : (
-
-                  <a
-                    href={
-                      item.href
-                    }
-                    className="
-                      block
-                      rounded-full
-                      px-5
-                      py-3
-                      text-sm
-                      font-semibold
-                      uppercase
-                      tracking-wide
-                      text-[#111]
-                      transition
-                      hover:bg-[#043927]
-                      hover:text-white
-                    "
-                    onClick={() => {
-                      setIsMobileMenuOpen(
-                        false
-                      );
-                    }}
-                  >
-                    {
-                      item.label
-                    }
-                  </a>
-
-                )}
-
-              </li>
-            )
-          )}
-
+          <li className="mt-1">
+            <Link
+              href="/#contact"
+              className="
+                block
+                rounded-xl
+                bg-[#C9A45C]
+                px-4
+                py-3
+                text-center
+                text-sm
+                font-bold
+                uppercase
+                tracking-wide
+                text-white
+              "
+              onClick={closeMobileMenu}
+            >
+              Book Your Site Visit
+            </Link>
+          </li>
         </ul>
       </div>
-
-    </div>
+    </header>
   );
 };
 
 export default PillNav;
+

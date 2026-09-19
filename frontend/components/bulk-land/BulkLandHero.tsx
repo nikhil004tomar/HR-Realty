@@ -39,7 +39,7 @@ export default function BulkLandHero() {
 
             <h1 className="text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
               Buy Bulk Land in{" "}
-              <span className="text-[#d6b46a]">Dholera</span>
+              <span className="text-[#d6b46a]">Dholera SIR</span>
             </h1>
 
             <p className="mt-5 max-w-2xl text-sm leading-7 text-white/85 sm:text-base lg:text-lg">

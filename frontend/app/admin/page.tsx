@@ -8,9 +8,12 @@ import {
   Users,
   MessageSquare,
   Handshake,
+  MapPinned,
+  Network,
   LogOut,
   ArrowRight,
   RefreshCw,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 import {
@@ -42,6 +45,10 @@ interface ChannelPartner {
   id: number;
 }
 
+interface CareerApplication {
+  id: number;
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
 
@@ -55,6 +62,9 @@ export default function AdminDashboard() {
     useState(0);
 
   const [channelPartnerCount, setChannelPartnerCount] =
+    useState(0);
+
+  const [careerApplicationCount, setCareerApplicationCount] =
     useState(0);
 
   const [loading, setLoading] =
@@ -144,6 +154,24 @@ export default function AdminDashboard() {
             : 0
         );
 
+        // ------------------------------------------------------
+        // CAREER APPLICATIONS
+        // ------------------------------------------------------
+
+        const careerApplications =
+          await apiRequest<CareerApplication[]>(
+            "/api/career-applications/admin",
+            {
+              authenticated: true,
+            }
+          );
+
+        setCareerApplicationCount(
+          Array.isArray(careerApplications)
+            ? careerApplications.length
+            : 0
+        );
+
       } catch (error) {
         console.error(
           "Dashboard loading error:",
@@ -155,7 +183,6 @@ export default function AdminDashboard() {
         router.replace(
           "/admin/login"
         );
-
       } finally {
         setLoading(false);
       }
@@ -216,6 +243,8 @@ export default function AdminDashboard() {
 
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
+          {/* BRAND */}
+
           <div className="flex items-center gap-3">
 
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#043927] text-white">
@@ -237,6 +266,8 @@ export default function AdminDashboard() {
             </div>
 
           </div>
+
+          {/* ADMIN / LOGOUT */}
 
           <div className="flex items-center gap-4">
 
@@ -275,7 +306,9 @@ export default function AdminDashboard() {
 
       <section className="mx-auto max-w-7xl px-6 py-10">
 
+        {/* ================================================== */}
         {/* WELCOME */}
+        {/* ================================================== */}
 
         <div className="mb-10">
 
@@ -289,7 +322,8 @@ export default function AdminDashboard() {
 
           <p className="mt-2 text-gray-600">
             Manage your real estate projects,
-            leads and channel partners.
+            leads, channel partners and career
+            applications.
           </p>
 
         </div>
@@ -298,9 +332,11 @@ export default function AdminDashboard() {
         {/* STAT CARDS */}
         {/* ================================================= */}
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
 
+          {/* ================================================= */}
           {/* PROJECTS */}
+          {/* ================================================= */}
 
           <button
             onClick={() =>
@@ -338,7 +374,9 @@ export default function AdminDashboard() {
 
           </button>
 
+          {/* ================================================= */}
           {/* INQUIRIES */}
+          {/* ================================================= */}
 
           <button
             onClick={() =>
@@ -376,7 +414,9 @@ export default function AdminDashboard() {
 
           </button>
 
+          {/* ================================================= */}
           {/* CHANNEL PARTNERS */}
+          {/* ================================================= */}
 
           <button
             onClick={() =>
@@ -414,7 +454,49 @@ export default function AdminDashboard() {
 
           </button>
 
+          {/* ================================================= */}
+          {/* CAREER APPLICATIONS */}
+          {/* ================================================= */}
+
+          <button
+            onClick={() =>
+              router.push(
+                "/admin/career-applications"
+              )
+            }
+            className="rounded-2xl bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+          >
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-sm text-gray-500">
+                  Career Applications
+                </p>
+
+                <p className="mt-2 text-3xl font-bold text-gray-900">
+                  {careerApplicationCount}
+                </p>
+
+              </div>
+
+              <div className="rounded-xl bg-gray-100 p-3">
+
+                <BriefcaseBusiness
+                  size={24}
+                  className="text-[#043927]"
+                />
+
+              </div>
+
+            </div>
+
+          </button>
+
+          {/* ================================================= */}
           {/* ACCOUNT */}
+          {/* ================================================= */}
 
           <div className="rounded-2xl bg-white p-6 shadow-sm">
 
@@ -463,118 +545,147 @@ export default function AdminDashboard() {
             Manage your real estate website.
           </p>
 
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 
+            {/* ================================================= */}
             {/* PROJECTS */}
+            {/* ================================================= */}
 
-            <button
+            <ManagementCard
+              icon={
+                <Building2
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Projects"
+              description="Add, edit and manage your real estate projects."
               onClick={() =>
                 router.push(
                   "/admin/projects"
                 )
               }
-              className="group rounded-2xl bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
+            />
 
-              <div className="flex items-center justify-between">
-
-                <div className="rounded-xl bg-gray-100 p-3">
-
-                  <Building2 size={25} />
-
-                </div>
-
-                <ArrowRight
-                  size={20}
-                  className="text-gray-400 transition group-hover:translate-x-1"
-                />
-
-              </div>
-
-              <h4 className="mt-5 text-lg font-bold">
-                Projects
-              </h4>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Add, edit and manage your
-                real estate projects.
-              </p>
-
-            </button>
-
+            {/* ================================================= */}
             {/* INQUIRIES */}
+            {/* ================================================= */}
 
-            <button
+            <ManagementCard
+              icon={
+                <MessageSquare
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Inquiries"
+              description="View and manage customer inquiries and leads."
               onClick={() =>
                 router.push(
                   "/admin/dashboard/inquiries"
                 )
               }
-              className="group rounded-2xl bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
+            />
 
-              <div className="flex items-center justify-between">
-
-                <div className="rounded-xl bg-gray-100 p-3">
-
-                  <MessageSquare size={25} />
-
-                </div>
-
-                <ArrowRight
-                  size={20}
-                  className="text-gray-400 transition group-hover:translate-x-1"
-                />
-
-              </div>
-
-              <h4 className="mt-5 text-lg font-bold">
-                Inquiries
-              </h4>
-
-              <p className="mt-2 text-sm text-gray-500">
-                View and manage customer
-                inquiries and leads.
-              </p>
-
-            </button>
-
+            {/* ================================================= */}
             {/* CHANNEL PARTNERS */}
+            {/* ================================================= */}
 
-            <button
+            <ManagementCard
+              icon={
+                <Handshake
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Channel Partners"
+              description="Manage your channel partner applications."
               onClick={() =>
                 router.push(
                   "/admin/channel-partners"
                 )
               }
-              className="group rounded-2xl bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
+            />
 
-              <div className="flex items-center justify-between">
+            {/* ================================================= */}
+            {/* CAREER APPLICATIONS */}
+            {/* ================================================= */}
 
-                <div className="rounded-xl bg-gray-100 p-3">
-
-                  <Handshake size={25} />
-
-                </div>
-
-                <ArrowRight
-                  size={20}
-                  className="text-gray-400 transition group-hover:translate-x-1"
+            <ManagementCard
+              icon={
+                <BriefcaseBusiness
+                  size={25}
+                  className="text-[#043927]"
                 />
+              }
+              title="Career Applications"
+              description="View applicants, resumes, statuses and notes."
+              onClick={() =>
+                router.push(
+                  "/admin/career-applications"
+                )
+              }
+            />
 
-              </div>
+            {/* ================================================= */}
+            {/* OUR TEAM */}
+            {/* ================================================= */}
 
-              <h4 className="mt-5 text-lg font-bold">
-                Channel Partners
-              </h4>
+            <ManagementCard
+              icon={
+                <Users
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Our Team"
+              description="Add, edit and manage your team members."
+              onClick={() =>
+                router.push(
+                  "/admin/team"
+                )
+              }
+            />
 
-              <p className="mt-2 text-sm text-gray-500">
-                Manage your channel partner
-                applications.
-              </p>
+            {/* ================================================= */}
+            {/* MAPS */}
+            {/* ================================================= */}
 
-            </button>
+            <ManagementCard
+              icon={
+                <MapPinned
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Maps"
+              description="Add, edit and manage your Dholera maps."
+              onClick={() =>
+                router.push(
+                  "/admin/maps"
+                )
+              }
+            />
+
+            {/* ================================================= */}
+            {/* CONNECTIVITY */}
+            {/* ================================================= */}
+
+            <ManagementCard
+              icon={
+                <Network
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Connectivity"
+              description="Manage Dholera SIR connectivity sections and images."
+              onClick={() =>
+                router.push(
+                  "/admin/connectivity"
+                )
+              }
+            />
 
           </div>
 
@@ -585,3 +696,75 @@ export default function AdminDashboard() {
     </main>
   );
 }
+
+
+// ============================================================
+// MANAGEMENT CARD
+// ============================================================
+
+function ManagementCard({
+  icon,
+  title,
+  description,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="
+        group
+        rounded-2xl
+        bg-white
+        p-6
+        text-left
+        shadow-sm
+        transition
+        hover:-translate-y-1
+        hover:shadow-md
+      "
+    >
+
+      <div className="flex items-center justify-between">
+
+        <div className="rounded-xl bg-gray-100 p-3">
+          {icon}
+        </div>
+
+        <ArrowRight
+          size={20}
+          className="text-gray-400 transition group-hover:translate-x-1"
+        />
+
+      </div>
+
+      <h4 className="mt-5 text-lg font-bold text-gray-900">
+        {title}
+      </h4>
+
+      <p className="mt-2 text-sm text-gray-500">
+        {description}
+      </p>
+
+    </button>
+  );
+}
+
+
+// ============================================================
+// NOTE
+// ============================================================
+//
+// Career Applications API:
+//
+// GET /api/career-applications/admin
+//
+// Requires:
+//
+// Authorization: Bearer <admin-token>
+//
+// ============================================================

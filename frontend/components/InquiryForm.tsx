@@ -3,17 +3,14 @@
 import { FormEvent, useState } from "react";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function InquiryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setLoading(true);
@@ -33,35 +30,24 @@ export default function InquiryForm() {
       ).trim();
 
       const phone = String(
-        formData.get(
-          "client_contact_no_display"
-        ) || ""
+        formData.get("client_contact_no_display") || ""
       ).trim();
 
       const message = String(
         formData.get("message") || ""
       ).trim();
 
-      // --------------------------------------------------------
       // Validation
-      // --------------------------------------------------------
-
       if (!name) {
-        throw new Error(
-          "Please enter your name."
-        );
+        throw new Error("Please enter your name.");
       }
 
       if (!email) {
-        throw new Error(
-          "Please enter your email."
-        );
+        throw new Error("Please enter your email.");
       }
 
       if (!phone) {
-        throw new Error(
-          "Please enter your phone number."
-        );
+        throw new Error("Please enter your phone number.");
       }
 
       if (!/^\d{10}$/.test(phone)) {
@@ -70,49 +56,30 @@ export default function InquiryForm() {
         );
       }
 
-      // --------------------------------------------------------
       // Backend payload
-      // --------------------------------------------------------
-
       const payload = {
         project_id: null,
-
         name,
-
         email,
-
         phone,
-
         city: null,
-
         message: message || null,
       };
 
-      // --------------------------------------------------------
       // Submit
-      // --------------------------------------------------------
-
       const response = await fetch(
         `${API_URL}/api/inquiries`,
         {
           method: "POST",
-
           headers: {
-            "Content-Type":
-              "application/json",
-
-            Accept:
-              "application/json",
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-
-          body: JSON.stringify(
-            payload
-          ),
+          body: JSON.stringify(payload),
         }
       );
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
         console.error(
@@ -122,31 +89,20 @@ export default function InquiryForm() {
         );
 
         throw new Error(
-          data.detail ||
-            "Unable to submit your inquiry."
+          data.detail || "Unable to submit your inquiry."
         );
       }
 
-      // --------------------------------------------------------
-      // Success
-      // --------------------------------------------------------
-
       setSubmitted(true);
-
       form.reset();
-
     } catch (error) {
-      console.error(
-        "Inquiry submission error:",
-        error
-      );
+      console.error("Inquiry submission error:", error);
 
       setError(
         error instanceof Error
           ? error.message
           : "Unable to submit your inquiry."
       );
-
     } finally {
       setLoading(false);
     }
@@ -155,278 +111,397 @@ export default function InquiryForm() {
   return (
     <section
       id="contact"
-      className="scroll-mt-24 relative overflow-hidden bg-[#043927]"
+      className="scroll-mt-24 bg-white"
     >
-      {/* Subtle background detail */}
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 md:py-20 lg:px-12 lg:py-24">
 
-      <div className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-[#d8c9a3]/5 blur-3xl" />
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-20">
 
-      <div className="pointer-events-none absolute -bottom-48 -left-40 h-[450px] w-[450px] rounded-full bg-black/20 blur-3xl" />
+          {/* LEFT SIDE */}
+          <div className="transition-all duration-500">
 
-      <div className="relative px-5 py-16 sm:px-8 md:py-20 lg:px-12 lg:py-24">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-10 bg-[#C9A45C]" />
 
-        <div className="mx-auto max-w-[1400px]">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
+                Get in Touch
+              </span>
+            </div>
 
-          <div className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start lg:gap-20">
+            <h2 className="text-4xl font-bold leading-tight tracking-tight text-[#111111] sm:text-5xl lg:text-6xl">
+              Inquire{" "}
+              <span className="text-[#043927]">
+                Now
+              </span>
+            </h2>
 
-            {/* LEFT CONTENT */}
+            <div className="mt-5 h-1 w-16 rounded-full bg-[#C9A45C]" />
 
-            <div className="lg:sticky lg:top-24">
+            <p className="mt-6 max-w-md text-sm leading-7 text-black/60 sm:text-base">
+              Have questions about our properties?
+              Share your details and our team will
+              get in touch with you shortly.
+            </p>
 
-              <div className="mb-5 flex items-center gap-3">
+            {/* FEATURES */}
+            <div className="mt-8 space-y-4">
 
-                <span className="h-px w-10 bg-[#d8c9a3]" />
-
-                <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-[#d8c9a3] sm:text-xs">
-                  Get in Touch
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
+                  ✓
                 </span>
+
+                <span className="text-sm text-[#111111]/70">
+                  Expert property guidance
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
+                  ✓
+                </span>
+
+                <span className="text-sm text-[#111111]/70">
+                  Site visit assistance
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
+                  ✓
+                </span>
+
+                <span className="text-sm text-[#111111]/70">
+                  Transparent property information
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+
+          {/* RIGHT SIDE - FORM */}
+          <div
+            className="
+              rounded-2xl
+              border
+              border-black/10
+              bg-white
+              p-6
+              shadow-[0_10px_40px_rgba(0,0,0,0.08)]
+              transition-shadow
+              duration-300
+              hover:shadow-[0_15px_45px_rgba(0,0,0,0.10)]
+              sm:p-8
+              lg:p-10
+            "
+          >
+
+            <div className="mb-8">
+              <h3 className="text-2xl font-semibold text-[#111111]">
+                Send Us Your Inquiry
+              </h3>
+
+              <p className="mt-2 text-sm text-black/50">
+                Fill in the details below and our team
+                will contact you.
+              </p>
+            </div>
+
+
+            {/* SUCCESS */}
+            {submitted && (
+              <div className="mb-6 rounded-lg border border-[#043927]/20 bg-[#043927]/5 px-4 py-3 text-sm text-[#043927]">
+                ✓ Your inquiry has been submitted
+                successfully. Our team will contact you
+                soon.
+              </div>
+            )}
+
+
+            {/* ERROR */}
+            {error && (
+              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            )}
+
+
+            <form
+              id="header_inquiry_form"
+              name="header_inquiry_form"
+              onSubmit={handleSubmit}
+            >
+
+              <div className="grid gap-6 sm:grid-cols-2">
+
+                {/* NAME */}
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="mb-2 block text-sm font-medium text-[#111111]"
+                  >
+                    Name
+                  </label>
+
+                  <input
+                    id="name"
+                    type="text"
+                    name="client_name"
+                    autoComplete="name"
+                    placeholder="Enter your name"
+                    required
+                    className="
+                      w-full
+                      rounded-lg
+                      border
+                      border-black/15
+                      bg-white
+                      px-4
+                      py-3
+                      text-sm
+                      text-[#111111]
+                      outline-none
+                      transition-all
+                      duration-200
+                      placeholder:text-black/35
+                      focus:border-[#043927]
+                      focus:ring-2
+                      focus:ring-[#043927]/10
+                    "
+                  />
+                </div>
+
+
+                {/* EMAIL */}
+                <div>
+                  <label
+                    htmlFor="email_address"
+                    className="mb-2 block text-sm font-medium text-[#111111]"
+                  >
+                    Email
+                  </label>
+
+                  <input
+                    id="email_address"
+                    type="email"
+                    name="email_address"
+                    autoComplete="email"
+                    placeholder="Enter your email"
+                    required
+                    className="
+                      w-full
+                      rounded-lg
+                      border
+                      border-black/15
+                      bg-white
+                      px-4
+                      py-3
+                      text-sm
+                      text-[#111111]
+                      outline-none
+                      transition-all
+                      duration-200
+                      placeholder:text-black/35
+                      focus:border-[#043927]
+                      focus:ring-2
+                      focus:ring-[#043927]/10
+                    "
+                  />
+                </div>
+
+
+                {/* PHONE */}
+                <div className="sm:col-span-2">
+
+                  <label
+                    htmlFor="client_contact_no"
+                    className="mb-2 block text-sm font-medium text-[#111111]"
+                  >
+                    Phone Number
+                  </label>
+
+                  <div className="flex">
+
+                    {/* COUNTRY CODE */}
+                    <div
+                      className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-l-lg
+                        border
+                        border-r-0
+                        border-black/15
+                        bg-[#043927]
+                        px-4
+                        text-sm
+                        text-white
+                      "
+                    >
+                      <span>🇮🇳</span>
+                      <span>+91</span>
+                    </div>
+
+
+                    {/* PHONE */}
+                    <input
+                      id="client_contact_no"
+                      type="tel"
+                      name="client_contact_no_display"
+                      minLength={10}
+                      maxLength={10}
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      placeholder="Enter 10-digit phone number"
+                      required
+                      className="
+                        min-w-0
+                        flex-1
+                        rounded-r-lg
+                        border
+                        border-black/15
+                        bg-white
+                        px-4
+                        py-3
+                        text-sm
+                        text-[#111111]
+                        outline-none
+                        transition-all
+                        duration-200
+                        placeholder:text-black/35
+                        focus:border-[#043927]
+                        focus:ring-2
+                        focus:ring-[#043927]/10
+                      "
+                    />
+
+                  </div>
+                </div>
+
+
+                {/* MESSAGE */}
+                <div className="sm:col-span-2">
+
+                  <label
+                    htmlFor="message"
+                    className="mb-2 block text-sm font-medium text-[#111111]"
+                  >
+                    Message{" "}
+                    <span className="font-normal text-black/40">
+                      (Optional)
+                    </span>
+                  </label>
+
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    placeholder="Tell us what you're looking for..."
+                    className="
+                      w-full
+                      resize-none
+                      rounded-lg
+                      border
+                      border-black/15
+                      bg-white
+                      px-4
+                      py-3
+                      text-sm
+                      leading-6
+                      text-[#111111]
+                      outline-none
+                      transition-all
+                      duration-200
+                      placeholder:text-black/35
+                      focus:border-[#043927]
+                      focus:ring-2
+                      focus:ring-[#043927]/10
+                    "
+                  />
+
+                </div>
 
               </div>
 
-              <h2 className="sfpro-bold text-4xl leading-[0.95] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
 
-                Inquire{" "}
+              {/* TERMS */}
+              <div className="mt-6 flex items-start gap-3">
 
-                <span className="canela-reg-font font-normal text-[#d8c9a3]">
-                  Now
-                </span>
+                <input
+                  type="checkbox"
+                  id="agree_tandc"
+                  name="agree_tandc_display"
+                  defaultChecked
+                  required
+                  className="
+                    mt-0.5
+                    h-4
+                    w-4
+                    shrink-0
+                    cursor-pointer
+                    accent-[#043927]
+                  "
+                />
 
-              </h2>
+                <label
+                  htmlFor="agree_tandc"
+                  className="cursor-pointer text-xs leading-5 text-black/50"
+                >
+                  By clicking the button, you agree to
+                  our Terms & Conditions.
+                </label>
 
-              <p className="mt-6 max-w-md text-sm leading-7 text-white/60 sm:text-base">
-                Share your details and we'll get back to you with expert
-                guidance.
-              </p>
+              </div>
 
-            </div>
 
-            {/* FORM */}
+              {/* BUTTON */}
+              <div className="mt-8">
 
-            <div className="relative">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="
+                    inline-flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-3
+                    rounded-lg
+                    bg-[#043927]
+                    px-7
+                    py-3.5
+                    text-sm
+                    font-semibold
+                    text-white
+                    transition-all
+                    duration-300
+                    hover:bg-[#032d20]
+                    hover:shadow-lg
+                    active:scale-[0.98]
+                    disabled:cursor-not-allowed
+                    disabled:opacity-60
+                    sm:w-auto
+                  "
+                >
+                  <span>
+                    {loading
+                      ? "Submitting..."
+                      : submitted
+                        ? "Submitted ✓"
+                        : "Submit Inquiry"}
+                  </span>
 
-              <form
-                id="header_inquiry_form"
-                name="header_inquiry_form"
-                onSubmit={handleSubmit}
-                className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.045] p-5 shadow-[0_25px_80px_rgba(0,0,0,0.18)] backdrop-blur-sm sm:p-7 lg:p-9"
-              >
-
-                {/* Top accent */}
-
-                <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[#d8c9a3]/70 to-transparent" />
-
-                {/* Success */}
-
-                {submitted && (
-                  <div className="mb-6 rounded-xl border border-green-300/30 bg-green-400/10 px-4 py-3 text-sm text-green-200">
-                    ✓ Your inquiry has been submitted successfully. Our team
-                    will contact you soon.
-                  </div>
-                )}
-
-                {/* Error */}
-
-                {error && (
-                  <div className="mb-6 rounded-xl border border-red-300/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
-                    {error}
-                  </div>
-                )}
-
-                <div className="grid gap-6 sm:grid-cols-2">
-
-                  {/* NAME */}
-
-                  <div className="group relative">
-
-                    <input
-                      id="name"
-                      type="text"
-                      name="client_name"
-                      autoComplete="name"
-                      placeholder=" "
-                      required
-                      className="peer w-full border-0 border-b border-white/20 bg-transparent px-0 pb-3 pt-6 text-sm text-white outline-none transition-all duration-300 placeholder-transparent focus:border-[#d8c9a3]"
-                    />
-
-                    <label
-                      htmlFor="name"
-                      className="pointer-events-none absolute left-0 top-5 origin-left text-sm text-white/45 transition-all duration-300 peer-focus:-translate-y-4 peer-focus:scale-[0.78] peer-focus:text-[#d8c9a3] peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:scale-[0.78]"
-                    >
-                      Name
-                    </label>
-
-                    <span className="absolute bottom-0 left-0 h-px w-0 bg-[#d8c9a3] transition-all duration-500 group-focus-within:w-full" />
-
-                  </div>
-
-                  {/* EMAIL */}
-
-                  <div className="group relative">
-
-                    <input
-                      id="email_address"
-                      type="email"
-                      name="email_address"
-                      autoComplete="email"
-                      placeholder=" "
-                      required
-                      className="peer w-full border-0 border-b border-white/20 bg-transparent px-0 pb-3 pt-6 text-sm text-white outline-none transition-all duration-300 placeholder-transparent focus:border-[#d8c9a3]"
-                    />
-
-                    <label
-                      htmlFor="email_address"
-                      className="pointer-events-none absolute left-0 top-5 origin-left text-sm text-white/45 transition-all duration-300 peer-focus:-translate-y-4 peer-focus:scale-[0.78] peer-focus:text-[#d8c9a3] peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:scale-[0.78]"
-                    >
-                      Email
-                    </label>
-
-                    <span className="absolute bottom-0 left-0 h-px w-0 bg-[#d8c9a3] transition-all duration-500 group-focus-within:w-full" />
-
-                  </div>
-
-                  {/* PHONE */}
-
-                  <div className="group relative sm:col-span-2">
-
-                    <div className="flex items-end gap-4">
-
-                      <div className="flex h-[48px] items-center gap-2 border-b border-white/20 pb-3 text-sm text-white/70">
-
-                        <img
-                          src="https://flagcdn.com/w40/in.webp"
-                          alt="India"
-                          width={24}
-                          height={16}
-                          className="h-4 w-6 rounded-[2px] object-cover"
-                        />
-
-                        <span>+91</span>
-
-                      </div>
-
-                      <div className="relative flex-1">
-
-                        <input
-                          id="client_contact_no"
-                          type="tel"
-                          name="client_contact_no_display"
-                          minLength={10}
-                          maxLength={10}
-                          inputMode="numeric"
-                          autoComplete="tel"
-                          placeholder=" "
-                          required
-                          className="peer w-full border-0 border-b border-white/20 bg-transparent px-0 pb-3 pt-6 text-sm text-white outline-none transition-all duration-300 placeholder-transparent focus:border-[#d8c9a3]"
-                        />
-
-                        <label
-                          htmlFor="client_contact_no"
-                          className="pointer-events-none absolute left-0 top-5 origin-left text-sm text-white/45 transition-all duration-300 peer-focus:-translate-y-4 peer-focus:scale-[0.78] peer-focus:text-[#d8c9a3] peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:scale-[0.78]"
-                        >
-                          Phone Number
-                        </label>
-
-                        <span className="absolute bottom-0 left-0 h-px w-0 bg-[#d8c9a3] transition-all duration-500 group-focus-within:w-full" />
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  {/* MESSAGE */}
-
-                  <div className="group relative sm:col-span-2">
-
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      placeholder=" "
-                      className="peer min-h-[120px] w-full resize-none border-0 border-b border-white/20 bg-transparent px-0 pb-3 pt-6 text-sm leading-7 text-white outline-none transition-all duration-300 placeholder-transparent focus:border-[#d8c9a3]"
-                    />
-
-                    <label
-                      htmlFor="message"
-                      className="pointer-events-none absolute left-0 top-5 origin-left text-sm text-white/45 transition-all duration-300 peer-focus:-translate-y-4 peer-focus:scale-[0.78] peer-focus:text-[#d8c9a3] peer-[:not(:placeholder-shown)]:-translate-y-4 peer-[:not(:placeholder-shown)]:scale-[0.78]"
-                    >
-                      Comments
-                    </label>
-
-                    <span className="absolute bottom-0 left-0 h-px w-0 bg-[#d8c9a3] transition-all duration-500 group-focus-within:w-full" />
-
-                  </div>
-
-                </div>
-
-                {/* TERMS */}
-
-                <div className="mt-7 flex items-start gap-3">
-
-                  <input
-                    type="checkbox"
-                    id="agree_tandc"
-                    name="agree_tandc_display"
-                    defaultChecked
-                    required
-                    className="mt-1 h-4 w-4 shrink-0 cursor-pointer appearance-none rounded-[3px] border border-white/30 bg-transparent transition-all checked:border-[#d8c9a3] checked:bg-[#d8c9a3] focus:ring-1 focus:ring-[#d8c9a3]"
-                  />
-
-                  <label
-                    htmlFor="agree_tandc"
-                    className="cursor-pointer text-xs leading-5 text-white/45"
-                  >
-                    By clicking the button you agree to our T&C.
-                  </label>
-
-                </div>
-
-                {/* SUBMIT */}
-
-                <div className="mt-8">
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="group inline-flex items-center gap-4 rounded-full border border-[#d8c9a3] bg-[#d8c9a3] px-7 py-3.5 text-sm font-medium text-[#043927] transition-all duration-300 hover:bg-transparent hover:text-[#d8c9a3] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-
-                    <span>
-                      {loading
-                        ? "Submitting..."
-                        : submitted
-                          ? "Submitted"
-                          : "Submit"}
+                  {!loading && (
+                    <span className="transition-transform duration-300">
+                      →
                     </span>
+                  )}
+                </button>
 
-                    {!loading && (
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full border border-current transition-transform duration-300 group-hover:translate-x-1">
+              </div>
 
-                        <svg
-                          width="13"
-                          height="13"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <path
-                            d="M5 12H19M13 6L19 12L13 18"
-                            stroke="currentColor"
-                            strokeWidth="1.7"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-
-                      </span>
-                    )}
-
-                  </button>
-
-                </div>
-
-              </form>
-
-            </div>
+            </form>
 
           </div>
 

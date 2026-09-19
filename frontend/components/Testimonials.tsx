@@ -1,7 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Quote,
+  Star,
+} from "lucide-react";
 
 interface Testimonial {
   id: number;
@@ -24,7 +29,7 @@ export default function Testimonials() {
   const [loading, setLoading] = useState(true);
 
   // ============================================================
-  // LOAD PUBLIC TESTIMONIALS
+  // LOAD TESTIMONIALS
   // ============================================================
 
   useEffect(() => {
@@ -67,51 +72,7 @@ export default function Testimonials() {
   }, []);
 
   // ============================================================
-  // AUTO RESET CURRENT INDEX
-  // ============================================================
-
-  useEffect(() => {
-    if (
-      testimonials.length > 0 &&
-      current >= testimonials.length
-    ) {
-      setCurrent(0);
-    }
-  }, [testimonials.length, current]);
-
-  // ============================================================
-  // NEXT
-  // ============================================================
-
-  const next = () => {
-    if (testimonials.length === 0) {
-      return;
-    }
-
-    setCurrent(
-      (prev) =>
-        (prev + 1) % testimonials.length
-    );
-  };
-
-  // ============================================================
-  // PREVIOUS
-  // ============================================================
-
-  const previous = () => {
-    if (testimonials.length === 0) {
-      return;
-    }
-
-    setCurrent(
-      (prev) =>
-        (prev - 1 + testimonials.length) %
-        testimonials.length
-    );
-  };
-
-  // ============================================================
-  // AUTO PLAY
+  // AUTO SLIDE
   // ============================================================
 
   useEffect(() => {
@@ -120,14 +81,43 @@ export default function Testimonials() {
     }
 
     const timer = setInterval(() => {
-      setCurrent(
-        (prev) =>
-          (prev + 1) % testimonials.length
+      setCurrent((previous) =>
+        previous === testimonials.length - 1
+          ? 0
+          : previous + 1
       );
     }, 5000);
 
     return () => clearInterval(timer);
   }, [testimonials.length]);
+
+  // ============================================================
+  // NEXT
+  // ============================================================
+
+  const next = () => {
+    if (testimonials.length === 0) return;
+
+    setCurrent((previous) =>
+      previous === testimonials.length - 1
+        ? 0
+        : previous + 1
+    );
+  };
+
+  // ============================================================
+  // PREVIOUS
+  // ============================================================
+
+  const previous = () => {
+    if (testimonials.length === 0) return;
+
+    setCurrent((previous) =>
+      previous === 0
+        ? testimonials.length - 1
+        : previous - 1
+    );
+  };
 
   // ============================================================
   // LOADING
@@ -137,9 +127,9 @@ export default function Testimonials() {
     return (
       <section
         id="testimonials"
-        className="relative w-full overflow-hidden bg-white py-16 sm:py-20 lg:py-24"
+        className="bg-white py-16 sm:py-20 lg:py-24"
       >
-        <div className="mx-auto flex min-h-[500px] max-w-7xl items-center justify-center px-5">
+        <div className="mx-auto flex min-h-[400px] max-w-7xl items-center justify-center px-5">
           <div className="text-center">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#043927]" />
 
@@ -153,161 +143,277 @@ export default function Testimonials() {
   }
 
   // ============================================================
-  // NO TESTIMONIALS
+  // EMPTY
   // ============================================================
 
   if (testimonials.length === 0) {
     return (
       <section
         id="testimonials"
-        className="relative w-full overflow-hidden bg-white py-16 sm:py-20 lg:py-24"
+        className="bg-white py-16 sm:py-20 lg:py-24"
       >
-        <div className="mx-auto flex min-h-[400px] max-w-7xl items-center justify-center px-5">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b2965d]">
-              Testimonials
-            </p>
+        <div className="mx-auto max-w-7xl px-5 text-center">
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-[2px] w-10 bg-[#C9A45C]" />
 
-            <h2 className="mt-3 text-3xl font-semibold text-[#043927]">
-              What Our Clients Say
-            </h2>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#043927]">
+              Client Feedback
+            </span>
 
-            <p className="mt-4 text-gray-500">
-              No testimonials available yet.
-            </p>
+            <span className="h-[2px] w-10 bg-[#C9A45C]" />
           </div>
+
+          <h2 className="text-3xl font-bold text-[#111111] sm:text-4xl">
+            What Our{" "}
+            <span className="text-[#043927]">
+              Clients Say
+            </span>
+          </h2>
+
+          <p className="mt-4 text-sm text-gray-500">
+            No testimonials available yet.
+          </p>
         </div>
       </section>
     );
   }
 
-  const testimonial = testimonials[current];
-
   return (
     <section
       id="testimonials"
-      className="relative w-full overflow-hidden bg-white py-16 sm:py-20 lg:py-24"
+      className="relative overflow-hidden bg-white py-16 sm:py-20 lg:py-24"
     >
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+      {/* Background Decoration */}
 
-        {/* CAROUSEL */}
+      <div className="pointer-events-none absolute left-0 top-0 h-48 w-48 rounded-full bg-[#043927]/5 blur-3xl" />
 
-        <div className="relative mx-auto max-w-5xl">
+      <div className="pointer-events-none absolute bottom-0 right-0 h-56 w-56 rounded-full bg-[#C9A45C]/10 blur-3xl" />
 
-          {/* TESTIMONIAL */}
+      <div className="relative mx-auto max-w-[1300px] px-5 sm:px-8 lg:px-12">
+
+        {/* ====================================================
+            HEADER
+        ===================================================== */}
+
+        <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-14 lg:mb-16">
+
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <span className="h-[2px] w-10 bg-[#C9A45C]" />
+
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#043927]">
+              Client Feedback
+            </span>
+
+            <span className="h-[2px] w-10 bg-[#C9A45C]" />
+          </div>
+
+          <h2 className="text-4xl font-black tracking-tight text-[#111111] sm:text-5xl lg:text-6xl">
+            What Our{" "}
+            <span className="text-[#043927]">
+              Clients Say
+            </span>
+          </h2>
+
+          <div className="mx-auto mt-5 h-[2px] w-16 bg-[#C9A45C]" />
+
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[#111111]/60 sm:text-base">
+            Real experiences from clients who trusted us
+            with their real estate journey.
+          </p>
+        </div>
+
+        {/* ====================================================
+            SLIDER
+        ===================================================== */}
+
+        <div className="mx-auto max-w-5xl overflow-hidden">
+
+          {/* TRACK */}
 
           <div
-            key={current}
-            className="flex min-h-[500px] flex-col items-center justify-center text-center transition-all duration-700 ease-out sm:min-h-[520px] lg:min-h-[540px]"
+            className="flex transition-transform duration-700 ease-in-out"
+            style={{
+              transform: `translateX(-${current * 100}%)`,
+            }}
           >
 
-            {/* CLIENT IMAGE */}
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.id}
+                className="w-full shrink-0 px-1"
+              >
 
-            <div className="relative mb-8 h-[120px] w-[120px] overflow-hidden rounded-full border-4 border-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] sm:h-[140px] sm:w-[140px]">
+                {/* CARD */}
 
-              {testimonial.image ? (
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  fill
-                  sizes="140px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[#043927] text-3xl font-semibold text-[#b2965d]">
-                  {testimonial.name
-                    .charAt(0)
-                    .toUpperCase()}
+                <div className="rounded-2xl border border-[#111111]/10 bg-[#fafafa] p-6 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-3xl sm:p-8 md:p-10 lg:p-12">
+
+                  <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-10 lg:gap-14">
+
+                    {/* ==================================================
+                        PROFILE
+                    =================================================== */}
+
+                    <div className="flex items-center gap-4 md:block md:w-40">
+
+                      {/* IMAGE / INITIAL */}
+
+                      <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#043927] text-lg font-bold text-white shadow-lg sm:h-20 sm:w-20 sm:text-xl">
+
+                        {testimonial.image ? (
+                          <img
+                            src={
+                              testimonial.image.startsWith(
+                                "http"
+                              )
+                                ? testimonial.image
+                                : `${API_URL}${testimonial.image}`
+                            }
+                            alt={testimonial.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          testimonial.name
+                            .split(" ")
+                            .map((name) =>
+                              name.charAt(0)
+                            )
+                            .join("")
+                            .slice(0, 2)
+                            .toUpperCase()
+                        )}
+
+                      </div>
+
+                      {/* NAME */}
+
+                      <div className="md:mt-5">
+
+                        <h3 className="text-base font-bold text-[#111111] sm:text-lg">
+                          {testimonial.name}
+                        </h3>
+
+                        {testimonial.location && (
+                          <p className="mt-1 text-xs text-[#111111]/45">
+                            {testimonial.location}
+                          </p>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                    {/* ==================================================
+                        CONTENT
+                    =================================================== */}
+
+                    <div className="relative">
+
+                      {/* QUOTE */}
+
+                      <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#C9A45C]/15">
+                        <Quote
+                          size={20}
+                          className="text-[#043927]"
+                          strokeWidth={2.5}
+                        />
+                      </div>
+
+                      {/* STARS */}
+
+                      <div className="mb-5 flex gap-1">
+                        {[1, 2, 3, 4, 5].map(
+                          (star) => (
+                            <Star
+                              key={star}
+                              size={17}
+                              fill="currentColor"
+                              className="text-[#C9A45C]"
+                            />
+                          )
+                        )}
+                      </div>
+
+                      {/* FEEDBACK */}
+
+                      <blockquote className="max-w-3xl text-xl font-medium leading-8 tracking-tight text-[#111111] sm:text-2xl sm:leading-9 lg:text-3xl lg:leading-10">
+                        &ldquo;
+                        {testimonial.message}
+                        &rdquo;
+                      </blockquote>
+
+                      {/* BOTTOM */}
+
+                      <div className="mt-7 flex items-center gap-3">
+                        <span className="h-[2px] w-10 bg-[#043927]" />
+
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#111111]/40">
+                          Client Experience
+                        </span>
+                      </div>
+
+                    </div>
+                  </div>
+
                 </div>
-              )}
+              </div>
+            ))}
 
-            </div>
+          </div>
+        </div>
 
-            {/* QUOTE */}
+        {/* ====================================================
+            CONTROLS
+        ===================================================== */}
 
-            <div className="relative max-w-3xl px-8 sm:px-12">
+        <div className="mx-auto mt-7 flex max-w-5xl items-center justify-between">
 
-              <span className="absolute -left-1 -top-8 text-6xl font-serif leading-none text-[#043927]/10 sm:-left-4">
-                “
-              </span>
+          {/* DOTS */}
 
-              <p className="whitespace-pre-line text-base font-medium leading-8 text-gray-700 sm:text-lg sm:leading-9 lg:text-xl">
-                {testimonial.message}
-              </p>
+          <div className="flex items-center gap-2">
 
-              <span className="absolute -bottom-10 -right-1 text-6xl font-serif leading-none text-[#043927]/10 sm:-right-4">
-                ”
-              </span>
-
-            </div>
-
-            {/* NAME */}
-
-            <p className="mt-10 text-sm font-semibold text-[#043927] sm:text-base">
-              {testimonial.name}
-
-              {testimonial.location && (
-                <span>
-                  , {testimonial.location}
-                </span>
-              )}
-            </p>
+            {testimonials.map(
+              (testimonial, index) => (
+                <button
+                  key={testimonial.id}
+                  type="button"
+                  onClick={() => setCurrent(index)}
+                  aria-label={`View testimonial from ${testimonial.name}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    current === index
+                      ? "w-8 bg-[#043927]"
+                      : "w-2 bg-[#111111]/15 hover:bg-[#C9A45C]"
+                  }`}
+                />
+              )
+            )}
 
           </div>
 
-          {/* PREVIOUS */}
+          {/* ARROWS */}
 
-          {testimonials.length > 1 && (
+          <div className="flex gap-2">
+
             <button
               type="button"
               onClick={previous}
               aria-label="Previous testimonial"
-              className="absolute left-0 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#043927]/15 text-xl text-[#043927] transition-all duration-300 hover:bg-[#043927] hover:text-white sm:left-2 sm:h-12 sm:w-12"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#111111]/15 bg-white text-[#111111] transition-all duration-300 hover:border-[#043927] hover:bg-[#043927] hover:text-white"
             >
-              ←
+              <ArrowLeft size={17} />
             </button>
-          )}
 
-          {/* NEXT */}
-
-          {testimonials.length > 1 && (
             <button
               type="button"
               onClick={next}
               aria-label="Next testimonial"
-              className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#043927]/15 text-xl text-[#043927] transition-all duration-300 hover:bg-[#043927] hover:text-white sm:right-2 sm:h-12 sm:w-12"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-[#043927] text-white transition-all duration-300 hover:bg-[#C9A45C] hover:text-[#111111]"
             >
-              →
+              <ArrowRight size={17} />
             </button>
-          )}
 
-          {/* INDICATORS */}
-
-          {testimonials.length > 1 && (
-            <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-center gap-2">
-              {testimonials.map(
-                (_, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    aria-label={`Go to testimonial ${
-                      index + 1
-                    }`}
-                    onClick={() =>
-                      setCurrent(index)
-                    }
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      current === index
-                        ? "w-8 bg-[#043927]"
-                        : "w-2 bg-[#043927]/20"
-                    }`}
-                  />
-                )
-              )}
-            </div>
-          )}
-
+          </div>
         </div>
+
       </div>
     </section>
   );
