@@ -1,16 +1,110 @@
-  mysql:
-    image: mysql:8.0
+services:
+
+  # ============================================================
+  # FRONTEND - NEXT.JS
+  # ============================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        INTERNAL_API_URL: ${INTERNAL_API_URL}
+
     restart: unless-stopped
 
-    command:
-      - mysqld
-      - --skip-grant-tables
-      - --skip-networking=0
+    expose:
+      - "3000"
 
     environment:
-      MYSQL_ROOT_PASSWORD: nikhil
+      NODE_ENV: production
+
+      # Browser -> FastAPI
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+
+      # Next.js container -> FastAPI container
+      INTERNAL_API_URL: ${INTERNAL_API_URL}
+
+    depends_on:
+      backend:
+        condition: service_started
+
+
+  # ============================================================
+  # BACKEND - FASTAPI
+  # ============================================================
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    expose:
+      - "8000"
+
+    environment:
+
+      # --------------------------------------------------------
+      # MYSQL DATABASE
+      # --------------------------------------------------------
+
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
+      MYSQL_PASSWORD: nikhil
+
+      # --------------------------------------------------------
+      # CORS
+      # --------------------------------------------------------
+
+      CORS_ORIGINS: ${CORS_ORIGINS}
+
+      # --------------------------------------------------------
+      # UPLOADS
+      # --------------------------------------------------------
+
+      UPLOAD_DIR: ${UPLOAD_DIR:-uploads}
+
+      # --------------------------------------------------------
+      # JWT
+      # --------------------------------------------------------
+
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+
+      # --------------------------------------------------------
+      # PYTHON
+      # --------------------------------------------------------
+
+      PYTHONUNBUFFERED: "1"
+
+    volumes:
+      - backend_uploads:/app/uploads
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+
+  # ============================================================
+  # MYSQL DATABASE
+  # ============================================================
+
+  mysql:
+    image: mysql:8.0
+
+    restart: unless-stopped
+
+    environment:
+
+      MYSQL_ROOT_PASSWORD: nikhil
+
+      MYSQL_DATABASE: hrrealtyinternational
+
+      MYSQL_USER: hruser
+
       MYSQL_PASSWORD: nikhil
 
     volumes:
@@ -18,9 +112,25 @@
 
     healthcheck:
       test:
-        - CMD-SHELL
-        - mysqladmin ping -h localhost || exit 1
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" || exit 1"
+        ]
+
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
+
+
+# ==============================================================
+# DOCKER VOLUMES
+# ==============================================================
+
+volumes:
+
+  mysql_data:
+    name: hrrealty_mysql_data
+
+  backend_uploads:
+    name: hrrealty_backend_uploads
