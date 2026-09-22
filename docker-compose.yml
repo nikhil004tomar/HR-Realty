@@ -167,10 +167,10 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: nikhil
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD: nikhil
 
     volumes:
       - mysql_data:/var/lib/mysql
