@@ -94,7 +94,11 @@ services:
 
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+      # IMPORTANT:
+      # This is temporarily explicit because Dokploy was
+      # passing ${MYSQL_PASSWORD} as empty to the backend.
+      MYSQL_PASSWORD: "nikhil"
 
       # --------------------------------------------------------
       # CORS
@@ -167,10 +171,10 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_ROOT_PASSWORD: nikhil
+      MYSQL_ROOT_PASSWORD: "nikhil"
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
-      MYSQL_PASSWORD: nikhil
+      MYSQL_PASSWORD: "nikhil"
 
     volumes:
       - mysql_data:/var/lib/mysql
