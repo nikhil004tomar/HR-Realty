@@ -32,6 +32,10 @@ services:
         condition: service_started
 
     labels:
+      # --------------------------------------------------------
+      # WWW
+      # --------------------------------------------------------
+
       - traefik.http.routers.hr-realty-website-kkxr13-7-web.rule=Host(`www.thehrrealty.com`)
       - traefik.http.routers.hr-realty-website-kkxr13-7-web.entrypoints=web
       - traefik.http.services.hr-realty-website-kkxr13-7-web.loadbalancer.server.port=3000
@@ -43,6 +47,10 @@ services:
       - traefik.http.services.hr-realty-website-kkxr13-7-websecure.loadbalancer.server.port=3000
       - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.service=hr-realty-website-kkxr13-7-websecure
       - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.tls.certresolver=letsencrypt
+
+      # --------------------------------------------------------
+      # ROOT DOMAIN
+      # --------------------------------------------------------
 
       - traefik.http.routers.hr-realty-website-kkxr13-6-web.rule=Host(`thehrrealty.com`)
       - traefik.http.routers.hr-realty-website-kkxr13-6-web.entrypoints=web
@@ -86,7 +94,7 @@ services:
 
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
-      MYSQL_PASSWORD: nikhil
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
       # --------------------------------------------------------
       # CORS
@@ -122,11 +130,19 @@ services:
     labels:
       - traefik.docker.network=dokploy-network
 
+      # --------------------------------------------------------
+      # API HTTP
+      # --------------------------------------------------------
+
       - traefik.http.routers.hr-realty-website-kkxr13-8-web.rule=Host(`api.thehrrealty.com`)
       - traefik.http.routers.hr-realty-website-kkxr13-8-web.entrypoints=web
       - traefik.http.services.hr-realty-website-kkxr13-8-web.loadbalancer.server.port=8000
       - traefik.http.routers.hr-realty-website-kkxr13-8-web.service=hr-realty-website-kkxr13-8-web
       - traefik.http.routers.hr-realty-website-kkxr13-8-web.middlewares=redirect-to-https@file
+
+      # --------------------------------------------------------
+      # API HTTPS
+      # --------------------------------------------------------
 
       - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.rule=Host(`api.thehrrealty.com`)
       - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.entrypoints=websecure
@@ -142,7 +158,7 @@ services:
 
 
   # ============================================================
-  # MYSQL DATABASE - TEMPORARY RECOVERY MODE
+  # MYSQL DATABASE - NORMAL PRODUCTION MODE
   # ============================================================
 
   mysql:
@@ -150,19 +166,11 @@ services:
 
     restart: unless-stopped
 
-    # TEMPORARY:
-    # Allows us to enter MySQL without the old password
-    # and repair the existing hruser account.
-    command:
-      - mysqld
-      - --skip-grant-tables
-      - --skip-networking=0
-
     environment:
-      MYSQL_ROOT_PASSWORD: nikhil
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: hrrealtyinternational
       MYSQL_USER: hruser
-      MYSQL_PASSWORD: nikhil
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
     volumes:
       - mysql_data:/var/lib/mysql
@@ -187,12 +195,14 @@ services:
 volumes:
 
   # IMPORTANT:
-  # This is the EXISTING production database volume.
+  # Existing production database.
   # DO NOT DELETE THIS VOLUME.
+
   mysql_data:
     name: hrrealty_mysql_data
 
   # Existing uploaded files.
+
   backend_uploads:
     name: hrrealty_backend_uploads
 
