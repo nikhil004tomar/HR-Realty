@@ -92,36 +92,28 @@ services:
   # MYSQL DATABASE
   # ============================================================
 
-  mysql:
-    image: mysql:8.0
-
-    restart: unless-stopped
-
-    environment:
-
-      MYSQL_ROOT_PASSWORD: nikhil
-
-      MYSQL_DATABASE: hrrealtyinternational
-
-      MYSQL_USER: hruser
-
-      MYSQL_PASSWORD: nikhil
-
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "mysqladmin ping -h localhost -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" || exit 1"
-        ]
-
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-
+mysql:
+  image: mysql:8.0
+  restart: unless-stopped
+  command:
+    - mysqld
+    - --skip-grant-tables
+    - --skip-networking=0
+  environment:
+    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    MYSQL_DATABASE: ${MYSQL_DATABASE}
+    MYSQL_USER: ${MYSQL_USER}
+    MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  volumes:
+    - mysql_data:/var/lib/mysql
+  healthcheck:
+    test:
+      - CMD-SHELL
+      - mysqladmin ping -h localhost || exit 1
+    interval: 10s
+    timeout: 5s
+    retries: 10
+    start_period: 30s
 
 # ==============================================================
 # DOCKER VOLUMES
