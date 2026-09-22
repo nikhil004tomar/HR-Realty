@@ -31,6 +31,38 @@ services:
       backend:
         condition: service_started
 
+    labels:
+      - traefik.http.routers.hr-realty-website-kkxr13-7-web.rule=Host(`www.thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-7-web.entrypoints=web
+      - traefik.http.services.hr-realty-website-kkxr13-7-web.loadbalancer.server.port=3000
+      - traefik.http.routers.hr-realty-website-kkxr13-7-web.service=hr-realty-website-kkxr13-7-web
+      - traefik.http.routers.hr-realty-website-kkxr13-7-web.middlewares=redirect-to-https@file
+
+      - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.rule=Host(`www.thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.entrypoints=websecure
+      - traefik.http.services.hr-realty-website-kkxr13-7-websecure.loadbalancer.server.port=3000
+      - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.service=hr-realty-website-kkxr13-7-websecure
+      - traefik.http.routers.hr-realty-website-kkxr13-7-websecure.tls.certresolver=letsencrypt
+
+      - traefik.http.routers.hr-realty-website-kkxr13-6-web.rule=Host(`thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-6-web.entrypoints=web
+      - traefik.http.services.hr-realty-website-kkxr13-6-web.loadbalancer.server.port=3000
+      - traefik.http.routers.hr-realty-website-kkxr13-6-web.service=hr-realty-website-kkxr13-6-web
+      - traefik.http.routers.hr-realty-website-kkxr13-6-web.middlewares=redirect-to-https@file
+
+      - traefik.http.routers.hr-realty-website-kkxr13-6-websecure.rule=Host(`thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-6-websecure.entrypoints=websecure
+      - traefik.http.services.hr-realty-website-kkxr13-6-websecure.loadbalancer.server.port=3000
+      - traefik.http.routers.hr-realty-website-kkxr13-6-websecure.service=hr-realty-website-kkxr13-6-websecure
+      - traefik.http.routers.hr-realty-website-kkxr13-6-websecure.tls.certresolver=letsencrypt
+
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+
+    networks:
+      - dokploy-network
+      - default
+
 
   # ============================================================
   # BACKEND - FASTAPI
@@ -87,33 +119,66 @@ services:
       mysql:
         condition: service_healthy
 
+    labels:
+      - traefik.docker.network=dokploy-network
+
+      - traefik.http.routers.hr-realty-website-kkxr13-8-web.rule=Host(`api.thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-8-web.entrypoints=web
+      - traefik.http.services.hr-realty-website-kkxr13-8-web.loadbalancer.server.port=8000
+      - traefik.http.routers.hr-realty-website-kkxr13-8-web.service=hr-realty-website-kkxr13-8-web
+      - traefik.http.routers.hr-realty-website-kkxr13-8-web.middlewares=redirect-to-https@file
+
+      - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.rule=Host(`api.thehrrealty.com`)
+      - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.entrypoints=websecure
+      - traefik.http.services.hr-realty-website-kkxr13-8-websecure.loadbalancer.server.port=8000
+      - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.service=hr-realty-website-kkxr13-8-websecure
+      - traefik.http.routers.hr-realty-website-kkxr13-8-websecure.tls.certresolver=letsencrypt
+
+      - traefik.enable=true
+
+    networks:
+      - dokploy-network
+      - default
+
 
   # ============================================================
-  # MYSQL DATABASE
+  # MYSQL DATABASE - TEMPORARY RECOVERY MODE
   # ============================================================
 
-mysql:
-  image: mysql:8.0
-  restart: unless-stopped
-  command:
-    - mysqld
-    - --skip-grant-tables
-    - --skip-networking=0
-  environment:
-    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    MYSQL_DATABASE: ${MYSQL_DATABASE}
-    MYSQL_USER: ${MYSQL_USER}
-    MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  volumes:
-    - mysql_data:/var/lib/mysql
-  healthcheck:
-    test:
-      - CMD-SHELL
-      - mysqladmin ping -h localhost || exit 1
-    interval: 10s
-    timeout: 5s
-    retries: 10
-    start_period: 30s
+  mysql:
+    image: mysql:8.0
+
+    restart: unless-stopped
+
+    # TEMPORARY:
+    # Allows us to enter MySQL without the old password
+    # and repair the existing hruser account.
+    command:
+      - mysqld
+      - --skip-grant-tables
+      - --skip-networking=0
+
+    environment:
+      MYSQL_ROOT_PASSWORD: nikhil
+      MYSQL_DATABASE: hrrealtyinternational
+      MYSQL_USER: hruser
+      MYSQL_PASSWORD: nikhil
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+    networks:
+      - default
+
 
 # ==============================================================
 # DOCKER VOLUMES
@@ -121,8 +186,22 @@ mysql:
 
 volumes:
 
+  # IMPORTANT:
+  # This is the EXISTING production database volume.
+  # DO NOT DELETE THIS VOLUME.
   mysql_data:
     name: hrrealty_mysql_data
 
+  # Existing uploaded files.
   backend_uploads:
     name: hrrealty_backend_uploads
+
+
+# ==============================================================
+# DOCKER NETWORKS
+# ==============================================================
+
+networks:
+
+  dokploy-network:
+    external: true
