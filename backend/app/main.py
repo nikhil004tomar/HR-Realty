@@ -101,20 +101,24 @@ app = FastAPI(
 # CORS
 # ============================================================
 
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in settings.CORS_ORIGINS.split(",")
+    if origin.strip()
+]
+
+print("========================================")
+print("CORS ALLOWED ORIGINS:")
+print(ALLOWED_ORIGINS)
+print("========================================")
+
 app.add_middleware(
     CORSMiddleware,
-
-    allow_origins=[
-        settings.CORS_ORIGINS
-    ],
-
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-
     allow_methods=["*"],
-
     allow_headers=["*"],
 )
-
 
 # ============================================================
 # STATIC FILES
