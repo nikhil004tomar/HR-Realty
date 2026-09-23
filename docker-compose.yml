@@ -104,7 +104,7 @@ services:
       # CORS
       # --------------------------------------------------------
 
-      CORS_ORIGINS: ${CORS_ORIGINS}
+      CORS_ORIGINS: "https://thehrrealty.com,https://www.thehrrealty.com"
 
       # --------------------------------------------------------
       # UPLOADS
