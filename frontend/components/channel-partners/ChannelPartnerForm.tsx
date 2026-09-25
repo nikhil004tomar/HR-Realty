@@ -9,9 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
+import API_URL from "@/lib/api";
 
 export default function ChannelPartnerForm() {
   const [loading, setLoading] = useState(false);
@@ -32,7 +30,7 @@ export default function ChannelPartnerForm() {
       const formData = new FormData(form);
 
       /*
-       * Your current backend only stores:
+       * Your current backend stores:
        * name
        * email
        * phone
@@ -43,25 +41,28 @@ export default function ChannelPartnerForm() {
        */
 
       const payload = {
-        name:
-          String(formData.get("first_name") || "").trim(),
+        name: String(
+          formData.get("first_name") || ""
+        ).trim(),
 
         email:
-          String(formData.get("email_address") || "").trim() ||
-          null,
-
-        phone:
           String(
-            formData.get("contact_no_display") || ""
-          ).trim(),
+            formData.get("email_address") || ""
+          ).trim() || null,
+
+        phone: String(
+          formData.get("contact_no_display") || ""
+        ).trim(),
 
         city:
-          String(formData.get("city") || "").trim() ||
-          null,
+          String(
+            formData.get("city") || ""
+          ).trim() || null,
 
         company:
-          String(formData.get("company_name") || "").trim() ||
-          null,
+          String(
+            formData.get("company_name") || ""
+          ).trim() || null,
 
         experience:
           String(
@@ -73,7 +74,9 @@ export default function ChannelPartnerForm() {
         message: [
           `Alternate Phone: ${
             String(
-              formData.get("contact_no_display_2") || ""
+              formData.get(
+                "contact_no_display_2"
+              ) || ""
             ).trim() || "Not provided"
           }`,
 
@@ -149,7 +152,9 @@ export default function ChannelPartnerForm() {
 
           `Average Monthly Sales: ${
             String(
-              formData.get("average_monthly_sales") || ""
+              formData.get(
+                "average_monthly_sales"
+              ) || ""
             ).trim() || "Not provided"
           }`,
 
@@ -161,14 +166,22 @@ export default function ChannelPartnerForm() {
 
           `Reference Number: ${
             String(
-              formData.get("reference_number_display") || ""
+              formData.get(
+                "reference_number_display"
+              ) || ""
             ).trim() || "Not provided"
           }`,
         ].join("\n"),
       };
 
+      // ======================================================
+      // VALIDATION
+      // ======================================================
+
       if (!payload.name) {
-        throw new Error("Please enter your name.");
+        throw new Error(
+          "Please enter your name."
+        );
       }
 
       if (!payload.phone) {
@@ -176,6 +189,10 @@ export default function ChannelPartnerForm() {
           "Please enter your phone number."
         );
       }
+
+      // ======================================================
+      // SUBMIT TO API
+      // ======================================================
 
       const response = await fetch(
         `${API_URL}/api/channel-partners`,
@@ -190,6 +207,10 @@ export default function ChannelPartnerForm() {
           body: JSON.stringify(payload),
         }
       );
+
+      // ======================================================
+      // RESPONSE
+      // ======================================================
 
       const data = await response.json();
 
@@ -234,9 +255,12 @@ export default function ChannelPartnerForm() {
 
   return (
     <section className="bg-[#043927] py-16 sm:py-20 lg:py-24">
+
       <div className="mx-auto max-w-5xl px-5 sm:px-8 lg:px-10">
 
-        {/* HEADER */}
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
 
         <div className="mb-12 text-center">
 
@@ -252,13 +276,16 @@ export default function ChannelPartnerForm() {
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl leading-7 text-white/70">
-            Fill in your details and our team will connect
-            with you to discuss the partnership opportunity.
+            Fill in your details and our team will
+            connect with you to discuss the
+            partnership opportunity.
           </p>
 
         </div>
 
-        {/* SUCCESS */}
+        {/* =====================================================
+            SUCCESS
+        ===================================================== */}
 
         {success && (
           <div className="mb-6 rounded-2xl border border-green-300 bg-green-50 p-5 text-center text-green-700">
@@ -266,7 +293,9 @@ export default function ChannelPartnerForm() {
           </div>
         )}
 
-        {/* ERROR */}
+        {/* =====================================================
+            ERROR
+        ===================================================== */}
 
         {error && (
           <div className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-5 text-center text-red-700">
@@ -274,18 +303,25 @@ export default function ChannelPartnerForm() {
           </div>
         )}
 
+        {/* =====================================================
+            FORM
+        ===================================================== */}
+
         <form
           onSubmit={handleSubmit}
           className="rounded-3xl bg-white p-6 shadow-2xl sm:p-8 lg:p-10"
         >
 
-          {/* SECTION 1 */}
+          {/* ===================================================
+              SECTION 1
+          =================================================== */}
 
           <FormSection
             number="1"
             title="Personal Details"
             icon={<User size={20} />}
           >
+
             <div className="grid gap-5 md:grid-cols-2">
 
               <Input
@@ -327,15 +363,19 @@ export default function ChannelPartnerForm() {
               />
 
             </div>
+
           </FormSection>
 
-          {/* SECTION 2 */}
+          {/* ===================================================
+              SECTION 2
+          =================================================== */}
 
           <FormSection
             number="2"
             title="Company Details (If Applicable)"
             icon={<Building2 size={20} />}
           >
+
             <div className="grid gap-5 md:grid-cols-2">
 
               <Select
@@ -388,15 +428,21 @@ export default function ChannelPartnerForm() {
               />
 
             </div>
+
           </FormSection>
 
-          {/* SECTION 3 */}
+          {/* ===================================================
+              SECTION 3
+          =================================================== */}
 
           <FormSection
             number="3"
             title="Business Experience & Real Estate Background"
-            icon={<BriefcaseBusiness size={20} />}
+            icon={
+              <BriefcaseBusiness size={20} />
+            }
           >
+
             <div className="grid gap-5 md:grid-cols-2">
 
               <Select
@@ -445,15 +491,19 @@ export default function ChannelPartnerForm() {
               />
 
             </div>
+
           </FormSection>
 
-          {/* SECTION 4 */}
+          {/* ===================================================
+              SECTION 4
+          =================================================== */}
 
           <FormSection
             number="4"
             title="Referee Details"
             icon={<Users size={20} />}
           >
+
             <div className="grid gap-5 md:grid-cols-2">
 
               <Input
@@ -469,9 +519,12 @@ export default function ChannelPartnerForm() {
               />
 
             </div>
+
           </FormSection>
 
-          {/* AGREEMENT */}
+          {/* ===================================================
+              AGREEMENT
+          =================================================== */}
 
           <div className="mt-8 flex items-start gap-3">
 
@@ -487,13 +540,21 @@ export default function ChannelPartnerForm() {
               htmlFor="agree_tandc_display"
               className="text-sm leading-6 text-gray-600"
             >
-              I confirm that the information provided by me is true, accurate, and complete. I acknowledge and agree to comply with all applicable terms and conditions, policies, and guidelines of HR Realty International Pvt. Ltd. as a Channel Partner.
-
+              I confirm that the information
+              provided by me is true, accurate,
+              and complete. I acknowledge and
+              agree to comply with all applicable
+              terms and conditions, policies, and
+              guidelines of HR Realty
+              International Pvt. Ltd. as a
+              Channel Partner.
             </label>
 
           </div>
 
-          {/* SUBMIT */}
+          {/* ===================================================
+              SUBMIT
+          =================================================== */}
 
           <div className="mt-8">
 
@@ -519,11 +580,12 @@ export default function ChannelPartnerForm() {
           </div>
 
         </form>
+
       </div>
+
     </section>
   );
 }
-
 
 /* ============================================================
    FORM SECTION
@@ -569,7 +631,6 @@ function FormSection({
   );
 }
 
-
 /* ============================================================
    INPUT
 ============================================================ */
@@ -596,6 +657,7 @@ function Input({
         htmlFor={name}
         className="mb-2 block text-sm font-medium text-[#043927]"
       >
+
         {label}
 
         {required && (
@@ -603,6 +665,7 @@ function Input({
             *
           </span>
         )}
+
       </label>
 
       <input
@@ -617,7 +680,6 @@ function Input({
     </div>
   );
 }
-
 
 /* ============================================================
    SELECT
