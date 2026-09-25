@@ -27,7 +27,7 @@ export interface Connectivity {
 
 const PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
+  "https://api.thehrrealty.com";
 
 /* =========================================================
    IMAGE URL
@@ -40,27 +40,72 @@ export function getConnectivityImageUrl(
     return "";
   }
 
-  /* Already a complete URL */
-  if (
-    url.startsWith("http://") ||
-    url.startsWith("https://")
-  ) {
-    /* Never expose Docker's internal backend hostname */
-    if (url.includes("backend:8000")) {
-      return url.replace(
-        "http://backend:8000",
-        PUBLIC_API_URL
-      );
-    }
+  const cleanUrl = url.trim();
 
-    return url;
+  if (!cleanUrl) {
+    return "";
   }
 
-  /* Backend returns paths such as:
-     /uploads/connectivity/1/image.jpg
-  */
+  /* =======================================================
+     FIX OLD LOCALHOST / DOCKER URLS
+  ======================================================= */
 
-  return `${PUBLIC_API_URL}${url}`;
+  if (
+    cleanUrl.startsWith(
+      "http://127.0.0.1:8000"
+    )
+  ) {
+    return cleanUrl.replace(
+      "http://127.0.0.1:8000",
+      PUBLIC_API_URL
+    );
+  }
+
+  if (
+    cleanUrl.startsWith(
+      "http://localhost:8000"
+    )
+  ) {
+    return cleanUrl.replace(
+      "http://localhost:8000",
+      PUBLIC_API_URL
+    );
+  }
+
+  if (
+    cleanUrl.startsWith(
+      "http://backend:8000"
+    )
+  ) {
+    return cleanUrl.replace(
+      "http://backend:8000",
+      PUBLIC_API_URL
+    );
+  }
+
+  /* =======================================================
+     ALREADY A PUBLIC URL
+  ======================================================= */
+
+  if (
+    cleanUrl.startsWith("https://") ||
+    cleanUrl.startsWith("http://")
+  ) {
+    return cleanUrl;
+  }
+
+  /* =======================================================
+     RELATIVE UPLOAD PATH
+     
+     Example:
+     /uploads/connectivity/1/image.jpg
+  ======================================================= */
+
+  return `${PUBLIC_API_URL}${
+    cleanUrl.startsWith("/")
+      ? cleanUrl
+      : `/${cleanUrl}`
+  }`;
 }
 
 /* =========================================================
@@ -81,6 +126,7 @@ function normalizeConnectivity(
       )
       .map((image) => ({
         ...image,
+
         image_url:
           getConnectivityImageUrl(
             image.image_url

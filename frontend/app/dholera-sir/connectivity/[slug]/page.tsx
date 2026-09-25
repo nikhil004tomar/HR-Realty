@@ -1,9 +1,8 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import {
-  getConnectivity,
-} from "@/lib/connectivity";
+import { getConnectivity } from "@/lib/connectivity";
+import API_URL from "@/lib/api";
 
 /* =========================================================
    PAGE PROPS
@@ -13,6 +12,44 @@ interface PageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+/* =========================================================
+   IMAGE URL HELPER
+========================================================= */
+
+function getImageUrl(imageUrl?: string | null) {
+  if (!imageUrl) return "";
+
+  const url = imageUrl.trim();
+
+  if (!url) return "";
+
+  // Fix old localhost URLs returned by the backend
+  if (url.startsWith("http://127.0.0.1:8000")) {
+    return url.replace(
+      "http://127.0.0.1:8000",
+      API_URL
+    );
+  }
+
+  if (url.startsWith("http://localhost:8000")) {
+    return url.replace(
+      "http://localhost:8000",
+      API_URL
+    );
+  }
+
+  // Already a production URL
+  if (
+    url.startsWith("https://") ||
+    url.startsWith("http://")
+  ) {
+    return url;
+  }
+
+  // Relative upload path
+  return `${API_URL}${url.startsWith("/") ? url : `/${url}`}`;
 }
 
 /* =========================================================
@@ -28,8 +65,7 @@ export default async function ConnectivityDetailPage({
      LOAD FROM BACKEND
   ======================================================= */
 
-  const data =
-    await getConnectivity(slug);
+  const data = await getConnectivity(slug);
 
   /* =======================================================
      INVALID SLUG
@@ -47,19 +83,16 @@ export default async function ConnectivityDetailPage({
       =================================================== */}
 
       <section className="bg-white px-5 pb-10 pt-16 sm:px-8 sm:pt-20 lg:px-12 lg:pb-14 lg:pt-24">
-
         <div className="mx-auto max-w-7xl">
 
           {/* Small Label */}
 
           <div className="flex items-center gap-3">
-
             <span className="h-px w-10 bg-[#C9A45C]" />
 
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#043927]">
               Dholera SIR Connectivity
             </span>
-
           </div>
 
           {/* Main Heading */}
@@ -81,7 +114,6 @@ export default async function ConnectivityDetailPage({
           )}
 
         </div>
-
       </section>
 
       {/* ===================================================
@@ -89,7 +121,6 @@ export default async function ConnectivityDetailPage({
       =================================================== */}
 
       <section className="bg-white px-5 pb-16 sm:px-8 lg:px-12 lg:pb-24">
-
         <div className="mx-auto max-w-7xl">
 
           {data.images.length === 0 ? (
@@ -119,9 +150,13 @@ export default async function ConnectivityDetailPage({
 
             <div className="space-y-8">
 
-              {data.images.map(
-                (image, index) => (
+              {data.images.map((image, index) => {
 
+                const imageUrl = getImageUrl(
+                  image.image_url
+                );
+
+                return (
                   <div
                     key={image.id}
                     className="relative w-full overflow-hidden rounded-2xl bg-[#f5f5f2]"
@@ -129,34 +164,34 @@ export default async function ConnectivityDetailPage({
 
                     <div className="relative min-h-[300px] w-full sm:min-h-[450px] lg:min-h-[650px]">
 
-                      <Image
-                        src={image.image_url}
-                        alt={
-                          image.original_name ||
-                          `${data.title} image ${
-                            index + 1
-                          }`
-                        }
-                        fill
-                        priority={index === 0}
-                        sizes="100vw"
-                        unoptimized
-                        className="object-contain object-center"
-                      />
+                      {imageUrl && (
+                        <Image
+                          src={imageUrl}
+                          alt={
+                            image.original_name ||
+                            `${data.title} image ${
+                              index + 1
+                            }`
+                          }
+                          fill
+                          priority={index === 0}
+                          sizes="100vw"
+                          unoptimized
+                          className="object-contain object-center"
+                        />
+                      )}
 
                     </div>
 
                   </div>
-
-                )
-              )}
+                );
+              })}
 
             </div>
 
           )}
 
         </div>
-
       </section>
 
     </main>
