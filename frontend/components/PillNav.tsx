@@ -1,8 +1,8 @@
-
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 
 export type PillNavItem = {
@@ -43,16 +43,32 @@ const PillNav: React.FC<PillNavProps> = ({
   onMobileMenuClick,
   initialLoadAnimation = true,
 }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] =
+    useState(false);
+
+  const [openDropdown, setOpenDropdown] =
+    useState<string | null>(null);
 
   const navRef = useRef<HTMLElement | null>(null);
-  const logoRef = useRef<HTMLAnchorElement | null>(null);
-  const logoImgRef = useRef<HTMLImageElement | null>(null);
-  const navItemsRef = useRef<HTMLDivElement | null>(null);
-  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
-  const hamburgerRef = useRef<HTMLButtonElement | null>(null);
-  const logoTweenRef = useRef<gsap.core.Tween | null>(null);
+  const logoRef =
+    useRef<HTMLAnchorElement | null>(null);
+
+  const logoImgRef =
+    useRef<HTMLImageElement | null>(null);
+
+  const navItemsRef =
+    useRef<HTMLDivElement | null>(null);
+
+  const mobileMenuRef =
+    useRef<HTMLDivElement | null>(null);
+
+  const hamburgerRef =
+    useRef<HTMLButtonElement | null>(null);
+
+  const logoTweenRef =
+    useRef<gsap.core.Tween | null>(null);
 
   // ============================================================
   // INITIAL ANIMATION
@@ -150,18 +166,103 @@ const PillNav: React.FC<PillNavProps> = ({
   };
 
   const isNextLink = (href?: string) => {
-    return Boolean(href && !isExternalLink(href));
+    return Boolean(
+      href && !isExternalLink(href)
+    );
   };
 
-  const homeHref = items?.[0]?.href || "/";
+  const homeHref =
+    items?.[0]?.href || "/";
+
+  // ============================================================
+  // ACTIVE PAGE HELPERS
+  // ============================================================
+
+  const normalizePath = (path: string) => {
+    if (!path) return "/";
+
+    const cleanPath = path
+      .split("?")[0]
+      .split("#")[0];
+
+    if (cleanPath.length > 1) {
+      return cleanPath.replace(/\/+$/, "");
+    }
+
+    return "/";
+  };
+
+  const isPathActive = (href: string) => {
+    if (!href || isExternalLink(href)) {
+      return false;
+    }
+
+    const currentPath =
+      normalizePath(pathname);
+
+    const targetPath =
+      normalizePath(href);
+
+    // Home should ONLY be active on "/"
+    if (targetPath === "/") {
+      return currentPath === "/";
+    }
+
+    // Exact match
+    if (currentPath === targetPath) {
+      return true;
+    }
+
+    // Nested pages
+    //
+    // Example:
+    // /projects
+    // /projects/dholera-metro-city
+    //
+    // PROJECTS remains active on both.
+    return currentPath.startsWith(
+      `${targetPath}/`
+    );
+  };
+
+  const isItemActive = (
+    item: PillNavItem
+  ) => {
+    // Direct item
+    if (isPathActive(item.href)) {
+      return true;
+    }
+
+    // Dropdown parent
+    //
+    // Example:
+    // DHOLERA SIR
+    // ├── /dholera-sir
+    // ├── /dholera-sir/connectivity
+    // └── /dholera-sir/infrastructure
+    //
+    // Parent stays active when child is active.
+    if (item.children?.length) {
+      return item.children.some(
+        (child) =>
+          isPathActive(child.href)
+      );
+    }
+
+    return false;
+  };
 
   // ============================================================
   // DROPDOWN
   // ============================================================
 
-  const toggleDropdown = (label: string) => {
+  const toggleDropdown = (
+    label: string
+  ) => {
     setOpenDropdown((current) =>
-      current === label ? null : label
+      current === label
+        ? null
+        : label
     );
   };
 
@@ -173,7 +274,8 @@ const PillNav: React.FC<PillNavProps> = ({
     setIsMobileMenuOpen(false);
     setOpenDropdown(null);
 
-    const menu = mobileMenuRef.current;
+    const menu =
+      mobileMenuRef.current;
 
     if (menu) {
       gsap.to(menu, {
@@ -189,7 +291,8 @@ const PillNav: React.FC<PillNavProps> = ({
       });
     }
 
-    const hamburger = hamburgerRef.current;
+    const hamburger =
+      hamburgerRef.current;
 
     if (hamburger) {
       const lines =
@@ -216,12 +319,18 @@ const PillNav: React.FC<PillNavProps> = ({
   };
 
   const toggleMobileMenu = () => {
-    const nextState = !isMobileMenuOpen;
+    const nextState =
+      !isMobileMenuOpen;
 
-    setIsMobileMenuOpen(nextState);
+    setIsMobileMenuOpen(
+      nextState
+    );
 
-    const menu = mobileMenuRef.current;
-    const hamburger = hamburgerRef.current;
+    const menu =
+      mobileMenuRef.current;
+
+    const hamburger =
+      hamburgerRef.current;
 
     if (nextState) {
       if (menu) {
@@ -274,16 +383,21 @@ const PillNav: React.FC<PillNavProps> = ({
   };
 
   // ============================================================
-  // DESKTOP DROPDOWN
+  // DESKTOP NAV ITEM
   // ============================================================
 
   const renderDesktopItem = (
     item: PillNavItem,
     index: number
   ) => {
-    const isActive = activeHref === item.href;
+    const isActive =
+      isItemActive(item);
+
     const hasChildren =
-      Boolean(item.children && item.children.length > 0);
+      Boolean(
+        item.children &&
+          item.children.length > 0
+      );
 
     const linkClasses = `
       group
@@ -301,12 +415,18 @@ const PillNav: React.FC<PillNavProps> = ({
       transition-all
       duration-200
       hover:text-[#C9A45C]
-      ${isActive ? "text-[#C9A45C]" : ""}
+      ${
+        isActive
+          ? "text-[#C9A45C]"
+          : ""
+      }
     `;
 
     const content = (
       <>
-        <span>{item.label}</span>
+        <span>
+          {item.label}
+        </span>
 
         {hasChildren && (
           <svg
@@ -360,10 +480,13 @@ const PillNav: React.FC<PillNavProps> = ({
                     : pillTextColor,
               }}
               onClick={() =>
-                toggleDropdown(item.label)
+                toggleDropdown(
+                  item.label
+                )
               }
               aria-expanded={
-                openDropdown === item.label
+                openDropdown ===
+                item.label
               }
             >
               {content}
@@ -409,39 +532,57 @@ const PillNav: React.FC<PillNavProps> = ({
                 </span>
               </div>
 
-              {item.children?.map((child) => (
-                <Link
-                  key={child.href}
-                  href={child.href}
-                  aria-label={
-                    child.ariaLabel ||
-                    child.label
-                  }
-                  className="
-                    flex
-                    items-center
-                    rounded-xl
-                    px-3
-                    py-2.5
-                    text-[12px]
-                    font-medium
-                    text-white
-                    transition-all
-                    duration-150
-                    hover:bg-[#C9A45C]
-                    hover:text-white
-                  "
-                >
-                  {child.label}
-                </Link>
-              ))}
+              {item.children?.map(
+                (child) => {
+                  const childActive =
+                    isPathActive(
+                      child.href
+                    );
+
+                  return (
+                    <Link
+                      key={
+                        child.href
+                      }
+                      href={
+                        child.href
+                      }
+                      aria-label={
+                        child.ariaLabel ||
+                        child.label
+                      }
+                      className={`
+                        flex
+                        items-center
+                        rounded-xl
+                        px-3
+                        py-2.5
+                        text-[12px]
+                        font-medium
+                        transition-all
+                        duration-150
+                        ${
+                          childActive
+                            ? "bg-[#C9A45C] text-white"
+                            : "text-white hover:bg-[#C9A45C] hover:text-white"
+                        }
+                      `}
+                    >
+                      {child.label}
+                    </Link>
+                  );
+                }
+              )}
             </div>
           </>
-        ) : isNextLink(item.href) ? (
+        ) : isNextLink(
+            item.href
+          ) ? (
           <Link
             href={item.href}
             aria-label={
-              item.ariaLabel || item.label
+              item.ariaLabel ||
+              item.label
             }
             className={linkClasses}
             style={{
@@ -449,7 +590,8 @@ const PillNav: React.FC<PillNavProps> = ({
                 isActive
                   ? GOLD
                   : pillTextColor,
-              background: pillColor,
+              background:
+                pillColor,
             }}
           >
             {content}
@@ -458,7 +600,8 @@ const PillNav: React.FC<PillNavProps> = ({
           <a
             href={item.href}
             aria-label={
-              item.ariaLabel || item.label
+              item.ariaLabel ||
+              item.label
             }
             className={linkClasses}
             style={{
@@ -466,7 +609,8 @@ const PillNav: React.FC<PillNavProps> = ({
                 isActive
                   ? GOLD
                   : pillTextColor,
-              background: pillColor,
+              background:
+                pillColor,
             }}
           >
             {content}
@@ -477,29 +621,36 @@ const PillNav: React.FC<PillNavProps> = ({
   };
 
   // ============================================================
-  // MOBILE ITEM
+  // MOBILE NAV ITEM
   // ============================================================
 
   const renderMobileItem = (
     item: PillNavItem
   ) => {
     const hasChildren =
-      Boolean(item.children && item.children.length > 0);
+      Boolean(
+        item.children &&
+          item.children.length > 0
+      );
 
-    const isActive = activeHref === item.href;
+    const isActive =
+      isItemActive(item);
 
     if (hasChildren) {
       const isOpen =
-        openDropdown === item.label;
+        openDropdown ===
+        item.label;
 
       return (
         <li key={item.label}>
           <button
             type="button"
             onClick={() =>
-              toggleDropdown(item.label)
+              toggleDropdown(
+                item.label
+              )
             }
-            className="
+            className={`
               flex
               w-full
               items-center
@@ -512,12 +663,17 @@ const PillNav: React.FC<PillNavProps> = ({
               font-semibold
               uppercase
               tracking-wide
-              text-white
               transition
-              hover:bg-[#C9A45C]
-            "
+              ${
+                isActive
+                  ? "bg-[#C9A45C] text-white"
+                  : "text-white hover:bg-[#C9A45C] hover:text-white"
+              }
+            `}
           >
-            <span>{item.label}</span>
+            <span>
+              {item.label}
+            </span>
 
             <svg
               width="15"
@@ -529,7 +685,11 @@ const PillNav: React.FC<PillNavProps> = ({
               className={`
                 transition-transform
                 duration-200
-                ${isOpen ? "rotate-180" : ""}
+                ${
+                  isOpen
+                    ? "rotate-180"
+                    : ""
+                }
               `}
             >
               <path d="m6 9 6 6 6-6" />
@@ -539,29 +699,42 @@ const PillNav: React.FC<PillNavProps> = ({
           {isOpen && (
             <div className="ml-3 mt-1 border-l border-[#C9A45C]/40 pl-2">
               {item.children?.map(
-                (child) => (
-                  <Link
-                    key={child.href}
-                    href={child.href}
-                    className="
-                      block
-                      rounded-lg
-                      px-4
-                      py-2.5
-                      text-xs
-                      font-medium
-                      text-white/90
-                      transition
-                      hover:bg-[#C9A45C]
-                      hover:text-white
-                    "
-                    onClick={
-                      closeMobileMenu
-                    }
-                  >
-                    {child.label}
-                  </Link>
-                )
+                (child) => {
+                  const childActive =
+                    isPathActive(
+                      child.href
+                    );
+
+                  return (
+                    <Link
+                      key={
+                        child.href
+                      }
+                      href={
+                        child.href
+                      }
+                      className={`
+                        block
+                        rounded-lg
+                        px-4
+                        py-2.5
+                        text-xs
+                        font-medium
+                        transition
+                        ${
+                          childActive
+                            ? "bg-[#C9A45C] text-white"
+                            : "text-white/90 hover:bg-[#C9A45C] hover:text-white"
+                        }
+                      `}
+                      onClick={
+                        closeMobileMenu
+                      }
+                    >
+                      {child.label}
+                    </Link>
+                  );
+                }
               )}
             </div>
           )}
@@ -588,11 +761,15 @@ const PillNav: React.FC<PillNavProps> = ({
 
     return (
       <li key={item.href}>
-        {isNextLink(item.href) ? (
+        {isNextLink(
+          item.href
+        ) ? (
           <Link
             href={item.href}
             className={linkClass}
-            onClick={closeMobileMenu}
+            onClick={
+              closeMobileMenu
+            }
           >
             {item.label}
           </Link>
@@ -600,7 +777,9 @@ const PillNav: React.FC<PillNavProps> = ({
           <a
             href={item.href}
             className={linkClass}
-            onClick={closeMobileMenu}
+            onClick={
+              closeMobileMenu
+            }
           >
             {item.label}
           </a>
@@ -635,7 +814,8 @@ const PillNav: React.FC<PillNavProps> = ({
           shadow-[0_4px_20px_rgba(0,0,0,0.12)]
         "
         style={{
-          background: baseColor,
+          background:
+            baseColor,
         }}
       >
         <div
@@ -656,13 +836,19 @@ const PillNav: React.FC<PillNavProps> = ({
           {/* LOGO */}
           {/* ================================================== */}
 
-          {isNextLink(homeHref) ? (
+          {isNextLink(
+            homeHref
+          ) ? (
             <Link
               href={homeHref}
               aria-label="Home"
               ref={logoRef}
-              onMouseEnter={handleLogoEnter}
-              onMouseLeave={handleLogoLeave}
+              onMouseEnter={
+                handleLogoEnter
+              }
+              onMouseLeave={
+                handleLogoLeave
+              }
               className="
                 flex
                 h-[62px]
@@ -677,7 +863,9 @@ const PillNav: React.FC<PillNavProps> = ({
               "
             >
               <img
-                ref={logoImgRef}
+                ref={
+                  logoImgRef
+                }
                 src={LOGO_SRC}
                 alt="HR Realty International"
                 draggable={false}
@@ -695,8 +883,12 @@ const PillNav: React.FC<PillNavProps> = ({
               href={homeHref}
               aria-label="Home"
               ref={logoRef}
-              onMouseEnter={handleLogoEnter}
-              onMouseLeave={handleLogoLeave}
+              onMouseEnter={
+                handleLogoEnter
+              }
+              onMouseLeave={
+                handleLogoLeave
+              }
               className="
                 flex
                 h-[62px]
@@ -711,7 +903,9 @@ const PillNav: React.FC<PillNavProps> = ({
               "
             >
               <img
-                ref={logoImgRef}
+                ref={
+                  logoImgRef
+                }
                 src={LOGO_SRC}
                 alt="HR Realty International"
                 draggable={false}
@@ -731,7 +925,9 @@ const PillNav: React.FC<PillNavProps> = ({
           {/* ================================================== */}
 
           <div
-            ref={navItemsRef}
+            ref={
+              navItemsRef
+            }
             className="
               ml-auto
               hidden
@@ -755,9 +951,7 @@ const PillNav: React.FC<PillNavProps> = ({
                 renderDesktopItem
               )}
 
-              {/* ============================================ */}
               {/* CTA */}
-              {/* ============================================ */}
 
               <li className="ml-2">
                 <Link
@@ -793,11 +987,17 @@ const PillNav: React.FC<PillNavProps> = ({
           {/* ================================================== */}
 
           <button
-            ref={hamburgerRef}
+            ref={
+              hamburgerRef
+            }
             type="button"
-            onClick={toggleMobileMenu}
+            onClick={
+              toggleMobileMenu
+            }
             aria-label="Toggle navigation menu"
-            aria-expanded={isMobileMenuOpen}
+            aria-expanded={
+              isMobileMenuOpen
+            }
             className="
               ml-auto
               flex
@@ -844,7 +1044,9 @@ const PillNav: React.FC<PillNavProps> = ({
       {/* ==================================================== */}
 
       <div
-        ref={mobileMenuRef}
+        ref={
+          mobileMenuRef
+        }
         className="
           absolute
           left-3
@@ -872,7 +1074,9 @@ const PillNav: React.FC<PillNavProps> = ({
             p-0
           "
         >
-          {items.map(renderMobileItem)}
+          {items.map(
+            renderMobileItem
+          )}
 
           <li className="mt-1">
             <Link
@@ -890,7 +1094,9 @@ const PillNav: React.FC<PillNavProps> = ({
                 tracking-wide
                 text-white
               "
-              onClick={closeMobileMenu}
+              onClick={
+                closeMobileMenu
+              }
             >
               Book Your Site Visit
             </Link>
@@ -902,4 +1108,3 @@ const PillNav: React.FC<PillNavProps> = ({
 };
 
 export default PillNav;
-

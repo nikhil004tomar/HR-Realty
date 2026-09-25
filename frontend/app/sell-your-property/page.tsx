@@ -18,8 +18,24 @@ import {
 
 import { FormEvent, useState } from "react";
 
-export default function SellYourPropertyPage() {
-  const [propertyType, setPropertyType] = useState("");
+/* ============================================================
+   CURRENCY FORMATTER
+============================================================ */
+
+function formatIndianCurrency(value: number) {
+  if (!Number.isFinite(value)) {
+    return "";
+  }
+
+  return `₹${value.toLocaleString("en-IN")}`;
+}
+
+/* ============================================================
+   MAIN PAGE
+============================================================ */
+
+export default function SellYourLandPage() {
+  const [landType, setLandType] = useState("");
   const [naStatus, setNaStatus] = useState("");
   const [tp, setTp] = useState("");
 
@@ -30,7 +46,7 @@ export default function SellYourPropertyPage() {
     phone: "",
     email: "",
     location: "",
-    propertySize: "",
+    landSize: "",
     pricePerSqYard: "",
     expectedPrice: "",
     message: "",
@@ -49,10 +65,63 @@ export default function SellYourPropertyPage() {
   ) {
     const { name, value } = e.target;
 
-    setForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
+    let cleanValue = value;
+
+    /*
+     * Only allow numbers and decimal point
+     * for land size and price.
+     */
+    if (
+      name === "landSize" ||
+      name === "pricePerSqYard"
+    ) {
+      cleanValue = value
+        .replace(/,/g, "")
+        .replace(/[^\d.]/g, "");
+    }
+
+    setForm((previous) => {
+      const updatedForm = {
+        ...previous,
+        [name]: cleanValue,
+      };
+
+      /* ======================================================
+         AUTOMATIC TOTAL PRICE CALCULATION
+
+         Land Size × Price Per Sq. Yard
+      ====================================================== */
+
+      if (
+        name === "landSize" ||
+        name === "pricePerSqYard"
+      ) {
+        const landSize = parseFloat(
+          updatedForm.landSize
+        );
+
+        const pricePerSqYard = parseFloat(
+          updatedForm.pricePerSqYard
+        );
+
+        if (
+          Number.isFinite(landSize) &&
+          Number.isFinite(pricePerSqYard) &&
+          landSize > 0 &&
+          pricePerSqYard > 0
+        ) {
+          const totalPrice =
+            landSize * pricePerSqYard;
+
+          updatedForm.expectedPrice =
+            formatIndianCurrency(totalPrice);
+        } else {
+          updatedForm.expectedPrice = "";
+        }
+      }
+
+      return updatedForm;
+    });
 
     if (errors[name]) {
       setErrors((previous) => ({
@@ -66,32 +135,41 @@ export default function SellYourPropertyPage() {
      HANDLE SUBMIT
   ========================================================== */
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleSubmit(
+    e: FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
 
     const newErrors: Record<string, string> = {};
 
-    /* Required fields */
-
     if (!form.name.trim()) {
-      newErrors.name = "Please enter your name.";
+      newErrors.name =
+        "Please enter your name.";
     }
 
     if (!form.phone.trim()) {
-      newErrors.phone = "Please enter your phone number.";
+      newErrors.phone =
+        "Please enter your phone number.";
     }
 
     if (!form.location.trim()) {
-      newErrors.location = "Please enter the property location.";
+      newErrors.location =
+        "Please enter the land location.";
     }
 
-    if (!propertyType) {
-      newErrors.propertyType = "Please select a property type.";
+    if (!landType) {
+      newErrors.landType =
+        "Please select a land type.";
     }
 
-    if (!form.propertySize.trim()) {
-      newErrors.propertySize =
-        "Please enter the property size.";
+    if (!form.landSize.trim()) {
+      newErrors.landSize =
+        "Please enter the land size.";
+    }
+
+    if (!form.pricePerSqYard.trim()) {
+      newErrors.pricePerSqYard =
+        "Please enter the price per sq. yard.";
     }
 
     if (!naStatus) {
@@ -100,12 +178,16 @@ export default function SellYourPropertyPage() {
     }
 
     if (!tp) {
-      newErrors.tp = "Please select TP.";
+      newErrors.tp =
+        "Please select TP.";
     }
 
-    /* Phone validation */
+    /* ========================================================
+       PHONE VALIDATION
+    ======================================================== */
 
-    const phoneDigits = form.phone.replace(/\D/g, "");
+    const phoneDigits =
+      form.phone.replace(/\D/g, "");
 
     if (
       form.phone.trim() &&
@@ -115,34 +197,83 @@ export default function SellYourPropertyPage() {
         "Please enter a valid phone number.";
     }
 
-    if (Object.keys(newErrors).length > 0) {
+    /* ========================================================
+       PRICE VALIDATION
+    ======================================================== */
+
+    const landSize =
+      parseFloat(form.landSize);
+
+    const pricePerSqYard =
+      parseFloat(form.pricePerSqYard);
+
+    if (
+      form.landSize.trim() &&
+      (!Number.isFinite(landSize) ||
+        landSize <= 0)
+    ) {
+      newErrors.landSize =
+        "Please enter a valid land size.";
+    }
+
+    if (
+      form.pricePerSqYard.trim() &&
+      (!Number.isFinite(pricePerSqYard) ||
+        pricePerSqYard <= 0)
+    ) {
+      newErrors.pricePerSqYard =
+        "Please enter a valid price.";
+    }
+
+    /* ========================================================
+       STOP SUBMISSION IF ERRORS
+    ======================================================== */
+
+    if (
+      Object.keys(newErrors).length > 0
+    ) {
       setErrors(newErrors);
       return;
     }
 
-    /*
-     * ========================================================
-     * BACKEND INTEGRATION
-     * ========================================================
-     *
-     * Connect your FastAPI endpoint here later.
-     *
-     * Example:
-     *
-     * await api.post("/api/property-listings", {
-     *   ...form,
-     *   property_type: propertyType,
-     *   na_status: naStatus,
-     *   tp: tp,
-     * });
-     */
+    /* ========================================================
+       FINAL CALCULATION
+    ======================================================== */
 
-    console.log("Property Listing:", {
+    const calculatedTotal =
+      landSize * pricePerSqYard;
+
+    const calculatedExpectedPrice =
+      formatIndianCurrency(
+        calculatedTotal
+      );
+
+    /* ========================================================
+       BACKEND INTEGRATION
+
+       IMPORTANT:
+       The backend should recalculate this value
+       before saving the enquiry.
+    ======================================================== */
+
+    console.log("Land Listing:", {
       ...form,
-      property_type: propertyType,
+      expectedPrice:
+        calculatedExpectedPrice,
+      land_type: landType,
       na_status: naStatus,
-      tp: tp,
+      tp,
+      land_size_sq_yard: landSize,
+      price_per_sq_yard: pricePerSqYard,
+      calculated_total_price:
+        calculatedTotal,
     });
+
+    setForm((previous) => ({
+      ...previous,
+      expectedPrice:
+        calculatedExpectedPrice,
+    }));
 
     setFormSubmitted(true);
 
@@ -161,15 +292,14 @@ export default function SellYourPropertyPage() {
 
       <section className="relative overflow-hidden bg-[#043927]">
 
-        {/* Subtle grid */}
-
         <div className="pointer-events-none absolute inset-0 opacity-[0.035]">
           <div
             className="h-full w-full"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(255,255,255,.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.8) 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
+              backgroundSize:
+                "60px 60px",
             }}
           />
         </div>
@@ -191,7 +321,7 @@ export default function SellYourPropertyPage() {
               </div>
 
               <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Sell Your Property
+                Sell Your Land
 
                 <span className="mt-2 block text-[#C9A45C]">
                   With HR Realty
@@ -201,19 +331,21 @@ export default function SellYourPropertyPage() {
               <div className="mt-6 h-1 w-14 rounded-full bg-[#C9A45C]" />
 
               <p className="mt-6 max-w-2xl text-sm leading-7 text-white/75 sm:text-base sm:leading-8 lg:text-lg">
-                Have a plot, land, residential property or
-                commercial property to sell? Share your
-                property details with us and our team will
-                help connect you with the right opportunity.
+                Have land, a residential plot,
+                commercial land or an investment
+                parcel to sell? Share your land
+                details with us and our team will
+                help connect you with the right
+                opportunity.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
                 <a
-                  href="#property-form"
+                  href="#land-form"
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#C9A45C] px-6 py-3.5 text-sm font-semibold text-[#111111] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white"
                 >
-                  Submit Your Property
+                  Submit Your Land
 
                   <ArrowRight className="h-4 w-4" />
                 </a>
@@ -245,6 +377,7 @@ export default function SellYourPropertyPage() {
                     text: "Market Opportunity",
                   },
                 ].map((item) => {
+
                   const Icon = item.icon;
 
                   return (
@@ -252,6 +385,7 @@ export default function SellYourPropertyPage() {
                       key={item.text}
                       className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 transition-all duration-300 hover:border-[#C9A45C]/50"
                     >
+
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#C9A45C]/10 text-[#C9A45C]">
                         <Icon className="h-4 w-4" />
                       </div>
@@ -259,6 +393,7 @@ export default function SellYourPropertyPage() {
                       <span className="text-xs font-medium text-white/70">
                         {item.text}
                       </span>
+
                     </div>
                   );
                 })}
@@ -281,13 +416,13 @@ export default function SellYourPropertyPage() {
                     </div>
 
                     <span className="rounded-full bg-[#043927]/5 px-3 py-1 text-xs font-semibold text-[#043927]">
-                      Property Opportunity
+                      Land Opportunity
                     </span>
 
                   </div>
 
                   <p className="mt-8 text-sm text-gray-500">
-                    Your Property
+                    Your Land
                   </p>
 
                   <h2 className="mt-2 text-2xl font-bold leading-tight text-[#111111] sm:text-3xl">
@@ -303,19 +438,23 @@ export default function SellYourPropertyPage() {
                     {[
                       "Residential Plots",
                       "Agricultural Land",
-                      "Commercial Property",
+                      "Commercial Land",
                       "Investment Land",
                     ].map((item) => (
+
                       <div
                         key={item}
                         className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-all duration-300 hover:border-[#C9A45C]"
                       >
+
                         <CheckCircle2 className="h-4 w-4 shrink-0 text-[#C9A45C]" />
 
                         <span className="text-sm text-gray-600">
                           {item}
                         </span>
+
                       </div>
+
                     ))}
 
                   </div>
@@ -333,13 +472,15 @@ export default function SellYourPropertyPage() {
                   </div>
 
                   <div>
+
                     <p className="text-xs text-gray-500">
                       Simple & Transparent
                     </p>
 
                     <p className="text-sm font-bold text-[#111111]">
-                      Start Your Property Journey
+                      Start Your Land Journey
                     </p>
+
                   </div>
 
                 </div>
@@ -349,7 +490,6 @@ export default function SellYourPropertyPage() {
           </div>
         </div>
       </section>
-
 
       {/* ======================================================
           SUCCESS MESSAGE
@@ -367,13 +507,13 @@ export default function SellYourPropertyPage() {
               <div>
 
                 <h3 className="font-bold text-[#043927]">
-                  Property details submitted successfully!
+                  Land details submitted successfully!
                 </h3>
 
                 <p className="mt-1 text-sm text-green-800/70">
-                  Thank you for sharing your property details.
-                  Our team will review the information and contact
-                  you.
+                  Thank you for sharing your land
+                  details. Our team will review the
+                  information and contact you.
                 </p>
 
               </div>
@@ -382,13 +522,12 @@ export default function SellYourPropertyPage() {
         </section>
       )}
 
-
       {/* ======================================================
-          PROPERTY FORM
+          LAND FORM
       ======================================================= */}
 
       <section
-        id="property-form"
+        id="land-form"
         className="scroll-mt-20 bg-gray-50 py-16 sm:py-20 lg:py-24"
       >
 
@@ -396,9 +535,7 @@ export default function SellYourPropertyPage() {
 
           <div className="grid gap-10 lg:grid-cols-[1fr_360px] xl:gap-14">
 
-            {/* ==================================================
-                FORM
-            ================================================== */}
+            {/* FORM */}
 
             <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8 lg:p-10">
 
@@ -409,41 +546,39 @@ export default function SellYourPropertyPage() {
                   <span className="h-px w-8 bg-[#C9A45C]" />
 
                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
-                    Property Details
+                    Land Details
                   </span>
 
                 </div>
 
                 <h2 className="text-2xl font-bold tracking-tight text-[#111111] sm:text-3xl">
-                  Tell Us About Your Property
+                  Tell Us About Your Land
                 </h2>
 
                 <div className="mt-4 h-1 w-12 rounded-full bg-[#C9A45C]" />
 
                 <p className="mt-4 text-sm leading-6 text-gray-500 sm:text-base">
-                  Provide the property information below so our
-                  team can understand your property requirements.
+                  Provide the land information below
+                  so our team can understand your
+                  requirements.
                 </p>
 
               </div>
-
 
               <form
                 onSubmit={handleSubmit}
                 className="space-y-7"
               >
 
-                {/* ==================================================
-                    PROPERTY TYPE
-                ================================================== */}
+                {/* LAND TYPE */}
 
                 <div>
 
                   <label
-                    htmlFor="propertyType"
+                    htmlFor="landType"
                     className="mb-2 block text-sm font-semibold text-[#111111]"
                   >
-                    Property Type
+                    Land Type
 
                     <span className="ml-1 text-red-500">
                       *
@@ -453,29 +588,35 @@ export default function SellYourPropertyPage() {
                   <div className="relative">
 
                     <select
-                      id="propertyType"
-                      value={propertyType}
+                      id="landType"
+                      value={landType}
                       onChange={(e) => {
 
-                        setPropertyType(e.target.value);
+                        setLandType(
+                          e.target.value
+                        );
 
-                        if (errors.propertyType) {
-                          setErrors((previous) => ({
-                            ...previous,
-                            propertyType: "",
-                          }));
+                        if (
+                          errors.landType
+                        ) {
+                          setErrors(
+                            (previous) => ({
+                              ...previous,
+                              landType: "",
+                            })
+                          );
                         }
 
                       }}
                       className={`w-full appearance-none rounded-lg border bg-white px-4 py-3.5 pr-11 text-sm text-[#111111] outline-none transition focus:border-[#C9A45C] focus:ring-4 focus:ring-[#C9A45C]/10 ${
-                        errors.propertyType
+                        errors.landType
                           ? "border-red-400"
                           : "border-gray-200"
                       }`}
                     >
 
                       <option value="">
-                        Select property type
+                        Select land type
                       </option>
 
                       <option value="Residential Plot">
@@ -490,20 +631,20 @@ export default function SellYourPropertyPage() {
                         Agricultural Land
                       </option>
 
-                      <option value="Residential Property">
-                        Residential Property
+                      <option value="Residential Land">
+                        Residential Land
                       </option>
 
-                      <option value="Commercial Property">
-                        Commercial Property
+                      <option value="Commercial Land">
+                        Commercial Land
                       </option>
 
-                      <option value="Industrial Property">
-                        Industrial Property
+                      <option value="Industrial Land">
+                        Industrial Land
                       </option>
 
-                      <option value="Other">
-                        Other
+                      <option value="Other Land">
+                        Other Land
                       </option>
 
                     </select>
@@ -512,23 +653,20 @@ export default function SellYourPropertyPage() {
 
                   </div>
 
-                  {errors.propertyType && (
+                  {errors.landType && (
                     <p className="mt-1.5 text-xs text-red-500">
-                      {errors.propertyType}
+                      {errors.landType}
                     </p>
                   )}
 
                 </div>
 
-
-                {/* ==================================================
-                    LOCATION + PROPERTY SIZE
-                ================================================== */}
+                {/* LOCATION + LAND SIZE */}
 
                 <div className="grid gap-6 md:grid-cols-2">
 
                   <FormField
-                    label="Property Location"
+                    label="Land Location"
                     name="location"
                     placeholder="e.g. Dholera SIR, Gujarat"
                     value={form.location}
@@ -539,53 +677,76 @@ export default function SellYourPropertyPage() {
                   />
 
                   <FormField
-                    label="Property Size (Sq. Yard)"
-                    name="propertySize"
-                    placeholder="e.g. 500 sq. yard"
-                    value={form.propertySize}
+                    label="Land Size (Sq. Yard)"
+                    name="landSize"
+                    type="number"
+                    placeholder="e.g. 500"
+                    value={form.landSize}
                     onChange={handleChange}
                     icon={LandPlot}
                     required
-                    error={errors.propertySize}
+                    error={errors.landSize}
                   />
 
                 </div>
 
-
-                {/* ==================================================
-                    PRICE PER SQ YARD + EXPECTED PRICE
-                ================================================== */}
+                {/* PRICE */}
 
                 <div className="grid gap-6 md:grid-cols-2">
 
                   <FormField
                     label="Price Per Sq. Yard"
                     name="pricePerSqYard"
-                    placeholder="e.g. ₹12,000"
+                    type="number"
+                    placeholder="e.g. 12000"
                     value={form.pricePerSqYard}
                     onChange={handleChange}
                     icon={TrendingUp}
+                    required
+                    error={errors.pricePerSqYard}
                   />
 
-                  <FormField
-                    label="Expected Total Price"
-                    name="expectedPrice"
-                    placeholder="e.g. ₹60,00,000"
-                    value={form.expectedPrice}
-                    onChange={handleChange}
-                    icon={TrendingUp}
-                  />
+                  {/* =================================================
+                      AUTOMATIC EXPECTED TOTAL PRICE
+                  ================================================== */}
+
+                  <div>
+
+                    <label
+                      htmlFor="expectedPrice"
+                      className="mb-2 block text-sm font-semibold text-[#111111]"
+                    >
+                      Expected Total Price
+                    </label>
+
+                    <div className="relative">
+
+                      <TrendingUp className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#043927]" />
+
+                      <input
+                        id="expectedPrice"
+                        name="expectedPrice"
+                        type="text"
+                        value={form.expectedPrice}
+                        readOnly
+                        placeholder="Calculated automatically"
+                        className="w-full rounded-lg border border-[#C9A45C]/40 bg-[#fafaf8] py-3.5 pl-11 pr-4 text-sm font-semibold text-[#043927] outline-none"
+                      />
+
+                    </div>
+
+                    <p className="mt-1.5 text-xs text-gray-400">
+                      Automatically calculated from
+                      land size × price per sq. yard.
+                    </p>
+
+                  </div>
 
                 </div>
 
-
-                {/* ==================================================
-                    NA STATUS + TP
-                ================================================== */}
+                {/* NA STATUS + TP */}
 
                 <div className="grid gap-6 md:grid-cols-2">
-
-                  {/* NA STATUS */}
 
                   <SelectField
                     label="NA Status"
@@ -596,28 +757,30 @@ export default function SellYourPropertyPage() {
 
                       setNaStatus(value);
 
-                      if (errors.naStatus) {
-                        setErrors((previous) => ({
-                          ...previous,
-                          naStatus: "",
-                        }));
+                      if (
+                        errors.naStatus
+                      ) {
+                        setErrors(
+                          (previous) => ({
+                            ...previous,
+                            naStatus: "",
+                          })
+                        );
                       }
 
                     }}
                     options={[
                       {
-                        value: "Done",
-                        label: "Done",
+                        value: "Applied",
+                        label: "Applied",
                       },
                       {
-                        value: "Not Done",
-                        label: "Not Done",
+                        value: "Ready",
+                        label: "Ready",
                       },
                     ]}
                     placeholder="Select NA Status"
                   />
-
-                  {/* TP */}
 
                   <SelectField
                     label="TP"
@@ -629,10 +792,12 @@ export default function SellYourPropertyPage() {
                       setTp(value);
 
                       if (errors.tp) {
-                        setErrors((previous) => ({
-                          ...previous,
-                          tp: "",
-                        }));
+                        setErrors(
+                          (previous) => ({
+                            ...previous,
+                            tp: "",
+                          })
+                        );
                       }
 
                     }}
@@ -671,10 +836,7 @@ export default function SellYourPropertyPage() {
 
                 </div>
 
-
-                {/* ==================================================
-                    CONTACT DETAILS
-                ================================================== */}
+                {/* CONTACT DETAILS */}
 
                 <div className="border-t border-gray-100 pt-7">
 
@@ -695,12 +857,11 @@ export default function SellYourPropertyPage() {
                     </h3>
 
                     <p className="mt-1 text-sm text-gray-500">
-                      So our team can contact you regarding your
-                      property.
+                      So our team can contact you
+                      regarding your land.
                     </p>
 
                   </div>
-
 
                   <div className="grid gap-6 md:grid-cols-2">
 
@@ -741,10 +902,7 @@ export default function SellYourPropertyPage() {
 
                 </div>
 
-
-                {/* ==================================================
-                    MESSAGE
-                ================================================== */}
+                {/* MESSAGE */}
 
                 <div>
 
@@ -761,16 +919,13 @@ export default function SellYourPropertyPage() {
                     rows={5}
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Tell us anything important about your property..."
+                    placeholder="Tell us anything important about your land..."
                     className="w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3.5 text-sm text-[#111111] outline-none transition placeholder:text-gray-400 focus:border-[#C9A45C] focus:ring-4 focus:ring-[#C9A45C]/10"
                   />
 
                 </div>
 
-
-                {/* ==================================================
-                    SUBMIT
-                ================================================== */}
+                {/* SUBMIT */}
 
                 <div className="pt-2">
 
@@ -778,15 +933,15 @@ export default function SellYourPropertyPage() {
                     type="submit"
                     className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#043927] px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#032d20] sm:w-auto"
                   >
-                    Submit Property Details
+                    Submit Land Details
 
                     <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </button>
 
                   <p className="mt-3 text-xs leading-5 text-gray-400">
-                    By submitting this form, you agree to be
-                    contacted by HR Realty regarding your property
-                    enquiry.
+                    By submitting this form, you agree
+                    to be contacted by HR Realty
+                    regarding your land enquiry.
                   </p>
 
                 </div>
@@ -794,10 +949,7 @@ export default function SellYourPropertyPage() {
               </form>
             </div>
 
-
-            {/* ==================================================
-                SIDEBAR
-            ================================================== */}
+            {/* SIDEBAR */}
 
             <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
 
@@ -816,34 +968,38 @@ export default function SellYourPropertyPage() {
                 <div className="mt-3 h-1 w-10 rounded-full bg-[#C9A45C]" />
 
                 <p className="mt-4 text-sm leading-6 text-white/65">
-                  Get professional assistance throughout your
-                  property selling journey.
+                  Get professional assistance
+                  throughout your land selling
+                  journey.
                 </p>
 
                 <div className="mt-6 space-y-4">
 
                   {[
-                    "Professional property guidance",
+                    "Professional land guidance",
                     "Better market visibility",
                     "Dedicated assistance",
                     "Transparent communication",
-                    "Property-specific consultation",
+                    "Land-specific consultation",
                   ].map((item) => (
+
                     <div
                       key={item}
                       className="flex items-start gap-3"
                     >
+
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#C9A45C]" />
 
                       <span className="text-sm text-white/75">
                         {item}
                       </span>
+
                     </div>
+
                   ))}
 
                 </div>
               </div>
-
 
               {/* TALK TO TEAM */}
 
@@ -858,8 +1014,9 @@ export default function SellYourPropertyPage() {
                 </h3>
 
                 <p className="mt-2 text-sm leading-6 text-gray-500">
-                  Our team is available to discuss your property
-                  and understand your requirements.
+                  Our team is available to discuss
+                  your land and understand your
+                  requirements.
                 </p>
 
                 <a
@@ -877,7 +1034,6 @@ export default function SellYourPropertyPage() {
           </div>
         </div>
       </section>
-
 
       {/* ======================================================
           HOW IT WORKS
@@ -911,16 +1067,13 @@ export default function SellYourPropertyPage() {
             <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
 
             <p className="mt-5 text-sm leading-7 text-gray-500 sm:text-base">
-              A simple way to introduce your property to our
-              team.
+              A simple way to introduce your land to
+              our team.
             </p>
 
           </div>
 
-
           <div className="relative mt-12 grid gap-6 md:grid-cols-3 lg:gap-8">
-
-            {/* Connecting line */}
 
             <div className="absolute left-[16.66%] right-[16.66%] top-10 hidden h-px bg-gray-200 md:block" />
 
@@ -930,21 +1083,21 @@ export default function SellYourPropertyPage() {
                 icon: Send,
                 title: "Share Details",
                 description:
-                  "Tell us about your property, location, size and expected price.",
+                  "Tell us about your land, location, size and expected price.",
               },
               {
                 number: "02",
                 icon: MessageSquare,
                 title: "Our Team Connects",
                 description:
-                  "Our property team reviews your information and gets in touch.",
+                  "Our land team reviews your information and gets in touch.",
               },
               {
                 number: "03",
                 icon: CheckCircle2,
                 title: "Move Forward",
                 description:
-                  "Discuss the opportunity and decide the next step for your property.",
+                  "Discuss the opportunity and decide the next step for your land.",
               },
             ].map((step) => {
 
@@ -980,9 +1133,8 @@ export default function SellYourPropertyPage() {
         </div>
       </section>
 
-
       {/* ======================================================
-          PROPERTY TYPES
+          LAND TYPES
       ======================================================= */}
 
       <section className="bg-gray-50 py-16 sm:py-20">
@@ -998,35 +1150,35 @@ export default function SellYourPropertyPage() {
                 <span className="h-px w-8 bg-[#C9A45C]" />
 
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
-                  Property Categories
+                  Land Categories
                 </span>
 
               </div>
 
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#111111] sm:text-4xl">
-                Have a Property to Sell?
+                Have Land to Sell?
               </h2>
 
               <div className="mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
 
               <p className="mt-5 max-w-xl text-sm leading-7 text-gray-500 sm:text-base">
-                Whether you own land, a residential plot,
-                commercial property or another real-estate asset,
-                share your details with HR Realty and let our team
-                understand your property.
+                Whether you own land, a residential
+                plot, commercial land or another
+                real-estate parcel, share your details
+                with HR Realty and let our team
+                understand your land.
               </p>
 
               <a
-                href="#property-form"
+                href="#land-form"
                 className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#043927] px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#032d20]"
               >
-                Submit Your Property
+                Submit Your Land
 
                 <ArrowRight className="h-4 w-4" />
               </a>
 
             </div>
-
 
             <div className="grid grid-cols-2 gap-4 sm:gap-5">
 
@@ -1038,18 +1190,18 @@ export default function SellYourPropertyPage() {
                 },
                 {
                   icon: Home,
-                  title: "Residential",
-                  text: "Homes & residential assets",
+                  title: "Residential Land",
+                  text: "Residential land opportunities",
                 },
                 {
                   icon: Building2,
-                  title: "Commercial",
-                  text: "Commercial opportunities",
+                  title: "Commercial Land",
+                  text: "Commercial land opportunities",
                 },
                 {
                   icon: TrendingUp,
                   title: "Investment Land",
-                  text: "Land & investment properties",
+                  text: "Land & investment opportunities",
                 },
               ].map((item) => {
 
@@ -1082,7 +1234,6 @@ export default function SellYourPropertyPage() {
         </div>
       </section>
 
-
       {/* ======================================================
           FINAL CTA
       ======================================================= */}
@@ -1096,21 +1247,22 @@ export default function SellYourPropertyPage() {
           </div>
 
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Ready to Sell Your Property?
+            Ready to Sell Your Land?
           </h2>
 
           <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
 
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/65 sm:text-base">
-            Share your property details with HR Realty and take
-            the first step toward your next real-estate opportunity.
+            Share your land details with HR Realty
+            and take the first step toward your
+            next real-estate opportunity.
           </p>
 
           <a
-            href="#property-form"
+            href="#land-form"
             className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#C9A45C] px-7 py-4 text-sm font-semibold text-[#111111] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white"
           >
-            Submit Property Details
+            Submit Land Details
 
             <ArrowRight className="h-4 w-4" />
           </a>
@@ -1121,7 +1273,6 @@ export default function SellYourPropertyPage() {
     </main>
   );
 }
-
 
 /* ============================================================
    FORM FIELD COMPONENT
@@ -1196,7 +1347,6 @@ function FormField({
   );
 }
 
-
 /* ============================================================
    SELECT FIELD COMPONENT
 ============================================================ */
@@ -1240,7 +1390,9 @@ function SelectField({
 
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+            onChange(e.target.value)
+          }
           className={`w-full appearance-none rounded-lg border bg-white px-4 py-3.5 pr-11 text-sm text-[#111111] outline-none transition focus:border-[#C9A45C] focus:ring-4 focus:ring-[#C9A45C]/10 ${
             error
               ? "border-red-400"
@@ -1276,7 +1428,6 @@ function SelectField({
     </div>
   );
 }
-
 
 /* ============================================================
    USER ICON

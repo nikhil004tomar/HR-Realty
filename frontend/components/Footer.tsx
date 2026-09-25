@@ -4,6 +4,7 @@ import {
   FaFacebookF,
   FaInstagram,
   FaYoutube,
+  FaTwitter,
 } from "react-icons/fa";
 export default function Footer() {
   return (
@@ -124,6 +125,25 @@ export default function Footer() {
                   "
                 >
                   <FaYoutube size={17} />                </a>
+                  {/* YouTube */}
+                <a
+                  href="https://x.com/HRREALTYT"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                  className="
+                    flex h-10 w-10 items-center justify-center
+                    rounded-full
+                    border border-white/15
+                    text-white/70
+                    transition-all duration-300
+                    hover:-translate-y-1
+                    hover:border-[#C9A45C]
+                    hover:bg-[#C9A45C]
+                    hover:text-[#043927]
+                  "
+                >
+                  <FaTwitter size={17} />                </a>
 
               </div>
             </div>

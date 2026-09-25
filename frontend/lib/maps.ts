@@ -1,11 +1,11 @@
 const API_URL =
   typeof window === "undefined"
-    ? process.env.INTERNAL_API_URL || "http://127.0.0.1:8000"
-    : process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    ? process.env.INTERNAL_API_URL || "http://backend:8000"
+    : process.env.NEXT_PUBLIC_API_URL || "https://api.thehrrealty.com";
 
 const PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000";
+  "https://api.thehrrealty.com";
 
 export interface SiteMap {
   id: number;
@@ -29,9 +29,8 @@ export function getMapImageUrl(
     return "/Location_Map_DMC-3.jpg";
   }
 
-  // If backend accidentally returns
-  // the internal Docker hostname,
-  // convert it to the public/local API URL.
+  // If backend returns the internal Docker hostname,
+  // convert it to the public API URL.
   if (imageUrl.includes("backend:8000")) {
     return imageUrl.replace(
       "http://backend:8000",
@@ -78,10 +77,7 @@ export async function getMaps(): Promise<SiteMap[]> {
 
     return data;
   } catch (error) {
-    console.error(
-      "Maps API error:",
-      error
-    );
+    console.error("Maps API error:", error);
 
     return [];
   }
