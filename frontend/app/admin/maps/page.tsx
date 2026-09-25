@@ -20,6 +20,7 @@ import {
 
 import { getToken } from "@/lib/auth";
 import { apiRequest } from "@/lib/api-client";
+import API_URL from "@/lib/api";
 
 interface SiteMap {
   id: number;
@@ -39,23 +40,30 @@ interface MapForm {
   is_published: boolean;
 }
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000";
+// ==========================================================
+// IMAGE URL
+// ==========================================================
 
-function getImageUrl(
-  image?: string | null
-): string {
+function getImageUrl(image?: string | null): string {
   if (!image) {
     return "/Location_Map_DMC-3.jpg";
   }
 
-  if (image.startsWith("http://") || image.startsWith("https://")) {
+  // Already a complete URL
+  if (
+    image.startsWith("http://") ||
+    image.startsWith("https://")
+  ) {
     return image;
   }
 
+  // Relative backend upload path
   return `${API_URL}${image}`;
 }
+
+// ==========================================================
+// ADMIN MAPS PAGE
+// ==========================================================
 
 export default function AdminMapsPage() {
   const router = useRouter();
@@ -63,19 +71,17 @@ export default function AdminMapsPage() {
   const [maps, setMaps] = useState<SiteMap[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [showModal, setShowModal] =
-    useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const [editingMap, setEditingMap] =
     useState<SiteMap | null>(null);
 
-  const [form, setForm] =
-    useState<MapForm>({
-      title: "",
-      description: "",
-      display_order: 0,
-      is_published: true,
-    });
+  const [form, setForm] = useState<MapForm>({
+    title: "",
+    description: "",
+    display_order: 0,
+    is_published: true,
+  });
 
   const [selectedFile, setSelectedFile] =
     useState<File | null>(null);
@@ -83,17 +89,11 @@ export default function AdminMapsPage() {
   const [previewUrl, setPreviewUrl] =
     useState<string | null>(null);
 
-  const [saving, setSaving] =
-    useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const [uploading, setUploading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // ==========================================================
   // AUTH
@@ -121,30 +121,20 @@ export default function AdminMapsPage() {
       setLoading(true);
       setError("");
 
-      const data =
-        await apiRequest<SiteMap[]>(
-          "/api/maps/admin",
-          {
-            authenticated: true,
-          }
-        );
-
-      setMaps(
-        Array.isArray(data)
-          ? data
-          : []
+      const data = await apiRequest<SiteMap[]>(
+        "/api/maps/admin",
+        {
+          authenticated: true,
+        }
       );
 
+      setMaps(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(
-        "Failed to load maps:",
-        err
-      );
+      console.error("Failed to load maps:", err);
 
       setError(
         "Failed to load maps. Please try again."
       );
-
     } finally {
       setLoading(false);
     }
@@ -196,10 +186,9 @@ export default function AdminMapsPage() {
     });
 
     setSelectedFile(null);
+
     setPreviewUrl(
-      map.image
-        ? getImageUrl(map.image)
-        : null
+      map.image ? getImageUrl(map.image) : null
     );
 
     setError("");
@@ -224,8 +213,7 @@ export default function AdminMapsPage() {
   function handleFileChange(
     event: React.ChangeEvent<HTMLInputElement>
   ) {
-    const file =
-      event.target.files?.[0];
+    const file = event.target.files?.[0];
 
     if (!file) return;
 
@@ -245,8 +233,7 @@ export default function AdminMapsPage() {
       return;
     }
 
-    const maxSize =
-      15 * 1024 * 1024;
+    const maxSize = 15 * 1024 * 1024;
 
     if (file.size > maxSize) {
       setError(
@@ -260,8 +247,7 @@ export default function AdminMapsPage() {
     setError("");
     setSelectedFile(file);
 
-    const objectUrl =
-      URL.createObjectURL(file);
+    const objectUrl = URL.createObjectURL(file);
 
     setPreviewUrl(objectUrl);
   }
@@ -289,80 +275,92 @@ export default function AdminMapsPage() {
 
       let savedMap: SiteMap;
 
-      if (editingMap) {
-        savedMap =
-          await apiRequest<SiteMap>(
-            `/api/maps/${editingMap.id}`,
-            {
-              method: "PATCH",
-              authenticated: true,
-              body: {
-                title: form.title.trim(),
-                description:
-                  form.description.trim() ||
-                  null,
-                display_order:
-                  Number(form.display_order) || 0,
-                is_published:
-                  form.is_published,
-              },
-            }
-          );
+      // ======================================================
+      // UPDATE EXISTING MAP
+      // ======================================================
 
-      } else {
-        savedMap =
-          await apiRequest<SiteMap>(
-            "/api/maps",
-            {
-              method: "POST",
-              authenticated: true,
-              body: {
-                title: form.title.trim(),
-                description:
-                  form.description.trim() ||
-                  null,
-                display_order:
-                  Number(form.display_order) || 0,
-                is_published:
-                  form.is_published,
-              },
-            }
-          );
+      if (editingMap) {
+        savedMap = await apiRequest<SiteMap>(
+          `/api/maps/${editingMap.id}`,
+          {
+            method: "PATCH",
+            authenticated: true,
+            body: {
+              title: form.title.trim(),
+              description:
+                form.description.trim() || null,
+              display_order:
+                Number(form.display_order) || 0,
+              is_published: form.is_published,
+            },
+          }
+        );
       }
 
-      // ------------------------------------------------------
+      // ======================================================
+      // CREATE NEW MAP
+      // ======================================================
+
+      else {
+        savedMap = await apiRequest<SiteMap>(
+          "/api/maps",
+          {
+            method: "POST",
+            authenticated: true,
+            body: {
+              title: form.title.trim(),
+              description:
+                form.description.trim() || null,
+              display_order:
+                Number(form.display_order) || 0,
+              is_published: form.is_published,
+            },
+          }
+        );
+      }
+
+      // ======================================================
       // UPLOAD IMAGE
-      // ------------------------------------------------------
+      // ======================================================
 
       if (selectedFile) {
         setUploading(true);
 
-        const formData =
-          new FormData();
+        const formData = new FormData();
 
-        formData.append(
-          "file",
-          selectedFile
-        );
+        formData.append("file", selectedFile);
 
         const token = getToken();
 
-        const response =
-          await fetch(
-            `${API_URL}/api/maps/${savedMap.id}/image`,
-            {
-              method: "POST",
-              headers: {
-                Authorization:
-                  `Bearer ${token}`,
-              },
-              body: formData,
-            }
+        if (!token) {
+          throw new Error(
+            "Authentication token is missing."
           );
+        }
+
+        const imageUploadUrl =
+          `${API_URL}/api/maps/${savedMap.id}/image`;
+
+        console.log(
+          "Uploading map image to:",
+          imageUploadUrl
+        );
+
+        const response = await fetch(
+          imageUploadUrl,
+          {
+            method: "POST",
+
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+
+            body: formData,
+          }
+        );
 
         if (!response.ok) {
-          const text =
-            await response.text();
+          const text = await response.text();
 
           throw new Error(
             text ||
@@ -371,6 +369,10 @@ export default function AdminMapsPage() {
         }
       }
 
+      // ======================================================
+      // SUCCESS
+      // ======================================================
+
       setSuccess(
         editingMap
           ? "Map updated successfully."
@@ -378,10 +380,10 @@ export default function AdminMapsPage() {
       );
 
       setShowModal(false);
+
       resetForm();
 
       await loadMaps();
-
     } catch (err) {
       console.error(
         "Map save error:",
@@ -393,7 +395,6 @@ export default function AdminMapsPage() {
           ? err.message
           : "Failed to save map."
       );
-
     } finally {
       setSaving(false);
       setUploading(false);
@@ -432,7 +433,6 @@ export default function AdminMapsPage() {
       );
 
       await loadMaps();
-
     } catch (err) {
       console.error(
         "Publish toggle error:",
@@ -454,10 +454,9 @@ export default function AdminMapsPage() {
   ) {
     if (!checkAuth()) return;
 
-    const confirmed =
-      window.confirm(
-        `Are you sure you want to delete "${map.title}"?`
-      );
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${map.title}"?`
+    );
 
     if (!confirmed) return;
 
@@ -478,7 +477,6 @@ export default function AdminMapsPage() {
       );
 
       await loadMaps();
-
     } catch (err) {
       console.error(
         "Delete map error:",
@@ -500,10 +498,9 @@ export default function AdminMapsPage() {
   ) {
     if (!checkAuth()) return;
 
-    const confirmed =
-      window.confirm(
-        "Remove this map image?"
-      );
+    const confirmed = window.confirm(
+      "Remove this map image?"
+    );
 
     if (!confirmed) return;
 
@@ -524,7 +521,6 @@ export default function AdminMapsPage() {
       );
 
       await loadMaps();
-
     } catch (err) {
       console.error(
         "Remove image error:",
@@ -544,9 +540,7 @@ export default function AdminMapsPage() {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gray-100">
-
         <div className="text-center">
-
           <RefreshCw
             size={35}
             className="mx-auto animate-spin text-[#043927]"
@@ -555,9 +549,7 @@ export default function AdminMapsPage() {
           <p className="mt-4 text-gray-600">
             Loading maps...
           </p>
-
         </div>
-
       </main>
     );
   }
@@ -574,7 +566,6 @@ export default function AdminMapsPage() {
       ===================================================== */}
 
       <header className="border-b bg-white">
-
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
 
           <div className="flex items-center gap-4">
@@ -590,7 +581,6 @@ export default function AdminMapsPage() {
             </button>
 
             <div>
-
               <h1 className="text-xl font-bold text-gray-900">
                 Maps
               </h1>
@@ -598,7 +588,6 @@ export default function AdminMapsPage() {
               <p className="text-xs text-gray-500">
                 Manage website maps
               </p>
-
             </div>
 
           </div>
@@ -612,7 +601,6 @@ export default function AdminMapsPage() {
           </button>
 
         </div>
-
       </header>
 
       {/* =====================================================
@@ -625,11 +613,8 @@ export default function AdminMapsPage() {
 
         {success && (
           <div className="mb-6 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-
             <CheckCircle2 size={19} />
-
             {success}
-
           </div>
         )}
 
@@ -647,12 +632,10 @@ export default function AdminMapsPage() {
           <div className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center shadow-sm">
 
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#043927]/5">
-
               <MapPinned
                 size={30}
                 className="text-[#043927]"
               />
-
             </div>
 
             <h2 className="mt-5 text-xl font-bold text-gray-900">
@@ -660,8 +643,8 @@ export default function AdminMapsPage() {
             </h2>
 
             <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">
-              Add your first Dholera map to display it
-              on the website.
+              Add your first Dholera map to
+              display it on the website.
             </p>
 
             <button
@@ -681,7 +664,6 @@ export default function AdminMapsPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
             {maps.map((map) => (
-
               <div
                 key={map.id}
                 className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
@@ -805,7 +787,6 @@ export default function AdminMapsPage() {
                 </div>
 
               </div>
-
             ))}
 
           </div>
@@ -993,7 +974,8 @@ export default function AdminMapsPage() {
                 />
 
                 <p className="mt-2 text-xs text-gray-500">
-                  JPG, PNG, WEBP or AVIF. Maximum 15MB.
+                  JPG, PNG, WEBP or AVIF.
+                  Maximum 15MB.
                 </p>
 
                 {/* PREVIEW */}
