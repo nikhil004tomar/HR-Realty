@@ -217,7 +217,7 @@ export default function DholeraSIRMap() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
 
               <Link
-                href="/dholera-sir"
+                href="/dholera-sir/maps"
                 className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#043927] px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:bg-[#111111] sm:w-auto"
               >
 

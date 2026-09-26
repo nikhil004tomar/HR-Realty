@@ -68,7 +68,7 @@ export default function Footer() {
 
                 {/* Facebook */}
                 <a
-                  href="https://www.facebook.com/profile.php?id=61592479960484"
+                  href="https://www.facebook.com/profile.php?id=61592553636902"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -108,7 +108,7 @@ export default function Footer() {
 
                 {/* YouTube */}
                 <a
-                  href="https://www.youtube.com/"
+                  href="https://www.youtube.com/@HRREALTYGROUP"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"

@@ -1,16 +1,16 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+import API_URL from "@/lib/api";
 
 export default function InquiryForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     setLoading(true);
@@ -37,7 +37,10 @@ export default function InquiryForm() {
         formData.get("message") || ""
       ).trim();
 
-      // Validation
+      /* =====================================================
+         VALIDATION
+      ===================================================== */
+
       if (!name) {
         throw new Error("Please enter your name.");
       }
@@ -47,7 +50,9 @@ export default function InquiryForm() {
       }
 
       if (!phone) {
-        throw new Error("Please enter your phone number.");
+        throw new Error(
+          "Please enter your phone number."
+        );
       }
 
       if (!/^\d{10}$/.test(phone)) {
@@ -56,7 +61,10 @@ export default function InquiryForm() {
         );
       }
 
-      // Backend payload
+      /* =====================================================
+         BACKEND PAYLOAD
+      ===================================================== */
+
       const payload = {
         project_id: null,
         name,
@@ -66,7 +74,10 @@ export default function InquiryForm() {
         message: message || null,
       };
 
-      // Submit
+      /* =====================================================
+         SUBMIT INQUIRY
+      ===================================================== */
+
       const response = await fetch(
         `${API_URL}/api/inquiries`,
         {
@@ -79,7 +90,17 @@ export default function InquiryForm() {
         }
       );
 
-      const data = await response.json();
+      /* =====================================================
+         HANDLE RESPONSE
+      ===================================================== */
+
+      let data: any = null;
+
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
       if (!response.ok) {
         console.error(
@@ -89,20 +110,35 @@ export default function InquiryForm() {
         );
 
         throw new Error(
-          data.detail || "Unable to submit your inquiry."
+          data?.detail ||
+            data?.message ||
+            "Unable to submit your inquiry."
         );
       }
 
+      /* =====================================================
+         SUCCESS
+      ===================================================== */
+
       setSubmitted(true);
+      setError("");
+
       form.reset();
+
     } catch (error) {
-      console.error("Inquiry submission error:", error);
+      console.error(
+        "Inquiry submission error:",
+        error
+      );
+
+      setSubmitted(false);
 
       setError(
         error instanceof Error
           ? error.message
           : "Unable to submit your inquiry."
       );
+
     } finally {
       setLoading(false);
     }
@@ -117,8 +153,13 @@ export default function InquiryForm() {
 
         <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-20">
 
-          {/* LEFT SIDE */}
+          {/* =================================================
+              LEFT SIDE
+          ================================================= */}
+
           <div className="transition-all duration-500">
+
+            {/* Small Label */}
 
             <div className="mb-5 flex items-center gap-3">
               <span className="h-px w-10 bg-[#C9A45C]" />
@@ -128,6 +169,8 @@ export default function InquiryForm() {
               </span>
             </div>
 
+            {/* Heading */}
+
             <h2 className="text-4xl font-bold leading-tight tracking-tight text-[#111111] sm:text-5xl lg:text-6xl">
               Inquire{" "}
               <span className="text-[#043927]">
@@ -135,7 +178,11 @@ export default function InquiryForm() {
               </span>
             </h2>
 
+            {/* Gold Accent */}
+
             <div className="mt-5 h-1 w-16 rounded-full bg-[#C9A45C]" />
+
+            {/* Description */}
 
             <p className="mt-6 max-w-md text-sm leading-7 text-black/60 sm:text-base">
               Have questions about our properties?
@@ -143,8 +190,13 @@ export default function InquiryForm() {
               get in touch with you shortly.
             </p>
 
-            {/* FEATURES */}
+            {/* =================================================
+                FEATURES
+            ================================================= */}
+
             <div className="mt-8 space-y-4">
+
+              {/* Feature 1 */}
 
               <div className="flex items-center gap-3">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
@@ -156,6 +208,8 @@ export default function InquiryForm() {
                 </span>
               </div>
 
+              {/* Feature 2 */}
+
               <div className="flex items-center gap-3">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
                   ✓
@@ -165,6 +219,8 @@ export default function InquiryForm() {
                   Site visit assistance
                 </span>
               </div>
+
+              {/* Feature 3 */}
 
               <div className="flex items-center gap-3">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#043927] text-sm text-white">
@@ -179,8 +235,10 @@ export default function InquiryForm() {
             </div>
           </div>
 
+          {/* =================================================
+              RIGHT SIDE - FORM
+          ================================================= */}
 
-          {/* RIGHT SIDE - FORM */}
           <div
             className="
               rounded-2xl
@@ -197,7 +255,10 @@ export default function InquiryForm() {
             "
           >
 
+            {/* Form Header */}
+
             <div className="mb-8">
+
               <h3 className="text-2xl font-semibold text-[#111111]">
                 Send Us Your Inquiry
               </h3>
@@ -206,10 +267,13 @@ export default function InquiryForm() {
                 Fill in the details below and our team
                 will contact you.
               </p>
+
             </div>
 
+            {/* =================================================
+                SUCCESS MESSAGE
+            ================================================= */}
 
-            {/* SUCCESS */}
             {submitted && (
               <div className="mb-6 rounded-lg border border-[#043927]/20 bg-[#043927]/5 px-4 py-3 text-sm text-[#043927]">
                 ✓ Your inquiry has been submitted
@@ -218,14 +282,19 @@ export default function InquiryForm() {
               </div>
             )}
 
+            {/* =================================================
+                ERROR MESSAGE
+            ================================================= */}
 
-            {/* ERROR */}
             {error && (
               <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                 {error}
               </div>
             )}
 
+            {/* =================================================
+                FORM
+            ================================================= */}
 
             <form
               id="header_inquiry_form"
@@ -235,8 +304,12 @@ export default function InquiryForm() {
 
               <div className="grid gap-6 sm:grid-cols-2">
 
-                {/* NAME */}
+                {/* =================================================
+                    NAME
+                ================================================= */}
+
                 <div>
+
                   <label
                     htmlFor="name"
                     className="mb-2 block text-sm font-medium text-[#111111]"
@@ -270,11 +343,15 @@ export default function InquiryForm() {
                       focus:ring-[#043927]/10
                     "
                   />
+
                 </div>
 
+                {/* =================================================
+                    EMAIL
+                ================================================= */}
 
-                {/* EMAIL */}
                 <div>
+
                   <label
                     htmlFor="email_address"
                     className="mb-2 block text-sm font-medium text-[#111111]"
@@ -308,10 +385,13 @@ export default function InquiryForm() {
                       focus:ring-[#043927]/10
                     "
                   />
+
                 </div>
 
+                {/* =================================================
+                    PHONE
+                ================================================= */}
 
-                {/* PHONE */}
                 <div className="sm:col-span-2">
 
                   <label
@@ -323,7 +403,8 @@ export default function InquiryForm() {
 
                   <div className="flex">
 
-                    {/* COUNTRY CODE */}
+                    {/* Country Code */}
+
                     <div
                       className="
                         flex
@@ -343,8 +424,8 @@ export default function InquiryForm() {
                       <span>+91</span>
                     </div>
 
+                    {/* Phone */}
 
-                    {/* PHONE */}
                     <input
                       id="client_contact_no"
                       type="tel"
@@ -377,10 +458,13 @@ export default function InquiryForm() {
                     />
 
                   </div>
+
                 </div>
 
+                {/* =================================================
+                    MESSAGE
+                ================================================= */}
 
-                {/* MESSAGE */}
                 <div className="sm:col-span-2">
 
                   <label
@@ -424,8 +508,10 @@ export default function InquiryForm() {
 
               </div>
 
+              {/* =================================================
+                  TERMS
+              ================================================= */}
 
-              {/* TERMS */}
               <div className="mt-6 flex items-start gap-3">
 
                 <input
@@ -454,8 +540,10 @@ export default function InquiryForm() {
 
               </div>
 
+              {/* =================================================
+                  BUTTON
+              ================================================= */}
 
-              {/* BUTTON */}
               <div className="mt-8">
 
                 <button
