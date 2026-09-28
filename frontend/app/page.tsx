@@ -19,6 +19,7 @@ export default function Page() {
           NAVIGATION
       ===================================================== */}
 
+    
       <PillNav
         items={[
           {
@@ -75,10 +76,16 @@ export default function Page() {
             ],
           },
 
-          {
+         /*
+           {
             label: "Projects",
             href: "/projects",
           },
+          */
+         {
+          label: "BECOME CHANNEL PARTNER",
+          href: "/channel-partner",
+         },
 
           {
             label: "Sell Your Property",
@@ -104,6 +111,7 @@ export default function Page() {
         hoveredPillTextColor="#C9A45C"
         initialLoadAnimation
       />
+    
 
       {/* =====================================================
           HERO

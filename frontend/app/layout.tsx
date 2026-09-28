@@ -81,10 +81,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             ],
           },
 
+         /*
           {
             label: "Projects",
             href: "/projects",
           },
+          */
+         {
+          label: "BECOME CHANNEL PARTNER",
+          href: "/channel-partner",
+         },
 
           {
             label: "Sell Your Property",

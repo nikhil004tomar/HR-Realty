@@ -2,12 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
-  const imageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -81,21 +80,6 @@ export default function Hero() {
             duration: 0.4,
           },
           "-=0.2"
-        )
-        .fromTo(
-          imageRef.current,
-          {
-            opacity: 0,
-            x: 40,
-            scale: 0.97,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            duration: 0.8,
-          },
-          "-=0.5"
         );
     }, heroRef);
 
@@ -105,276 +89,237 @@ export default function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative overflow-hidden bg-white text-[#111111]"
+      className="relative min-h-[720px] overflow-hidden bg-[#043927] text-white sm:min-h-[760px] lg:min-h-[820px]"
     >
       {/* =====================================================
-          TOP GREEN LINE
+          BACKGROUND VIDEO
       ====================================================== */}
 
-      <div className="absolute left-0 top-0 h-1 w-full bg-[#043927]" />
+      <video
+        className="absolute inset-0 h-full w-full object-cover brightness-110"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source
+          src="/videos/dholera-hero.mp4"
+          type="video/mp4"
+        />
+      </video>
 
       {/* =====================================================
-          VERY SUBTLE BACKGROUND
+          VERY LIGHT VIDEO OVERLAY
       ====================================================== */}
 
-      <div className="pointer-events-none absolute -right-40 top-10 h-[500px] w-[500px] rounded-full bg-[#043927]/[0.025] blur-3xl" />
+      <div className="absolute inset-0 bg-black/10" />
 
-      <div className="mx-auto max-w-[1550px] px-5 pb-14 pt-24 sm:px-8 sm:pb-18 sm:pt-28 lg:px-12 lg:pb-20 lg:pt-32">
-        <div className="grid items-center gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-12 xl:gap-16">
+      {/* =====================================================
+          SUBTLE HR GREEN BRAND TINT
+      ====================================================== */}
 
-          {/* =====================================================
-              LEFT CONTENT
-          ====================================================== */}
+      <div className="absolute inset-0 bg-[#043927]/10" />
 
-          <div className="max-w-xl">
+      {/* =====================================================
+          LEFT GRADIENT
+          
+          Keeps the text readable while allowing the
+          video to remain bright and visible.
+      ====================================================== */}
 
-            {/* =================================================
-                BRAND BADGE
-            ================================================== */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent" />
 
-            <div className="hero-badge mb-6 inline-flex items-center gap-3 rounded-full border border-[#043927]/15 bg-[#043927]/[0.035] px-4 py-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C9A45C] opacity-40" />
+      {/* =====================================================
+          TOP GOLD LINE
+      ====================================================== */}
 
-                <span className="relative h-2.5 w-2.5 rounded-full bg-[#C9A45C]" />
-              </span>
+      <div className="absolute left-0 top-0 z-20 h-1 w-full bg-[#C9A45C]" />
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#043927] sm:text-xs">
-                HR REALTY INTERNATIONAL
-              </span>
-            </div>
+      {/* =====================================================
+          CONTENT
+      ====================================================== */}
 
-            {/* =================================================
-                MAIN HEADING
-            ================================================== */}
+      <div className="relative z-10 mx-auto flex min-h-[720px] max-w-[1550px] items-center px-5 py-24 sm:min-h-[760px] sm:px-8 sm:py-28 lg:min-h-[820px] lg:px-12 lg:py-32">
 
-            <h1 className="text-[clamp(2.15rem,4.3vw,4.25rem)] font-black uppercase leading-[0.94] tracking-[-0.045em]">
+        <div className="max-w-4xl">
 
-              <span className="hero-title-line block text-[#111111]">
-                Building India&apos;s
-                <span className="hero-title-line mt-1 block text-[#043927]">
-                Largest Real Estate
-                <span className="hero-title-line mt-1 block text-[#111111]">
-                Channel Partner Network
-              </span>
-              </span>
-              </span>
+          {/* =================================================
+              BRAND BADGE
+          ================================================== */}
 
-              {/*<span className="hero-title-line mt-1 block text-[#043927]">
-                Largest Real Estate
-              </span>*/}
+          <div className="hero-badge mb-7 inline-flex items-center gap-3 rounded-full border border-white/25 bg-black/15 px-4 py-2 backdrop-blur-md">
 
-              {/*<span className="hero-title-line mt-1 block text-[#111111]">
-                Channel Partner Network
-              </span>*/}
+            <span className="relative flex h-2.5 w-2.5">
 
-            </h1>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C9A45C] opacity-50" />
 
-            {/* =================================================
-                ACCENT
-            ================================================== */}
+              <span className="relative h-2.5 w-2.5 rounded-full bg-[#C9A45C]" />
 
-            <div className="mt-6 flex items-center gap-2">
-              <span className="h-[3px] w-14 rounded-full bg-[#C9A45C]" />
+            </span>
 
-              <span className="h-[3px] w-7 rounded-full bg-[#043927]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:text-xs">
+              HR REALTY INTERNATIONAL
+            </span>
 
-              <span className="h-[3px] w-2 rounded-full bg-black/15" />
-            </div>
-
-            {/* =================================================
-                DESCRIPTION
-            ================================================== */}
-
-            <p className="hero-description mt-6 max-w-lg text-sm leading-7 text-black/55 sm:text-base sm:leading-8">
-              Dholera SIR — India&apos;s emerging greenfield smart city.
-              A city designed for tomorrow, taking shape today.
-            </p>
-
-            {/* =================================================
-                BUTTONS
-            ================================================== */}
-
-            <div className="hero-buttons mt-7 flex flex-col gap-3 sm:flex-row">
-
-              <Link
-                href="/projects"
-                className="group inline-flex w-fit items-center gap-3 rounded-full bg-[#043927] px-5 py-3 text-sm font-bold text-white transition-all duration-300 hover:bg-[#111111]"
-              >
-                <span>
-                  Explore Projects
-                </span>
-
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C9A45C] text-[#111111] transition-transform duration-300 group-hover:translate-x-1">
-                  <ArrowRight size={16} />
-                </span>
-              </Link>
-
-              <Link
-                href="/#contact"
-                className="inline-flex w-fit items-center justify-center rounded-full border border-black/15 bg-white px-6 py-3 text-sm font-bold text-[#111111] transition-all duration-300 hover:border-[#043927] hover:bg-[#043927] hover:text-white"
-              >
-                Book Site Visit
-              </Link>
-
-            </div>
-
-            {/* =================================================
-                STATS
-            ================================================== */}
-
-            <div className="hero-stat mt-9 grid max-w-lg grid-cols-3 border-t border-black/10 pt-5">
-
-              {/* PROJECTS */}
-
-              <div className="pr-3">
-                <p className="text-2xl font-black text-[#043927] sm:text-3xl">
-                  15+
-                </p>
-
-                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
-                  Projects
-                </p>
-              </div>
-
-              {/* EXPERIENCE */}
-
-              <div className="border-l border-black/10 px-3 sm:px-5">
-                <p className="text-2xl font-black text-[#043927] sm:text-3xl">
-                  12+
-                </p>
-
-                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
-                  Years Experience
-                </p>
-              </div>
-
-              {/* CLIENTS */}
-
-              <div className="border-l border-black/10 pl-3 sm:pl-5">
-                <p className="text-2xl font-black text-[#C9A45C] sm:text-3xl">
-                  10K+
-                </p>
-
-                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-black/40 sm:text-[10px]">
-                  Happy Clients
-                </p>
-              </div>
-
-            </div>
           </div>
 
-          {/* =====================================================
-              LARGE IMAGE AREA
-              
-              Green background shape removed.
-              Gold corner decoration removed.
-          ====================================================== */}
+          {/* =================================================
+              MAIN HEADING
+          ================================================== */}
 
-          <div
-            ref={imageRef}
-            className="relative mx-auto w-full max-w-[900px]"
-          >
+          <h1 className="max-w-5xl text-[clamp(2.5rem,6vw,5.75rem)] font-black uppercase leading-[0.92] tracking-[-0.045em]">
 
-            {/* =================================================
-                MAIN IMAGE CARD
-            ================================================== */}
+            <span className="hero-title-line block text-white">
+              Building India&apos;s
+            </span>
 
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-black/10 bg-[#f7f7f5] shadow-[0_25px_70px_rgba(17,17,17,0.10)]">
+            <span className="hero-title-line mt-2 block text-[#C9A45C]">
+              Largest Real Estate
+            </span>
 
-              {/* Gold top line */}
+            <span className="hero-title-line mt-2 block text-white">
+              Channel Partner Network
+            </span>
 
-              <div className="absolute left-0 right-0 top-0 z-20 h-1 bg-[#C9A45C]" />
+          </h1>
 
-              {/* =================================================
-                  MAP
-              ================================================== */}
+          {/* =================================================
+              ACCENT
+          ================================================== */}
 
-              <div className="relative aspect-[16/9] w-full">
+          <div className="mt-7 flex items-center gap-2">
 
-                <img
-                  src="/22village.png"
-                  alt="Dholera Smart City Location Map"
-                  className="h-full w-full object-contain p-3 transition-transform duration-700 hover:scale-[1.01] sm:p-5 lg:p-7"
-                />
+            <span className="h-[3px] w-16 rounded-full bg-[#C9A45C]" />
 
-              </div>
+            <span className="h-[3px] w-8 rounded-full bg-white" />
 
-              {/* =================================================
-                  IMAGE INFORMATION
-              ================================================== */}
+            <span className="h-[3px] w-3 rounded-full bg-white/30" />
 
-              <div className="border-t border-black/10 bg-white px-5 py-4 sm:px-7 sm:py-5">
+          </div>
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* =================================================
+              DESCRIPTION
+          ================================================== */}
 
-                  {/* LOCATION */}
+          <p className="hero-description mt-7 max-w-2xl text-sm leading-7 text-white/85 sm:text-base sm:leading-8 lg:text-lg">
+            Dholera SIR — India&apos;s emerging greenfield smart city.
+            A city designed for tomorrow, taking shape today.
+          </p>
 
-                  <div className="flex items-center gap-3">
+          {/* =================================================
+              BUTTONS
+          ================================================== */}
 
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#043927]/5 text-[#043927]">
-                      <MapPin size={17} />
-                    </div>
+          <div className="hero-buttons mt-8 flex flex-col gap-3 sm:flex-row">
 
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/35">
-                        Location
-                      </p>
+            {/* EXPLORE PROJECTS */}
 
-                      <p className="mt-0.5 text-sm font-bold text-[#111111]">
-                        Dholera, Gujarat
-                      </p>
-                    </div>
+            <Link
+              href="/channel-partner"
+              className="group inline-flex w-fit items-center gap-3 rounded-full bg-[#C9A45C] px-5 py-3 text-sm font-bold text-[#111111] shadow-lg shadow-black/10 transition-all duration-300 hover:bg-white"
+            >
 
-                  </div>
+              <span>
+                Become Channel Partner
+              </span>
 
-                  {/* DEVELOPMENT */}
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#043927] text-white transition-transform duration-300 group-hover:translate-x-1">
 
-                  <div className="flex items-center gap-3">
+                <ArrowRight size={16} />
 
-                    <div className="hidden h-8 w-px bg-black/10 sm:block" />
+              </span>
 
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/35 sm:text-right">
-                        Development
-                      </p>
+            </Link>
 
-                      <p className="mt-0.5 text-sm font-bold text-[#043927] sm:text-right">
-                        Dholera SIR
-                      </p>
-                    </div>
+            {/* BOOK SITE VISIT */}
 
-                  </div>
+            <Link
+              href="/#contact"
+              className="inline-flex w-fit items-center justify-center rounded-full border border-white/40 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur-sm transition-all duration-300 hover:border-white hover:bg-white hover:text-[#043927]"
+            >
+              Book Site Visit
+            </Link>
 
-                </div>
+          </div>
 
-              </div>
+          {/* =================================================
+              STATS
+          ================================================== */}
+
+          <div className="hero-stat mt-10 grid max-w-xl grid-cols-3 border-t border-white/25 pt-6">
+
+            {/* PROJECTS */}
+
+            <div className="pr-3">
+
+              <p className="text-2xl font-black text-white sm:text-3xl">
+                15+
+              </p>
+
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-white/60 sm:text-[10px]">
+                Projects
+              </p>
 
             </div>
+
+            {/* EXPERIENCE */}
+
+            <div className="border-l border-white/20 px-3 sm:px-5">
+
+              <p className="text-2xl font-black text-white sm:text-3xl">
+                12+
+              </p>
+
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-white/60 sm:text-[10px]">
+                Years Experience
+              </p>
+
+            </div>
+
+            {/* CLIENTS */}
+
+            <div className="border-l border-white/20 pl-3 sm:pl-5">
+
+              <p className="text-2xl font-black text-[#C9A45C] sm:text-3xl">
+                10K+
+              </p>
+
+              <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.13em] text-white/60 sm:text-[10px]">
+                Happy Clients
+              </p>
+
+            </div>
+
           </div>
 
         </div>
       </div>
 
       {/* =====================================================
-          BOTTOM STRIP
+          BOTTOM LOCATION STRIP
       ====================================================== */}
 
-      <div className="border-t border-black/10 bg-[#fafafa]">
+      <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/15 bg-black/15 backdrop-blur-sm">
 
         <div className="mx-auto flex max-w-[1550px] flex-col gap-3 px-5 py-4 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
+
+          {/* LOCATION */}
 
           <div className="flex items-center gap-3">
 
             <span className="h-2 w-2 rounded-full bg-[#C9A45C]" />
 
-            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/40 sm:text-[10px]">
+            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/70 sm:text-[10px]">
               Dholera SIR • Gujarat
             </p>
 
           </div>
 
-          <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.18em] text-black/30 sm:text-[10px]">
+          {/* DISCOVER */}
+
+          <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.18em] text-white/60 sm:text-[10px]">
 
             <span>
               Discover the opportunity
@@ -382,7 +327,7 @@ export default function Hero() {
 
             <ArrowRight
               size={13}
-              className="text-[#043927]"
+              className="text-[#C9A45C]"
             />
 
           </div>

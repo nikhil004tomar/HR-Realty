@@ -174,6 +174,7 @@ export default function Footer() {
                 </Link>
               </li>
 
+              {/*
               <li>
                 <Link
                   href="/projects"
@@ -182,6 +183,7 @@ export default function Footer() {
                   Projects
                 </Link>
               </li>
+              */}
 
               <li>
                 <Link
