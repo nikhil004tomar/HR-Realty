@@ -7,6 +7,7 @@ import {
   Building2,
   Users,
   MessageSquare,
+  MessageSquareQuote,
   Handshake,
   MapPinned,
   Network,
@@ -648,6 +649,26 @@ export default function AdminDashboard() {
             />
 
             {/* ================================================= */}
+            {/* TESTIMONIALS */}
+            {/* ================================================= */}
+
+            <ManagementCard
+              icon={
+                <MessageSquareQuote
+                  size={25}
+                  className="text-[#043927]"
+                />
+              }
+              title="Testimonials"
+              description="Add, edit and manage client testimonials."
+              onClick={() =>
+                router.push(
+                  "/admin/testimonials"
+                )
+              }
+            />
+
+            {/* ================================================= */}
             {/* MAPS */}
             {/* ================================================= */}
 
@@ -715,6 +736,7 @@ function ManagementCard({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className="
         group
@@ -753,18 +775,3 @@ function ManagementCard({
     </button>
   );
 }
-
-
-// ============================================================
-// NOTE
-// ============================================================
-//
-// Career Applications API:
-//
-// GET /api/career-applications/admin
-//
-// Requires:
-//
-// Authorization: Bearer <admin-token>
-//
-// ============================================================
