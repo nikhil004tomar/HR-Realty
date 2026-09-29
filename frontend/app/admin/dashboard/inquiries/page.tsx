@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { getToken, removeToken } from "@/lib/auth";
+import API_URL from "@/lib/api";
 
 // ============================================================
 // INQUIRY TYPE
@@ -29,14 +30,6 @@ interface Inquiry {
   created_at: string;
   updated_at: string;
 }
-
-// ============================================================
-// API URL
-// ============================================================
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://127.0.0.1:8000";
 
 // ============================================================
 // PAGE
@@ -57,6 +50,11 @@ export default function InquiriesPage() {
       setError("");
 
       const token = getToken();
+
+      console.log(
+        "INQUIRIES API URL:",
+        API_URL
+      );
 
       console.log(
         "INQUIRIES TOKEN:",
@@ -92,6 +90,10 @@ export default function InquiriesPage() {
       // ========================================================
 
       if (response.status === 401) {
+        console.warn(
+          "Inquiry authentication expired."
+        );
+
         removeToken();
         window.location.href = "/admin/login";
         return;
@@ -188,6 +190,11 @@ export default function InquiriesPage() {
         }
       );
 
+      console.log(
+        "UPDATE INQUIRY STATUS:",
+        response.status
+      );
+
       // ========================================================
       // UNAUTHORIZED
       // ========================================================
@@ -277,6 +284,11 @@ export default function InquiriesPage() {
             Authorization: `Bearer ${token}`,
           },
         }
+      );
+
+      console.log(
+        "DELETE INQUIRY STATUS:",
+        response.status
       );
 
       // ========================================================
@@ -555,9 +567,7 @@ export default function InquiriesPage() {
 
                     <div className="mt-6 grid gap-3 md:grid-cols-3">
 
-                      {/* ====================================== */}
                       {/* PHONE */}
-                      {/* ====================================== */}
 
                       <a
                         href={`tel:${inquiry.phone}`}
@@ -590,9 +600,7 @@ export default function InquiriesPage() {
 
                       </a>
 
-                      {/* ====================================== */}
                       {/* EMAIL */}
-                      {/* ====================================== */}
 
                       <a
                         href={
@@ -630,18 +638,18 @@ export default function InquiriesPage() {
 
                       </a>
 
-                      {/* ====================================== */}
                       {/* CITY */}
-                      {/* ====================================== */}
 
-                      <div className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-xl
-                        bg-gray-50
-                        p-4
-                      ">
+                      <div
+                        className="
+                          flex
+                          items-center
+                          gap-3
+                          rounded-xl
+                          bg-gray-50
+                          p-4
+                        "
+                      >
 
                         <MapPin
                           size={18}
@@ -667,29 +675,35 @@ export default function InquiriesPage() {
                     {/* PROJECT */}
                     {/* ======================================== */}
 
-                    <div className="
-                      mt-5
-                      rounded-2xl
-                      border
-                      border-gray-100
-                      p-5
-                    ">
+                    <div
+                      className="
+                        mt-5
+                        rounded-2xl
+                        border
+                        border-gray-100
+                        p-5
+                      "
+                    >
 
-                      <p className="
-                        text-xs
-                        font-semibold
-                        uppercase
-                        tracking-wide
-                        text-gray-400
-                      ">
+                      <p
+                        className="
+                          text-xs
+                          font-semibold
+                          uppercase
+                          tracking-wide
+                          text-gray-400
+                        "
+                      >
                         Project
                       </p>
 
-                      <p className="
-                        mt-2
-                        font-medium
-                        text-[#043927]
-                      ">
+                      <p
+                        className="
+                          mt-2
+                          font-medium
+                          text-[#043927]
+                        "
+                      >
                         {inquiry.project_id
                           ? `Project #${inquiry.project_id}`
                           : "General Inquiry"}
@@ -702,30 +716,36 @@ export default function InquiriesPage() {
                     {/* ======================================== */}
 
                     {inquiry.message && (
-                      <div className="
-                        mt-5
-                        rounded-2xl
-                        border
-                        border-gray-100
-                        p-5
-                      ">
+                      <div
+                        className="
+                          mt-5
+                          rounded-2xl
+                          border
+                          border-gray-100
+                          p-5
+                        "
+                      >
 
-                        <p className="
-                          text-xs
-                          font-semibold
-                          uppercase
-                          tracking-wide
-                          text-gray-400
-                        ">
+                        <p
+                          className="
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wide
+                            text-gray-400
+                          "
+                        >
                           Message
                         </p>
 
-                        <p className="
-                          mt-2
-                          whitespace-pre-line
-                          leading-7
-                          text-gray-600
-                        ">
+                        <p
+                          className="
+                            mt-2
+                            whitespace-pre-line
+                            leading-7
+                            text-gray-600
+                          "
+                        >
                           {inquiry.message}
                         </p>
 
@@ -736,18 +756,20 @@ export default function InquiriesPage() {
                     {/* ACTIONS */}
                     {/* ======================================== */}
 
-                    <div className="
-                      mt-6
-                      flex
-                      flex-col
-                      gap-3
-                      border-t
-                      border-gray-100
-                      pt-5
-                      sm:flex-row
-                      sm:items-center
-                      sm:justify-between
-                    ">
+                    <div
+                      className="
+                        mt-6
+                        flex
+                        flex-col
+                        gap-3
+                        border-t
+                        border-gray-100
+                        pt-5
+                        sm:flex-row
+                        sm:items-center
+                        sm:justify-between
+                      "
+                    >
 
                       {/* STATUS */}
 

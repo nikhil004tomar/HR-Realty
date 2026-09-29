@@ -147,9 +147,7 @@ export default function BusinessDevelopmentPage() {
   ) => {
     e.preventDefault();
 
-    console.log(
-      "SUBMIT BUTTON CLICKED"
-    );
+    console.log("SUBMIT BUTTON CLICKED");
 
     setSuccess("");
     setError("");
@@ -296,18 +294,14 @@ export default function BusinessDevelopmentPage() {
 
       const formData = new FormData();
 
-      // --------------------------------------------------------
       // POSITION
-      // --------------------------------------------------------
 
       formData.append(
         "position",
         "Business Development"
       );
 
-      // --------------------------------------------------------
       // PERSONAL DETAILS
-      // --------------------------------------------------------
 
       formData.append(
         "fullName",
@@ -339,9 +333,7 @@ export default function BusinessDevelopmentPage() {
         form.state.trim()
       );
 
-      // --------------------------------------------------------
       // PROFESSIONAL DETAILS
-      // --------------------------------------------------------
 
       formData.append(
         "experience",
@@ -373,9 +365,7 @@ export default function BusinessDevelopmentPage() {
         form.noticePeriod
       );
 
-      // --------------------------------------------------------
       // PROFESSIONAL PROFILES
-      // --------------------------------------------------------
 
       formData.append(
         "linkedin",
@@ -392,9 +382,7 @@ export default function BusinessDevelopmentPage() {
         form.source
       );
 
-      // --------------------------------------------------------
       // ABOUT APPLICANT
-      // --------------------------------------------------------
 
       formData.append(
         "whyJoin",
@@ -406,18 +394,14 @@ export default function BusinessDevelopmentPage() {
         form.coverLetter.trim()
       );
 
-      // --------------------------------------------------------
       // CONSENT
-      // --------------------------------------------------------
 
       formData.append(
         "consent",
         String(form.consent)
       );
 
-      // --------------------------------------------------------
       // RESUME
-      // --------------------------------------------------------
 
       formData.append(
         "resume",
@@ -429,7 +413,7 @@ export default function BusinessDevelopmentPage() {
       // --------------------------------------------------------
 
       console.log(
-        "API URL:",
+        "CAREER APPLICATION API URL:",
         API_URL
       );
 
@@ -459,12 +443,12 @@ export default function BusinessDevelopmentPage() {
           .catch(() => null);
 
       console.log(
-        "API STATUS:",
+        "CAREER API STATUS:",
         response.status
       );
 
       console.log(
-        "API RESPONSE:",
+        "CAREER API RESPONSE:",
         data
       );
 
@@ -818,9 +802,7 @@ export default function BusinessDevelopmentPage() {
                 className="mt-8 space-y-8"
               >
 
-                {/* =================================================
-                    PERSONAL DETAILS
-                ================================================= */}
+                {/* PERSONAL DETAILS */}
 
                 <FormSection
                   number="01"
@@ -901,9 +883,7 @@ export default function BusinessDevelopmentPage() {
 
                 </FormSection>
 
-                {/* =================================================
-                    PROFESSIONAL DETAILS
-                ================================================= */}
+                {/* PROFESSIONAL DETAILS */}
 
                 <FormSection
                   number="02"
@@ -981,9 +961,7 @@ export default function BusinessDevelopmentPage() {
 
                 </FormSection>
 
-                {/* =================================================
-                    ONLINE PROFILE
-                ================================================= */}
+                {/* ONLINE PROFILE */}
 
                 <FormSection
                   number="03"
@@ -1031,9 +1009,7 @@ export default function BusinessDevelopmentPage() {
 
                 </FormSection>
 
-                {/* =================================================
-                    RESUME
-                ================================================= */}
+                {/* RESUME */}
 
                 <FormSection
                   number="04"
@@ -1110,9 +1086,7 @@ export default function BusinessDevelopmentPage() {
 
                 </FormSection>
 
-                {/* =================================================
-                    ABOUT YOU
-                ================================================= */}
+                {/* ABOUT YOU */}
 
                 <FormSection
                   number="05"
@@ -1143,9 +1117,7 @@ export default function BusinessDevelopmentPage() {
 
                 </FormSection>
 
-                {/* =================================================
-                    CONSENT
-                ================================================= */}
+                {/* CONSENT */}
 
                 <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
 
@@ -1182,9 +1154,7 @@ export default function BusinessDevelopmentPage() {
 
                 </div>
 
-                {/* =================================================
-                    SUBMIT
-                ================================================= */}
+                {/* SUBMIT */}
 
                 <div className="flex flex-col gap-4 border-t border-gray-200 pt-7 sm:flex-row sm:items-center sm:justify-between">
 
