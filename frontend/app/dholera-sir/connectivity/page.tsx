@@ -782,11 +782,11 @@ export default function ConnectivityPage() {
           <div className="mt-8">
 
             <Link
-              href="/projects"
+              href="/channel-partner"
               className="group inline-flex items-center gap-3 rounded-full bg-[#043927] px-6 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#06543a] hover:shadow-md"
             >
 
-              Explore Our Projects
+              Become Channel Partner
 
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition-transform duration-300 group-hover:translate-x-1">
 
