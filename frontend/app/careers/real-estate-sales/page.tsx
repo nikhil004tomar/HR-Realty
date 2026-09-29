@@ -1,7 +1,13 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useState,
+} from "react";
+
 import Link from "next/link";
+
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,6 +21,8 @@ import {
   User,
   Users,
 } from "lucide-react";
+
+import API_URL from "@/lib/api";
 
 export default function RealEstateSalesPage() {
   const [resume, setResume] = useState<File | null>(null);
@@ -46,6 +54,10 @@ export default function RealEstateSalesPage() {
     consent: false,
   });
 
+  // ============================================================
+  // HANDLE FORM CHANGE
+  // ============================================================
+
   const handleChange = (
     e: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -61,6 +73,10 @@ export default function RealEstateSalesPage() {
           : value,
     }));
   };
+
+  // ============================================================
+  // HANDLE RESUME
+  // ============================================================
 
   const handleResumeChange = (
     e: ChangeEvent<HTMLInputElement>
@@ -86,6 +102,7 @@ export default function RealEstateSalesPage() {
       setError(
         "Please upload your resume in PDF, DOC or DOCX format."
       );
+
       e.target.value = "";
       setResume(null);
       return;
@@ -93,6 +110,7 @@ export default function RealEstateSalesPage() {
 
     if (file.size > maxSize) {
       setError("Resume size must be less than 5 MB.");
+
       e.target.value = "";
       setResume(null);
       return;
@@ -100,6 +118,10 @@ export default function RealEstateSalesPage() {
 
     setResume(file);
   };
+
+  // ============================================================
+  // HANDLE SUBMIT
+  // ============================================================
 
   const handleSubmit = async (
     e: FormEvent<HTMLFormElement>
@@ -131,18 +153,26 @@ export default function RealEstateSalesPage() {
     try {
       setIsSubmitting(true);
 
+      console.log(
+        "CAREER APPLICATION API URL:",
+        API_URL
+      );
+
       const formData = new FormData();
 
       Object.entries(form).forEach(([key, value]) => {
         formData.append(key, String(value));
       });
 
-      formData.append("position", "Real Estate Sales");
-      formData.append("resume", resume);
+      formData.append(
+        "position",
+        "Real Estate Sales"
+      );
 
-      const API_URL =
-        process.env.NEXT_PUBLIC_API_URL ||
-        "http://127.0.0.1:8000";
+      formData.append(
+        "resume",
+        resume
+      );
 
       const response = await fetch(
         `${API_URL}/api/career-applications`,
@@ -150,6 +180,11 @@ export default function RealEstateSalesPage() {
           method: "POST",
           body: formData,
         }
+      );
+
+      console.log(
+        "CAREER APPLICATION STATUS:",
+        response.status
       );
 
       if (!response.ok) {
@@ -166,15 +201,21 @@ export default function RealEstateSalesPage() {
                 : message;
           }
         } catch {
-          // Ignore invalid JSON response
+          // Ignore invalid JSON
         }
 
         throw new Error(message);
       }
 
+      // ========================================================
+      // SUCCESS
+      // ========================================================
+
       setSuccess(
         "Your application has been submitted successfully. Our team will review your profile and contact you if your application matches the opportunity."
       );
+
+      // Reset form
 
       setForm({
         fullName: "",
@@ -215,6 +256,11 @@ export default function RealEstateSalesPage() {
         behavior: "smooth",
       });
     } catch (err) {
+      console.error(
+        "CAREER APPLICATION ERROR:",
+        err
+      );
+
       setError(
         err instanceof Error
           ? err.message
@@ -231,6 +277,7 @@ export default function RealEstateSalesPage() {
       {/* =====================================================
           HERO
       ===================================================== */}
+
       <section className="bg-[#043927]">
         <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-18 lg:px-10 lg:py-20">
 
@@ -255,15 +302,18 @@ export default function RealEstateSalesPage() {
           <div className="mt-8 max-w-4xl">
 
             <div className="flex items-center gap-3">
+
               <span className="h-px w-10 bg-[#C9A45C]" />
 
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A45C]">
                 Career Opportunity
               </span>
+
             </div>
 
             <h1 className="mt-5 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
               Real Estate Sales
+
               <span className="block text-[#C9A45C]">
                 Application
               </span>
@@ -284,6 +334,7 @@ export default function RealEstateSalesPage() {
       {/* =====================================================
           APPLICATION
       ===================================================== */}
+
       <section className="bg-gray-50 py-12 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
@@ -292,6 +343,7 @@ export default function RealEstateSalesPage() {
             {/* =================================================
                 JOB INFORMATION
             ================================================= */}
+
             <aside className="lg:sticky lg:top-24">
 
               <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-7">
@@ -311,12 +363,15 @@ export default function RealEstateSalesPage() {
                 </p>
 
                 {/* JOB DETAILS */}
+
                 <div className="mt-7 space-y-4">
 
                   <div className="flex items-start gap-3">
+
                     <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#043927]" />
 
                     <div>
+
                       <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                         Location
                       </p>
@@ -324,13 +379,17 @@ export default function RealEstateSalesPage() {
                       <p className="mt-1 text-sm font-medium text-[#111111]">
                         Gujarat / Ahmedabad / Dholera
                       </p>
+
                     </div>
+
                   </div>
 
                   <div className="flex items-start gap-3">
+
                     <BriefcaseBusiness className="mt-0.5 h-5 w-5 shrink-0 text-[#043927]" />
 
                     <div>
+
                       <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                         Department
                       </p>
@@ -338,13 +397,17 @@ export default function RealEstateSalesPage() {
                       <p className="mt-1 text-sm font-medium text-[#111111]">
                         Sales
                       </p>
+
                     </div>
+
                   </div>
 
                   <div className="flex items-start gap-3">
+
                     <Users className="mt-0.5 h-5 w-5 shrink-0 text-[#043927]" />
 
                     <div>
+
                       <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                         Role
                       </p>
@@ -352,7 +415,9 @@ export default function RealEstateSalesPage() {
                       <p className="mt-1 text-sm font-medium text-[#111111]">
                         Real Estate Sales
                       </p>
+
                     </div>
+
                   </div>
 
                 </div>
@@ -360,6 +425,7 @@ export default function RealEstateSalesPage() {
                 <div className="my-7 h-px bg-gray-200" />
 
                 {/* WHAT WE LOOK FOR */}
+
                 <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-[#043927]">
                   What We Look For
                 </h3>
@@ -378,33 +444,40 @@ export default function RealEstateSalesPage() {
                       key={item}
                       className="flex items-start gap-2"
                     >
+
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#C9A45C]" />
 
                       <span className="text-sm leading-6 text-gray-600">
                         {item}
                       </span>
+
                     </li>
                   ))}
 
                 </ul>
 
               </div>
+
             </aside>
 
             {/* =================================================
                 FORM
             ================================================= */}
+
             <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8 lg:p-10">
 
               {/* FORM HEADER */}
+
               <div className="border-b border-gray-200 pb-6">
 
                 <div className="flex items-center gap-3">
+
                   <span className="h-px w-8 bg-[#C9A45C]" />
 
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#043927]">
                     Apply Now
                   </span>
+
                 </div>
 
                 <h2 className="mt-3 text-2xl font-bold text-[#111111] sm:text-3xl">
@@ -419,22 +492,28 @@ export default function RealEstateSalesPage() {
               </div>
 
               {/* SUCCESS */}
+
               {success && (
                 <div className="mt-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
+
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#043927]" />
 
                   <p className="text-sm leading-6 text-[#043927]">
                     {success}
                   </p>
+
                 </div>
               )}
 
               {/* ERROR */}
+
               {error && (
                 <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4">
+
                   <p className="text-sm leading-6 text-red-700">
                     {error}
                   </p>
+
                 </div>
               )}
 
@@ -446,6 +525,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     PERSONAL DETAILS
                 ================================================= */}
+
                 <FormSection
                   number="01"
                   title="Personal Details"
@@ -520,6 +600,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     PROFESSIONAL DETAILS
                 ================================================= */}
+
                 <FormSection
                   number="02"
                   title="Professional Details"
@@ -599,6 +680,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     SALES EXPERIENCE
                 ================================================= */}
+
                 <FormSection
                   number="03"
                   title="Sales Experience"
@@ -644,6 +726,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     PROFESSIONAL PROFILE
                 ================================================= */}
+
                 <FormSection
                   number="04"
                   title="Professional Profiles"
@@ -693,6 +776,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     RESUME
                 ================================================= */}
+
                 <FormSection
                   number="05"
                   title="Resume / CV"
@@ -771,6 +855,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     ABOUT APPLICANT
                 ================================================= */}
+
                 <FormSection
                   number="06"
                   title="About You"
@@ -812,6 +897,7 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     CONSENT
                 ================================================= */}
+
                 <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
 
                   <label className="flex cursor-pointer items-start gap-3">
@@ -837,7 +923,10 @@ export default function RealEstateSalesPage() {
                       application is accurate and complete. I understand
                       that the company may contact me regarding this
                       application.
-                      <span className="ml-1 text-red-500">*</span>
+
+                      <span className="ml-1 text-red-500">
+                        *
+                      </span>
                     </span>
 
                   </label>
@@ -847,14 +936,17 @@ export default function RealEstateSalesPage() {
                 {/* =================================================
                     SUBMIT
                 ================================================= */}
+
                 <div className="flex flex-col gap-4 border-t border-gray-200 pt-7 sm:flex-row sm:items-center sm:justify-between">
 
                   <div className="flex items-center gap-2 text-xs text-gray-500">
+
                     <FileText className="h-4 w-4 text-[#043927]" />
 
                     <span>
                       Please ensure your resume is up to date.
                     </span>
+
                   </div>
 
                   <button
@@ -881,6 +973,7 @@ export default function RealEstateSalesPage() {
                       disabled:opacity-60
                     "
                   >
+
                     {isSubmitting
                       ? "Submitting..."
                       : "Submit Application"}
@@ -903,6 +996,7 @@ export default function RealEstateSalesPage() {
                         <ArrowRight className="h-4 w-4" />
                       </span>
                     )}
+
                   </button>
 
                 </div>
@@ -910,7 +1004,9 @@ export default function RealEstateSalesPage() {
               </form>
 
             </div>
+
           </div>
+
         </div>
       </section>
 
@@ -933,6 +1029,7 @@ function FormSection({
 }) {
   return (
     <section>
+
       <div className="mb-5 flex items-center gap-3">
 
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#043927] text-xs font-semibold text-white">
@@ -948,6 +1045,7 @@ function FormSection({
       </div>
 
       {children}
+
     </section>
   );
 }
@@ -1097,6 +1195,7 @@ function SelectField({
           focus:ring-[#043927]/10
         "
       >
+
         <option value="">
           Select an option
         </option>
@@ -1109,6 +1208,7 @@ function SelectField({
             {option}
           </option>
         ))}
+
       </select>
 
     </div>
