@@ -42,13 +42,18 @@ const locations = [
 
 export default function PrimeLocations() {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section
+      aria-labelledby="prime-locations-heading"
+      className="bg-white py-16 sm:py-20 lg:py-24"
+    >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
         {/* HEADER */}
-        <div className="mx-auto max-w-3xl text-center">
-
-          <div className="flex items-center justify-center gap-3">
+        <header className="mx-auto max-w-3xl text-center">
+          <div
+            aria-hidden="true"
+            className="flex items-center justify-center gap-3"
+          >
             <span className="h-px w-8 bg-[#C9A45C]" />
 
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
@@ -58,34 +63,36 @@ export default function PrimeLocations() {
             <span className="h-px w-8 bg-[#C9A45C]" />
           </div>
 
-          <h2 className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl">
+          <h2
+            id="prime-locations-heading"
+            className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl"
+          >
             Prime Locations Across{" "}
-            <span className="text-[#043927]">
-              Dholera Smart City
-            </span>
+            <span className="text-[#043927]">Dholera Smart City</span>
           </h2>
 
-          <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
+          <div
+            aria-hidden="true"
+            className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]"
+          />
 
           <p className="mt-6 text-base leading-7 text-gray-600 sm:text-lg">
             We offer strategically located land parcels across key Town
             Planning (TP) Schemes of Dholera SIR, giving investors access to
             the region&apos;s promising growth corridors.
           </p>
-
-        </div>
+        </header>
 
         {/* MAIN CONTENT */}
         <div className="mt-12 grid items-start gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
 
-          {/* LEFT — LOCATION LIST */}
+          {/* LOCATION LIST */}
           <div className="space-y-4">
-
             {locations.map((location, index) => {
               const Icon = location.icon;
 
               return (
-                <div
+                <article
                   key={location.title}
                   className="
                     group
@@ -97,16 +104,15 @@ export default function PrimeLocations() {
                     bg-white
                     p-4
                     shadow-sm
-                    transition-all
+                    transition-colors
                     duration-300
-                    hover:-translate-y-1
                     hover:border-[#C9A45C]
                     hover:shadow-md
                   "
                 >
-
                   {/* NUMBER */}
                   <div
+                    aria-hidden="true"
                     className="
                       flex
                       h-11
@@ -129,6 +135,7 @@ export default function PrimeLocations() {
 
                   {/* ICON */}
                   <div
+                    aria-hidden="true"
                     className="
                       hidden
                       h-11
@@ -139,17 +146,14 @@ export default function PrimeLocations() {
                       rounded-xl
                       bg-[#043927]/5
                       text-[#043927]
-                      transition-all
+                      transition-colors
                       duration-300
                       group-hover:bg-[#043927]
                       group-hover:text-[#C9A45C]
                       sm:flex
                     "
                   >
-                    <Icon
-                      size={20}
-                      strokeWidth={1.8}
-                    />
+                    <Icon size={20} strokeWidth={1.8} />
                   </div>
 
                   {/* TEXT */}
@@ -173,40 +177,36 @@ export default function PrimeLocations() {
                       {location.description}
                     </p>
                   </div>
-
-                </div>
+                </article>
               );
             })}
-
           </div>
 
-          {/* RIGHT — IMAGE */}
-          <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-
+          {/* IMAGE */}
+          <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             <Image
               src="/images/bulk-land/prime-location3.webp"
-              alt="Prime locations across Dholera Smart City"
+              alt="Strategic land locations across Dholera SIR"
               width={1000}
               height={1100}
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="
                 h-[450px]
                 w-full
                 object-cover
-                transition-transform
-                duration-700
-                ease-out
-                group-hover:scale-[1.03]
                 sm:h-[550px]
                 lg:h-[650px]
               "
             />
 
             {/* IMAGE OVERLAY */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
+            />
 
             {/* IMAGE CONTENT */}
             <div className="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7">
-
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A45C]">
                 Dholera SIR
               </span>
@@ -215,18 +215,17 @@ export default function PrimeLocations() {
                 Positioned for the next phase of growth
               </h3>
 
-              <div className="mt-4 h-1 w-10 rounded-full bg-[#C9A45C] transition-all duration-500 group-hover:w-16" />
-
+              <div
+                aria-hidden="true"
+                className="mt-4 h-1 w-10 rounded-full bg-[#C9A45C]"
+              />
             </div>
-
           </div>
-
         </div>
 
         {/* BOTTOM HIGHLIGHTS */}
         <div className="mt-12 grid overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm sm:grid-cols-3">
 
-          {/* ITEM 1 */}
           <div className="p-6 sm:p-8">
             <p className="text-2xl font-bold text-[#043927] sm:text-3xl">
               Dholera SIR
@@ -237,7 +236,6 @@ export default function PrimeLocations() {
             </p>
           </div>
 
-          {/* ITEM 2 */}
           <div className="border-t border-gray-200 p-6 sm:border-l sm:border-t-0 sm:p-8">
             <p className="text-2xl font-bold text-[#043927] sm:text-3xl">
               Strategic
@@ -248,7 +246,6 @@ export default function PrimeLocations() {
             </p>
           </div>
 
-          {/* ITEM 3 */}
           <div className="border-t border-gray-200 p-6 sm:border-l sm:border-t-0 sm:p-8">
             <p className="text-2xl font-bold text-[#C9A45C] sm:text-3xl">
               High Growth
@@ -260,7 +257,6 @@ export default function PrimeLocations() {
           </div>
 
         </div>
-
       </div>
     </section>
   );

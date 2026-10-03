@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,6 +11,42 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Careers at HR Realty International | Real Estate Jobs",
+  description:
+    "Explore career opportunities at HR Realty International in real estate sales, business development and related roles across Dholera and Gujarat.",
+  alternates: {
+    canonical: "/careers",
+  },
+  openGraph: {
+    title: "Careers at HR Realty International",
+    description:
+      "Explore career opportunities with HR Realty International in Dholera and Gujarat.",
+    url: "/careers",
+    siteName: "HR Realty International",
+    type: "website",
+    images: [
+      {
+        url: "/images/bulk-land/bulk-land1.webp",
+        width: 1200,
+        height: 630,
+        alt: "Careers at HR Realty International",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Careers at HR Realty International",
+    description:
+      "Explore career opportunities with HR Realty International.",
+    images: ["/images/bulk-land/bulk-land1.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 const opportunities = [
   {
@@ -51,37 +88,42 @@ export default function CareersPage() {
       {/* =====================================================
           HERO
       ===================================================== */}
-      <section className="relative overflow-hidden bg-[#043927]">
+      <section
+        aria-labelledby="careers-heading"
+        className="relative overflow-hidden bg-[#043927]"
+      >
         <div className="relative min-h-[420px] sm:min-h-[480px] lg:min-h-[540px]">
 
           <Image
             src="/images/bulk-land/bulk-land1.webp"
-            alt="Careers at HR Realty"
+            alt="Careers at HR Realty International"
             fill
             priority
             sizes="100vw"
-            className="
-              object-cover
-              transition-transform
-              duration-700
-              ease-out
-              hover:scale-[1.02]
-            "
+            className="object-cover"
           />
 
           {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/55" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-black/55"
+          />
 
           {/* Green Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#043927]/95 via-[#043927]/65 to-transparent" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-[#043927]/95 via-[#043927]/65 to-transparent"
+          />
 
           {/* Hero Content */}
           <div className="relative z-10 mx-auto flex min-h-[420px] max-w-7xl items-center px-5 py-16 sm:min-h-[480px] sm:px-8 lg:min-h-[540px] lg:px-10">
-
             <div className="max-w-3xl">
 
               {/* Label */}
-              <div className="flex items-center gap-3">
+              <div
+                aria-hidden="true"
+                className="flex items-center gap-3"
+              >
                 <span className="h-px w-10 bg-[#C9A45C]" />
 
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A45C]">
@@ -90,7 +132,10 @@ export default function CareersPage() {
               </div>
 
               {/* Heading */}
-              <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1
+                id="careers-heading"
+                className="mt-5 text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl"
+              >
                 Build Your Career
                 <span className="block text-[#C9A45C]">
                   With Us
@@ -98,7 +143,10 @@ export default function CareersPage() {
               </h1>
 
               {/* Gold Line */}
-              <div className="mt-6 h-1 w-14 rounded-full bg-[#C9A45C]" />
+              <div
+                aria-hidden="true"
+                className="mt-6 h-1 w-14 rounded-full bg-[#C9A45C]"
+              />
 
               {/* Description */}
               <p className="mt-6 max-w-2xl text-base leading-7 text-white/80 sm:text-lg sm:leading-8">
@@ -123,15 +171,17 @@ export default function CareersPage() {
                     text-sm
                     font-semibold
                     text-[#111111]
-                    transition-all
+                    transition-colors
                     duration-300
                     hover:bg-white
-                    hover:shadow-lg
                   "
                 >
                   View Opportunities
 
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="h-4 w-4"
+                  />
                 </Link>
 
                 <Link
@@ -149,7 +199,7 @@ export default function CareersPage() {
                     text-sm
                     font-semibold
                     text-white
-                    transition-all
+                    transition-colors
                     duration-300
                     hover:border-white
                     hover:bg-white
@@ -168,36 +218,38 @@ export default function CareersPage() {
       {/* =====================================================
           INTRODUCTION
       ===================================================== */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <section
+        aria-labelledby="careers-intro-heading"
+        className="bg-white py-16 sm:py-20 lg:py-24"
+      >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
 
             {/* IMAGE */}
-            <div className="group relative overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+            <div className="relative overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
 
               <Image
                 src="/images/bulk-land/bulkland2.webp"
-                alt="Join our real estate team"
+                alt="Join the HR Realty International real estate team"
                 width={1000}
                 height={750}
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="
                   h-[320px]
                   w-full
                   object-cover
-                  transition-transform
-                  duration-700
-                  ease-out
-                  group-hover:scale-[1.03]
                   sm:h-[420px]
                   lg:h-[480px]
                 "
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
+              />
 
               <div className="absolute bottom-5 left-5">
-
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C9A45C]">
                   Join Our Team
                 </p>
@@ -205,31 +257,37 @@ export default function CareersPage() {
                 <p className="mt-1 text-xl font-semibold text-white">
                   Grow With Us
                 </p>
-
               </div>
             </div>
 
             {/* CONTENT */}
             <div>
 
-              <div className="flex items-center gap-3">
-
+              <div
+                aria-hidden="true"
+                className="flex items-center gap-3"
+              >
                 <span className="h-px w-8 bg-[#C9A45C]" />
 
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
                   Work With Us
                 </span>
-
               </div>
 
-              <h2 className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl">
+              <h2
+                id="careers-intro-heading"
+                className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl"
+              >
                 Be Part of Our
                 <span className="block text-[#043927]">
                   Growing Team
                 </span>
               </h2>
 
-              <div className="mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
+              <div
+                aria-hidden="true"
+                className="mt-5 h-1 w-12 rounded-full bg-[#C9A45C]"
+              />
 
               <p className="mt-6 text-base leading-7 text-gray-600">
                 At HR Realty, we believe our people are an important part of
@@ -246,7 +304,6 @@ export default function CareersPage() {
 
               {/* Highlight */}
               <div className="mt-7 rounded-xl border border-[#C9A45C]/40 bg-[#C9A45C]/10 p-5">
-
                 <p className="text-sm font-semibold text-[#043927]">
                   Looking for your next opportunity?
                 </p>
@@ -254,7 +311,6 @@ export default function CareersPage() {
                 <p className="mt-1 text-sm leading-6 text-gray-600">
                   Explore our current opportunities and connect with our team.
                 </p>
-
               </div>
 
             </div>
@@ -267,15 +323,18 @@ export default function CareersPage() {
       ===================================================== */}
       <section
         id="openings"
+        aria-labelledby="career-opportunities-heading"
         className="border-y border-gray-200 bg-gray-50 py-16 sm:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
           {/* SECTION HEADING */}
-          <div className="mx-auto max-w-3xl text-center">
+          <header className="mx-auto max-w-3xl text-center">
 
-            <div className="flex items-center justify-center gap-3">
-
+            <div
+              aria-hidden="true"
+              className="flex items-center justify-center gap-3"
+            >
               <span className="h-px w-8 bg-[#C9A45C]" />
 
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
@@ -283,24 +342,29 @@ export default function CareersPage() {
               </span>
 
               <span className="h-px w-8 bg-[#C9A45C]" />
-
             </div>
 
-            <h2 className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl">
+            <h2
+              id="career-opportunities-heading"
+              className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl"
+            >
               Find Your Place
               <span className="text-[#043927]">
                 {" "}With Us
               </span>
             </h2>
 
-            <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
+            <div
+              aria-hidden="true"
+              className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]"
+            />
 
             <p className="mt-6 text-base leading-7 text-gray-600 sm:text-lg">
               We are always interested in connecting with talented,
               motivated and passionate people.
             </p>
 
-          </div>
+          </header>
 
           {/* OPPORTUNITY CARDS */}
           <div className="mt-12 grid gap-5 md:grid-cols-3">
@@ -321,16 +385,20 @@ export default function CareersPage() {
                     bg-white
                     p-6
                     shadow-sm
-                    transition-all
+                    transition-colors
                     duration-300
-                    hover:-translate-y-1
                     hover:border-[#C9A45C]
                     hover:shadow-md
+                    focus-visible:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-[#C9A45C]
+                    focus-visible:ring-offset-2
                   "
                 >
 
                   {/* ICON */}
                   <div
+                    aria-hidden="true"
                     className="
                       flex
                       h-14
@@ -340,7 +408,7 @@ export default function CareersPage() {
                       rounded-xl
                       bg-[#043927]
                       text-white
-                      transition-all
+                      transition-colors
                       duration-300
                       group-hover:bg-[#C9A45C]
                       group-hover:text-[#111111]
@@ -364,19 +432,12 @@ export default function CareersPage() {
 
                   {/* LINK */}
                   <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-[#043927]">
-
                     Explore Opportunity
 
                     <ArrowRight
-                      className="
-                        h-4
-                        w-4
-                        transition-transform
-                        duration-300
-                        group-hover:translate-x-1
-                      "
+                      aria-hidden="true"
+                      className="h-4 w-4"
                     />
-
                   </div>
 
                 </Link>
@@ -390,7 +451,10 @@ export default function CareersPage() {
       {/* =====================================================
           WHY JOIN US
       ===================================================== */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <section
+        aria-labelledby="why-join-careers-heading"
+        className="bg-white py-16 sm:py-20 lg:py-24"
+      >
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
@@ -398,27 +462,32 @@ export default function CareersPage() {
             {/* LEFT CONTENT */}
             <div>
 
-              <div className="flex items-center gap-3">
-
+              <div
+                aria-hidden="true"
+                className="flex items-center gap-3"
+              >
                 <span className="h-px w-8 bg-[#C9A45C]" />
 
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
                   Why Join Us
                 </span>
-
               </div>
 
-              <h2 className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl">
-
+              <h2
+                id="why-join-careers-heading"
+                className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl"
+              >
                 Grow Your Skills.
 
                 <span className="block text-[#043927]">
                   Grow With Us.
                 </span>
-
               </h2>
 
-              <div className="mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
+              <div
+                aria-hidden="true"
+                className="mt-5 h-1 w-12 rounded-full bg-[#C9A45C]"
+              />
 
               <p className="mt-6 text-base leading-7 text-gray-600">
                 We aim to create a professional environment where our team
@@ -443,7 +512,7 @@ export default function CareersPage() {
                     border-gray-200
                     bg-white
                     p-4
-                    transition-all
+                    transition-colors
                     duration-300
                     hover:border-[#C9A45C]
                     hover:shadow-sm
@@ -451,6 +520,7 @@ export default function CareersPage() {
                 >
 
                   <CheckCircle2
+                    aria-hidden="true"
                     className="mt-0.5 h-5 w-5 shrink-0 text-[#043927]"
                     strokeWidth={2}
                   />
@@ -473,6 +543,7 @@ export default function CareersPage() {
       ===================================================== */}
       <section
         id="apply"
+        aria-labelledby="career-application-heading"
         className="bg-gray-50 py-16 sm:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
@@ -480,12 +551,18 @@ export default function CareersPage() {
           <div className="rounded-2xl bg-[#043927] p-7 text-center sm:p-10 lg:p-14">
 
             {/* ICON */}
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#C9A45C] text-[#111111]">
+            <div
+              aria-hidden="true"
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#C9A45C] text-[#111111]"
+            >
               <Mail className="h-6 w-6" />
             </div>
 
             {/* HEADING */}
-            <h2 className="mt-6 text-3xl font-bold text-white sm:text-4xl">
+            <h2
+              id="career-application-heading"
+              className="mt-6 text-3xl font-bold text-white sm:text-4xl"
+            >
               Ready to Start Your Journey?
             </h2>
 
@@ -509,40 +586,55 @@ export default function CareersPage() {
                 text-sm
                 font-semibold
                 text-[#043927]
-                transition-all
+                transition-colors
                 duration-300
                 hover:bg-[#C9A45C]
                 hover:text-[#111111]
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-white
+                focus-visible:ring-offset-2
+                focus-visible:ring-offset-[#043927]
               "
             >
               Send Your Resume
 
-              <ArrowUpRight className="h-4 w-4" />
+              <ArrowUpRight
+                aria-hidden="true"
+                className="h-4 w-4"
+              />
             </a>
 
             {/* DETAILS */}
             <div className="mt-7 flex flex-col items-center justify-center gap-3 text-sm text-white/60 sm:flex-row">
 
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#C9A45C]" />
+                <MapPin
+                  aria-hidden="true"
+                  className="h-4 w-4 text-[#C9A45C]"
+                />
 
                 <span>
                   Dholera / Ahmedabad, Gujarat
                 </span>
               </div>
 
-              <span className="hidden sm:block">
+              <span
+                aria-hidden="true"
+                className="hidden sm:block"
+              >
                 •
               </span>
 
               <div className="flex items-center gap-2">
-
-                <BriefcaseBusiness className="h-4 w-4 text-[#C9A45C]" />
+                <BriefcaseBusiness
+                  aria-hidden="true"
+                  className="h-4 w-4 text-[#C9A45C]"
+                />
 
                 <span>
                   Real Estate Opportunities
                 </span>
-
               </div>
 
             </div>

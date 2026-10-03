@@ -40,108 +40,76 @@ const features = [
 
 export default function WhyChooseBulkLand() {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section
+      aria-labelledby="why-hr-realty-heading"
+      className="bg-white py-16 sm:py-20 lg:py-24"
+    >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-
         {/* SECTION HEADING */}
-        <div className="mx-auto max-w-3xl text-center">
-
+        <header className="mx-auto max-w-3xl text-center">
           <div className="flex items-center justify-center gap-3">
-            <span className="h-px w-8 bg-[#C9A45C]" />
+            <span
+              className="h-px w-8 bg-[#C9A45C]"
+              aria-hidden="true"
+            />
 
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
               Why HR Realty
             </span>
 
-            <span className="h-px w-8 bg-[#C9A45C]" />
+            <span
+              className="h-px w-8 bg-[#C9A45C]"
+              aria-hidden="true"
+            />
           </div>
 
-          <h2 className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl">
+          <h2
+            id="why-hr-realty-heading"
+            className="mt-4 text-3xl font-bold leading-tight text-[#111111] sm:text-4xl lg:text-5xl"
+          >
             Why Choose{" "}
             <span className="text-[#043927]">
-              HR Realty Internationl Private Limited
+              HR Realty International Private Limited
             </span>
           </h2>
 
-          <div className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]" />
+          <div
+            className="mx-auto mt-5 h-1 w-12 rounded-full bg-[#C9A45C]"
+            aria-hidden="true"
+          />
 
           <p className="mt-6 text-base leading-7 text-gray-600 sm:text-lg">
-            Dholera is India&apos;s next economic powerhouse, and we ensure a
-            legally secure and hassle-free land buying experience for
-            investors, developers and business owners.
+            Dholera is India&apos;s next economic powerhouse, and we focus on
+            providing structured land solutions for investors, developers and
+            business owners.
           </p>
-
-        </div>
+        </header>
 
         {/* FEATURE GRID */}
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-
           {features.map((feature) => (
-            <div
+            <article
               key={feature.title}
               className="
-                group
-                rounded-2xl
-                border border-gray-200
-                bg-white
-                p-6
-                shadow-sm
-                transition-all
-                duration-300
-                hover:-translate-y-1
+                rounded-2xl border border-gray-200
+                bg-white p-6 shadow-sm
+                transition-colors duration-200
                 hover:border-[#C9A45C]
-                hover:shadow-md
               "
             >
-
               {/* ICON */}
-              <div
-                className="
-                  flex
-                  h-14
-                  w-14
-                  items-center
-                  justify-center
-                  rounded-xl
-                  border
-                  border-gray-200
-                  bg-gray-50
-                  transition-all
-                  duration-300
-                  group-hover:border-[#C9A45C]
-                  group-hover:bg-[#043927]
-                "
-              >
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-gray-200 bg-gray-50">
                 <Image
                   src={feature.icon}
-                  alt={feature.title}
+                  alt=""
                   width={36}
                   height={36}
-                  className="
-                    h-8
-                    w-8
-                    object-contain
-                    transition-transform
-                    duration-300
-                    group-hover:scale-105
-                  "
+                  className="h-8 w-8 object-contain"
                 />
               </div>
 
               {/* TITLE */}
-              <h3
-                className="
-                  mt-5
-                  text-lg
-                  font-semibold
-                  leading-snug
-                  text-[#111111]
-                  transition-colors
-                  duration-300
-                  group-hover:text-[#043927]
-                  sm:text-xl
-                "
-              >
+              <h3 className="mt-5 text-lg font-semibold leading-snug text-[#111111] sm:text-xl">
                 {feature.title}
               </h3>
 
@@ -150,25 +118,13 @@ export default function WhyChooseBulkLand() {
                 {feature.description}
               </p>
 
-              {/* GOLD LINE */}
-              <div className="mt-5 h-px w-full bg-gray-200">
-                <div
-                  className="
-                    h-px
-                    w-0
-                    bg-[#C9A45C]
-                    transition-all
-                    duration-500
-                    group-hover:w-full
-                  "
-                />
-              </div>
-
-            </div>
+              <div
+                className="mt-5 h-px w-full bg-[#C9A45C]"
+                aria-hidden="true"
+              />
+            </article>
           ))}
-
         </div>
-
       </div>
     </section>
   );

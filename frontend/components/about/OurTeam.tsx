@@ -1,12 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Mail,
-  Phone,
-  Users,
-  RefreshCw,
-} from "lucide-react";
+import { Mail, Phone, Users, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import {
@@ -33,344 +28,297 @@ export default function OurTeam() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ==========================================================
-  // LOAD TEAM MEMBERS FROM BACKEND
-  // ==========================================================
-
   useEffect(() => {
+    let mounted = true;
+
     async function loadTeam() {
       try {
-        setLoading(true);
-
         const data = await getTeamMembers();
+
+        if (!mounted) return;
 
         setTeamMembers(
           Array.isArray(data)
-            ? data.filter(
-                (member) => member.is_published
-              )
+            ? data.filter((member) => member.is_published)
             : []
         );
       } catch (error) {
-        console.error(
-          "Failed to load team members:",
-          error
-        );
+        console.error("Failed to load team members:", error);
 
-        setTeamMembers([]);
+        if (mounted) {
+          setTeamMembers([]);
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     }
 
     loadTeam();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
-    <section className="bg-white py-16 md:py-24">
+    <section
+      aria-labelledby="our-team-heading"
+      className="bg-white py-16 md:py-24"
+    >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-
-        {/* ==================================================
-            HEADER
-        ================================================== */}
-
-        <div className="mx-auto max-w-3xl text-center">
-
+        {/* HEADER */}
+        <header className="mx-auto max-w-3xl text-center">
           <div className="mb-5 flex items-center justify-center gap-3">
-
-            <span className="h-px w-10 bg-[#C9A45C]" />
+            <span
+              className="h-px w-10 bg-[#C9A45C]"
+              aria-hidden="true"
+            />
 
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#043927]">
               Our Team
             </span>
 
-            <span className="h-px w-10 bg-[#C9A45C]" />
-
+            <span
+              className="h-px w-10 bg-[#C9A45C]"
+              aria-hidden="true"
+            />
           </div>
 
-          <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#111111] sm:text-4xl md:text-5xl">
+          <h2
+            id="our-team-heading"
+            className="
+              text-3xl font-bold leading-tight tracking-tight
+              text-[#111111]
+              sm:text-4xl
+              md:text-5xl
+            "
+          >
             Meet the{" "}
-            <span className="text-[#043927]">
-              People
-            </span>{" "}
+            <span className="text-[#043927]">People</span>{" "}
             Behind HR Realty
           </h2>
 
-          <div className="mx-auto mt-5 h-1 w-14 rounded-full bg-[#C9A45C]" />
+          <div
+            className="mx-auto mt-5 h-1 w-14 rounded-full bg-[#C9A45C]"
+            aria-hidden="true"
+          />
 
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-black/55 sm:text-base">
-            Our experienced team works together with a shared
-            vision of delivering quality, transparency and
-            long-term value to our clients.
+            Our team works together with a shared vision of delivering
+            quality, transparency and long-term value to our clients.
           </p>
+        </header>
 
-        </div>
-
-        {/* ==================================================
-            LOADING STATE
-        ================================================== */}
-
+        {/* LOADING STATE */}
         {loading && (
-          <div className="flex min-h-[300px] items-center justify-center">
-
+          <div
+            className="flex min-h-[300px] items-center justify-center"
+            role="status"
+            aria-live="polite"
+          >
             <div className="text-center">
-
               <RefreshCw
                 size={32}
-                className="mx-auto animate-spin text-[#043927]"
+                className="mx-auto animate-spin text-[#043927] motion-reduce:animate-none"
+                aria-hidden="true"
               />
 
               <p className="mt-4 text-sm text-gray-500">
                 Loading our team...
               </p>
-
             </div>
-
           </div>
         )}
 
-        {/* ==================================================
-            EMPTY STATE
-        ================================================== */}
-
+        {/* EMPTY STATE */}
         {!loading && teamMembers.length === 0 && (
           <div className="mt-12 flex min-h-[250px] items-center justify-center rounded-2xl border border-black/10 bg-gray-50">
-
             <div className="text-center">
-
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#043927]/5">
-
+              <div
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#043927]/5"
+                aria-hidden="true"
+              >
                 <Users
                   size={28}
                   className="text-[#043927]"
                 />
-
               </div>
 
               <p className="mt-4 text-sm font-medium text-gray-700">
                 Our team information will be available soon.
               </p>
-
             </div>
-
           </div>
         )}
 
-        {/* ==================================================
-            TEAM GRID
-        ================================================== */}
-
+        {/* TEAM GRID */}
         {!loading && teamMembers.length > 0 && (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
-
             {teamMembers.map((member) => {
-
-              const imageUrl = getImageUrl(
-                member.profile_image
-              );
+              const imageUrl = getImageUrl(member.profile_image);
 
               return (
-                <div
+                <article
                   key={member.id}
                   className="
-                    group
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    border-black/10
+                    overflow-hidden rounded-2xl
+                    border border-black/10
                     bg-white
                     shadow-[0_6px_25px_rgba(0,0,0,0.05)]
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:border-[#C9A45C]/60
-                    hover:shadow-[0_12px_30px_rgba(0,0,0,0.09)]
                   "
                 >
-
-                  {/* =========================================
-                      IMAGE
-                  ========================================== */}
-
+                  {/* IMAGE */}
                   <div className="relative aspect-[4/4.5] overflow-hidden bg-[#043927]/5">
-
-                    <Image
-                      src={imageUrl}
-                      alt={`${member.name} - ${member.designation}`}
-                      fill
-                      sizes="
-                        (max-width: 640px) 100vw,
-                        (max-width: 1024px) 50vw,
-                        25vw
-                      "
-                      unoptimized
-                      className="
-                        object-cover
-                        transition-transform
-                        duration-500
-                        ease-out
-                        group-hover:scale-[1.03]
-                      "
-                    />
-
-                    {/* Bottom overlay */}
-
-                    <div
-                      className="
-                        absolute
-                        inset-x-0
-                        bottom-0
-                        h-24
-                        bg-gradient-to-t
-                        from-black/40
-                        to-transparent
-                        opacity-0
-                        transition-opacity
-                        duration-300
-                        group-hover:opacity-100
-                      "
-                    />
-
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={`${member.name}, ${member.designation} at HR Realty International`}
+                        fill
+                        sizes="
+                          (max-width: 640px) 100vw,
+                          (max-width: 1024px) 50vw,
+                          25vw
+                        "
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="flex h-full items-center justify-center"
+                        aria-label="No profile image available"
+                      >
+                        <Users
+                          size={48}
+                          className="text-[#043927]/30"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  {/* =========================================
-                      CONTENT
-                  ========================================== */}
-
+                  {/* CONTENT */}
                   <div className="p-5">
-
                     {/* DESIGNATION */}
-
                     <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#C9A45C]">
                       {member.designation}
                     </p>
 
                     {/* NAME */}
-
                     <h3 className="mt-2 text-xl font-bold text-[#111111]">
                       {member.name}
                     </h3>
 
                     {/* GOLD LINE */}
-
-                    <div className="mt-3 h-px w-10 bg-[#C9A45C] transition-all duration-300 group-hover:w-16" />
+                    <div
+                      className="mt-3 h-px w-10 bg-[#C9A45C]"
+                      aria-hidden="true"
+                    />
 
                     {/* BIO */}
-
                     {member.bio && (
                       <p className="mt-4 text-sm leading-6 text-black/55">
                         {member.bio}
                       </p>
                     )}
 
-                    {/* =========================================
-                        SOCIAL / CONTACT
-                    ========================================== */}
+                    {/* CONTACT */}
+                    {(member.linkedin_url ||
+                      member.email ||
+                      member.phone) && (
+                      <div className="mt-5 flex items-center gap-2">
+                        {/* LINKEDIN */}
+                        {member.linkedin_url && (
+                          <a
+                            href={member.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} on LinkedIn`}
+                            className="
+                              flex h-9 w-9 items-center justify-center
+                              rounded-full border border-black/10
+                              text-[#043927]
+                              transition-colors duration-200
+                              hover:border-[#043927]
+                              hover:bg-[#043927]
+                              hover:text-white
+                              focus-visible:outline-none
+                              focus-visible:ring-2
+                              focus-visible:ring-[#C9A45C]
+                              focus-visible:ring-offset-2
+                              motion-reduce:transition-none
+                            "
+                          >
+                            <span
+                              className="text-xs font-bold leading-none"
+                              aria-hidden="true"
+                            >
+                              in
+                            </span>
+                          </a>
+                        )}
 
-                    <div className="mt-5 flex items-center gap-2">
+                        {/* EMAIL */}
+                        {member.email && (
+                          <a
+                            href={`mailto:${member.email}`}
+                            aria-label={`Email ${member.name}`}
+                            className="
+                              flex h-9 w-9 items-center justify-center
+                              rounded-full border border-black/10
+                              text-[#043927]
+                              transition-colors duration-200
+                              hover:border-[#043927]
+                              hover:bg-[#043927]
+                              hover:text-white
+                              focus-visible:outline-none
+                              focus-visible:ring-2
+                              focus-visible:ring-[#C9A45C]
+                              focus-visible:ring-offset-2
+                              motion-reduce:transition-none
+                            "
+                          >
+                            <Mail
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          </a>
+                        )}
 
-                      {/* =====================================
-                          LINKEDIN
-                      ====================================== */}
-
-                      {member.linkedin_url && (
-                        <a
-                          href={member.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`${member.name} LinkedIn`}
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-black/10
-                            text-[#043927]
-                            transition-all
-                            duration-200
-                            hover:border-[#043927]
-                            hover:bg-[#043927]
-                            hover:text-white
-                          "
-                        >
-                          <span className="text-xs font-bold leading-none">
-                            in
-                          </span>
-                        </a>
-                      )}
-
-                      {/* =====================================
-                          EMAIL
-                      ====================================== */}
-
-                      {member.email && (
-                        <a
-                          href={`mailto:${member.email}`}
-                          aria-label={`Email ${member.name}`}
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-black/10
-                            text-[#043927]
-                            transition-all
-                            duration-200
-                            hover:border-[#043927]
-                            hover:bg-[#043927]
-                            hover:text-white
-                          "
-                        >
-                          <Mail size={16} />
-                        </a>
-                      )}
-
-                      {/* =====================================
-                          PHONE
-                      ====================================== */}
-
-                      {member.phone && (
-                        <a
-                          href={`tel:${member.phone}`}
-                          aria-label={`Call ${member.name}`}
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-black/10
-                            text-[#043927]
-                            transition-all
-                            duration-200
-                            hover:border-[#043927]
-                            hover:bg-[#043927]
-                            hover:text-white
-                          "
-                        >
-                          <Phone size={16} />
-                        </a>
-                      )}
-
-                    </div>
-
+                        {/* PHONE */}
+                        {member.phone && (
+                          <a
+                            href={`tel:${member.phone}`}
+                            aria-label={`Call ${member.name}`}
+                            className="
+                              flex h-9 w-9 items-center justify-center
+                              rounded-full border border-black/10
+                              text-[#043927]
+                              transition-colors duration-200
+                              hover:border-[#043927]
+                              hover:bg-[#043927]
+                              hover:text-white
+                              focus-visible:outline-none
+                              focus-visible:ring-2
+                              focus-visible:ring-[#C9A45C]
+                              focus-visible:ring-offset-2
+                              motion-reduce:transition-none
+                            "
+                          >
+                            <Phone
+                              size={16}
+                              aria-hidden="true"
+                            />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
-
-                </div>
+                </article>
               );
             })}
-
           </div>
         )}
-
       </div>
     </section>
   );

@@ -1,94 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { gsap } from "gsap";
 
 export default function Hero() {
-  const heroRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        defaults: {
-          ease: "power3.out",
-        },
-      });
-
-      tl.fromTo(
-        ".hero-badge",
-        {
-          opacity: 0,
-          y: 15,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-        }
-      )
-        .fromTo(
-          ".hero-title-line",
-          {
-            opacity: 0,
-            y: 22,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.08,
-          },
-          "-=0.2"
-        )
-        .fromTo(
-          ".hero-description",
-          {
-            opacity: 0,
-            y: 15,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-          },
-          "-=0.25"
-        )
-        .fromTo(
-          ".hero-buttons",
-          {
-            opacity: 0,
-            y: 15,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-          },
-          "-=0.2"
-        )
-        .fromTo(
-          ".hero-stat",
-          {
-            opacity: 0,
-            y: 10,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.4,
-          },
-          "-=0.2"
-        );
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
-      ref={heroRef}
+      aria-labelledby="hero-heading"
       className="
         relative
         min-h-[680px]
@@ -106,7 +24,10 @@ export default function Hero() {
           BACKGROUND VIDEO
       ====================================================== */}
 
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div
+        className="absolute inset-0 z-0 overflow-hidden"
+        aria-hidden="true"
+      >
         <video
           className="
             absolute
@@ -114,16 +35,13 @@ export default function Hero() {
             top-1/2
             h-full
             w-full
-            min-w-full
             min-h-full
+            min-w-full
             -translate-x-1/2
             -translate-y-1/2
             object-cover
             object-center
             brightness-110
-            sm:object-center
-            md:object-center
-            lg:object-center
           "
           autoPlay
           muted
@@ -136,23 +54,43 @@ export default function Hero() {
             src="/videos/dholera-hero.mp4"
             type="video/mp4"
           />
+
+          Your browser does not support the video element.
         </video>
       </div>
 
       {/* =====================================================
-          VERY LIGHT VIDEO OVERLAY
+          VIDEO OVERLAY
       ====================================================== */}
 
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-black/10" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-[1]
+          bg-black/10
+        "
+        aria-hidden="true"
+      />
 
       {/* =====================================================
-          SUBTLE GREEN BRAND TINT
+          BRAND TINT
       ====================================================== */}
 
-      <div className="pointer-events-none absolute inset-0 z-[2] bg-[#043927]/10" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-[2]
+          bg-[#043927]/10
+        "
+        aria-hidden="true"
+      />
 
       {/* =====================================================
-          RESPONSIVE TEXT READABILITY GRADIENT
+          DESKTOP TEXT READABILITY GRADIENT
       ====================================================== */}
 
       <div
@@ -165,10 +103,8 @@ export default function Hero() {
           from-black/45
           via-black/15
           to-transparent
-          sm:from-black/45
-          sm:via-black/15
-          sm:to-transparent
         "
+        aria-hidden="true"
       />
 
       {/* =====================================================
@@ -187,16 +123,28 @@ export default function Hero() {
           to-black/20
           md:hidden
         "
+        aria-hidden="true"
       />
 
       {/* =====================================================
           TOP GOLD LINE
       ====================================================== */}
 
-      <div className="absolute left-0 top-0 z-20 h-1 w-full bg-[#C9A45C]" />
+      <div
+        className="
+          absolute
+          left-0
+          top-0
+          z-20
+          h-1
+          w-full
+          bg-[#C9A45C]
+        "
+        aria-hidden="true"
+      />
 
       {/* =====================================================
-          CONTENT
+          MAIN CONTENT
       ====================================================== */}
 
       <div
@@ -230,7 +178,6 @@ export default function Hero() {
 
           <div
             className="
-              hero-badge
               mb-6
               inline-flex
               max-w-full
@@ -246,12 +193,43 @@ export default function Hero() {
               sm:mb-7
               sm:gap-3
               sm:px-4
+              motion-reduce:transition-none
             "
           >
-            <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C9A45C] opacity-50" />
+            <span
+              className="
+                relative
+                flex
+                h-2.5
+                w-2.5
+                shrink-0
+              "
+            >
+              <span
+                className="
+                  absolute
+                  inline-flex
+                  h-full
+                  w-full
+                  animate-ping
+                  rounded-full
+                  bg-[#C9A45C]
+                  opacity-50
+                  motion-reduce:animate-none
+                "
+                aria-hidden="true"
+              />
 
-              <span className="relative h-2.5 w-2.5 rounded-full bg-[#C9A45C]" />
+              <span
+                className="
+                  relative
+                  h-2.5
+                  w-2.5
+                  rounded-full
+                  bg-[#C9A45C]
+                "
+                aria-hidden="true"
+              />
             </span>
 
             <span
@@ -272,10 +250,11 @@ export default function Hero() {
           </div>
 
           {/* =================================================
-              MAIN HEADING
+              MAIN SEO HEADING
           ================================================== */}
 
           <h1
+            id="hero-heading"
             className="
               max-w-5xl
               text-[clamp(2.25rem,9vw,5.75rem)]
@@ -287,16 +266,16 @@ export default function Hero() {
               md:text-[clamp(3.25rem,6vw,5.75rem)]
             "
           >
-            <span className="hero-title-line block text-white">
-              Building India&apos;s
+            <span className="block text-white">
+              Dholera SIR
             </span>
 
-            <span className="hero-title-line mt-2 block text-[#C9A45C]">
-              Largest Real Estate
+            <span className="mt-2 block text-[#C9A45C]">
+              Real Estate
             </span>
 
-            <span className="hero-title-line mt-2 block text-white">
-              Channel Partner Network
+            <span className="mt-2 block text-white">
+              &amp; Property Opportunities
             </span>
           </h1>
 
@@ -304,12 +283,44 @@ export default function Hero() {
               ACCENT
           ================================================== */}
 
-          <div className="mt-6 flex items-center gap-2 sm:mt-7">
-            <span className="h-[3px] w-12 rounded-full bg-[#C9A45C] sm:w-16" />
+          <div
+            className="
+              mt-6
+              flex
+              items-center
+              gap-2
+              sm:mt-7
+            "
+            aria-hidden="true"
+          >
+            <span
+              className="
+                h-[3px]
+                w-12
+                rounded-full
+                bg-[#C9A45C]
+                sm:w-16
+              "
+            />
 
-            <span className="h-[3px] w-7 rounded-full bg-white sm:w-8" />
+            <span
+              className="
+                h-[3px]
+                w-7
+                rounded-full
+                bg-white
+                sm:w-8
+              "
+            />
 
-            <span className="h-[3px] w-3 rounded-full bg-white/30" />
+            <span
+              className="
+                h-[3px]
+                w-3
+                rounded-full
+                bg-white/30
+              "
+            />
           </div>
 
           {/* =================================================
@@ -318,7 +329,6 @@ export default function Hero() {
 
           <p
             className="
-              hero-description
               mt-6
               max-w-2xl
               text-sm
@@ -330,9 +340,29 @@ export default function Hero() {
               lg:text-lg
             "
           >
-            Dholera SIR — India&apos;s emerging greenfield smart
-            city. A city designed for tomorrow, taking shape
-            today.
+            Explore land, plotted developments, bulk land
+            opportunities and channel partner opportunities in
+            Dholera SIR, Gujarat.
+          </p>
+
+          {/* =================================================
+              SUPPORTING BRAND MESSAGE
+          ================================================== */}
+
+          <p
+            className="
+              mt-4
+              max-w-2xl
+              text-xs
+              font-semibold
+              uppercase
+              tracking-[0.12em]
+              text-white/70
+              sm:text-sm
+              sm:tracking-[0.16em]
+            "
+          >
+            Building India&apos;s Real Estate Channel Partner Network
           </p>
 
           {/* =================================================
@@ -341,7 +371,6 @@ export default function Hero() {
 
           <div
             className="
-              hero-buttons
               mt-7
               flex
               w-full
@@ -352,7 +381,9 @@ export default function Hero() {
               sm:flex-row
             "
           >
-            {/* BECOME CHANNEL PARTNER */}
+            {/* =============================================
+                CHANNEL PARTNER
+            ============================================== */}
 
             <Link
               href="/channel-partner"
@@ -375,7 +406,13 @@ export default function Hero() {
                 transition-all
                 duration-300
                 hover:bg-white
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-[#C9A45C]
+                focus-visible:ring-offset-2
+                focus-visible:ring-offset-[#043927]
                 sm:w-fit
+                motion-reduce:transition-none
               "
             >
               <span>
@@ -396,13 +433,20 @@ export default function Hero() {
                   transition-transform
                   duration-300
                   group-hover:translate-x-1
+                  motion-reduce:transform-none
+                  motion-reduce:transition-none
                 "
               >
-                <ArrowRight size={16} />
+                <ArrowRight
+                  size={16}
+                  aria-hidden="true"
+                />
               </span>
             </Link>
 
-            {/* BOOK SITE VISIT */}
+            {/* =============================================
+                BOOK SITE VISIT
+            ============================================== */}
 
             <Link
               href="/#contact"
@@ -426,7 +470,13 @@ export default function Hero() {
                 hover:border-white
                 hover:bg-white
                 hover:text-[#043927]
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-white
+                focus-visible:ring-offset-2
+                focus-visible:ring-offset-[#043927]
                 sm:w-fit
+                motion-reduce:transition-none
               "
             >
               Book Site Visit
@@ -439,7 +489,6 @@ export default function Hero() {
 
           <div
             className="
-              hero-stat
               mt-9
               grid
               max-w-xl
@@ -454,7 +503,14 @@ export default function Hero() {
             {/* PROJECTS */}
 
             <div className="pr-2 sm:pr-3">
-              <p className="text-xl font-black text-white sm:text-3xl">
+              <p
+                className="
+                  text-xl
+                  font-black
+                  text-white
+                  sm:text-3xl
+                "
+              >
                 15+
               </p>
 
@@ -484,7 +540,14 @@ export default function Hero() {
                 sm:px-5
               "
             >
-              <p className="text-xl font-black text-white sm:text-3xl">
+              <p
+                className="
+                  text-xl
+                  font-black
+                  text-white
+                  sm:text-3xl
+                "
+              >
                 12+
               </p>
 
@@ -514,7 +577,14 @@ export default function Hero() {
                 sm:pl-5
               "
             >
-              <p className="text-xl font-black text-[#C9A45C] sm:text-3xl">
+              <p
+                className="
+                  text-xl
+                  font-black
+                  text-[#C9A45C]
+                  sm:text-3xl
+                "
+              >
                 10K+
               </p>
 
@@ -575,7 +645,16 @@ export default function Hero() {
           {/* LOCATION */}
 
           <div className="flex items-center gap-3">
-            <span className="h-2 w-2 shrink-0 rounded-full bg-[#C9A45C]" />
+            <span
+              className="
+                h-2
+                w-2
+                shrink-0
+                rounded-full
+                bg-[#C9A45C]
+              "
+              aria-hidden="true"
+            />
 
             <p
               className="
@@ -615,6 +694,7 @@ export default function Hero() {
             <ArrowRight
               size={13}
               className="shrink-0 text-[#C9A45C]"
+              aria-hidden="true"
             />
           </div>
         </div>
