@@ -47,7 +47,7 @@ export default function Footer() {
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/company/hr-realty-international-pvt-ltd/posts/?feedView=all"
+                  href="https://www.linkedin.com/company/hr-realty-international-pvt-ltd/posts/?viewAsMember=true"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -240,13 +240,13 @@ export default function Footer() {
 
               {/* Phone */}
               <a
-                href="tel:+919773892312"
+                href="tel:0120-5185526"
                 className="block transition hover:text-white"
               >
                 <span className="mb-1 block text-xs uppercase tracking-wider text-white/40">
                   Phone
                 </span>
-                +91 97738 92312
+                0120-5185526
               </a>
 
               {/* Email */}

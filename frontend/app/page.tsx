@@ -7,6 +7,7 @@ import OurProjects from "@/components/OurProjects";
 import Testimonials from "@/components/Testimonials";
 import FAQSection from "@/components/FAQSection";
 import InquiryForm from "@/components/InquiryForm";
+import VirtualTourSection from "@/components/dholera-sir/VirtualTourSection";
 
 export const metadata: Metadata = {
   title: "Dholera SIR Real Estate & Property Opportunities",
@@ -85,6 +86,10 @@ export default function Page() {
         </h2>
 
         <DholeraSIRMap />
+        {/*
+        <VirtualTourSection />
+        */}
+
       </section>
 
       {/* =====================================================

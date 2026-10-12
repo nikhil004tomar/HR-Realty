@@ -35,6 +35,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
 
     {
+      url: `${BASE_URL}/dholera-sir/kalpasar`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/dholera-sir/abcd-building`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+
+    {
       url: `${BASE_URL}/dholera-sir/projects`,
       changeFrequency: "monthly",
       priority: 0.8,

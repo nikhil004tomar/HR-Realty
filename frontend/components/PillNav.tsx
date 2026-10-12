@@ -29,7 +29,7 @@ const GREEN = "#043927";
 const GOLD = "#C9A45C";
 const WHITE = "#FFFFFF";
 
-const LOGO_SRC = "/images/logo.png";
+const LOGO_SRC = "/images/logo.webp";
 
 const PillNav: React.FC<PillNavProps> = ({
   items = [],

@@ -87,7 +87,7 @@ export const metadata: Metadata = {
       "Explore real estate, land and property opportunities in Dholera SIR, Gujarat with HR Realty International.",
     images: [
       {
-        url: "/images/logo.png",
+        url: "/images/logo.webp",
         width: 1200,
         height: 630,
         alt: "HR Realty International",
@@ -211,6 +211,14 @@ export default function RootLayout({
                   href: "/dholera-sir/connectivity",
                 },
                 {
+                  label: "Kalpasar Project",
+                  href: "/dholera-sir/kalpasar",
+                },
+                {
+                  label: "ABCD Building",
+                  href: "/dholera-sir/abcd-building",
+                },
+                {
                   label: "About Dholera SIR",
                   href: "/dholera-sir/projects",
                 },
@@ -238,6 +246,7 @@ export default function RootLayout({
                   label: "Maps",
                   href: "/dholera-sir/maps",
                 },
+
               ],
             },
 
