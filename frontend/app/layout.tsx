@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -15,21 +16,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-/* =========================================================
-   GLOBAL SEO
-========================================================= */
+const siteUrl = "https://www.thehrrealty.com";
+
+/* ================= GLOBAL SEO ================= */
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.thehrrealty.com"),
+  metadataBase: new URL(siteUrl),
 
   title: {
-    default:
-      "HR Realty International | Dholera SIR Real Estate & Property",
+    default: "HR Realty International | Dholera SIR Real Estate",
     template: "%s | HR Realty International",
   },
 
   description:
-    "HR Realty International provides real estate and property opportunities in Dholera SIR, Gujarat, including land, plotted developments, bulk land and channel partner opportunities.",
+    "Explore real estate, land, plotted developments, bulk land and property opportunities in Dholera SIR, Gujarat, with HR Realty International.",
 
   keywords: [
     "Dholera SIR",
@@ -44,16 +44,14 @@ export const metadata: Metadata = {
     "Dholera bulk land",
     "Dholera channel partner",
     "Dholera SIR Gujarat",
-    "Dholera infrastructure",
     "DMIC Dholera",
     "DFC Dholera",
-    "Dholera International Airport",
   ],
 
   authors: [
     {
       name: "HR Realty International",
-      url: "https://www.thehrrealty.com",
+      url: siteUrl,
     },
   ],
 
@@ -61,7 +59,7 @@ export const metadata: Metadata = {
   publisher: "HR Realty International",
 
   alternates: {
-    canonical: "https://www.thehrrealty.com",
+    canonical: "/",
   },
 
   robots: {
@@ -79,17 +77,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://www.thehrrealty.com",
+    url: siteUrl,
     siteName: "HR Realty International",
-    title:
-      "HR Realty International | Dholera SIR Real Estate & Property",
+    title: "HR Realty International | Dholera SIR Real Estate",
     description:
-      "Explore real estate, land and property opportunities in Dholera SIR, Gujarat with HR Realty International.",
+      "Explore real estate, land and property opportunities in Dholera SIR, Gujarat.",
     images: [
       {
         url: "/images/logo.webp",
-        width: 1200,
-        height: 630,
         alt: "HR Realty International",
       },
     ],
@@ -97,11 +92,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title:
-      "HR Realty International | Dholera SIR Real Estate",
+    title: "HR Realty International | Dholera SIR Real Estate",
     description:
-      "Real estate, land and property opportunities in Dholera SIR, Gujarat.",
-    images: ["/images/logo.png"],
+      "Real estate and land opportunities in Dholera SIR, Gujarat.",
+    images: ["/images/logo.webp"],
   },
 
   icons: {
@@ -111,23 +105,17 @@ export const metadata: Metadata = {
   },
 };
 
-/* =========================================================
-   STRUCTURED DATA
-========================================================= */
+/* ================= STRUCTURED DATA ================= */
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-
+  "@id": `${siteUrl}/#organization`,
   name: "HR Realty International",
-
-  url: "https://www.thehrrealty.com",
-
-  logo: "https://www.thehrrealty.com/images/logo.png",
-
+  url: `${siteUrl}/`,
+  logo: `${siteUrl}/images/logo.png`,
   description:
-    "HR Realty International provides real estate and property opportunities in Dholera SIR, Gujarat.",
-
+    "HR Realty International provides real estate and property opportunities in Dholera SIR, Gujarat, India.",
   areaServed: {
     "@type": "Place",
     name: "Dholera SIR, Gujarat, India",
@@ -137,24 +125,16 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-
+  "@id": `${siteUrl}/#website`,
   name: "HR Realty International",
-
-  url: "https://www.thehrrealty.com",
-
-  description:
-    "HR Realty International real estate and property opportunities in Dholera SIR, Gujarat.",
-
+  url: `${siteUrl}/`,
   publisher: {
-    "@type": "Organization",
-    name: "HR Realty International",
-    url: "https://www.thehrrealty.com",
+    "@id": `${siteUrl}/#organization`,
   },
+  inLanguage: "en-IN",
 };
 
-/* =========================================================
-   ROOT LAYOUT
-========================================================= */
+/* ================= ROOT LAYOUT ================= */
 
 export default function RootLayout({
   children,
@@ -166,42 +146,42 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        {/* Organization Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
-          }}
-        />
-
-        {/* Website Schema */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteSchema),
-          }}
-        />
-      </head>
-
       <body className="min-h-full flex flex-col">
+        {/* Organization and website structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(
+              /</g,
+              "\\u003c"
+            ),
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(
+              /</g,
+              "\\u003c"
+            ),
+          }}
+        />
+
         <PillNav
           items={[
             {
               label: "Home",
               href: "/",
             },
-
             {
               label: "About-us",
               href: "/about",
             },
-
             {
               label: "Bulk Land",
               href: "/bulk-land",
             },
-
             {
               label: "Dholera SIR",
               href: "/dholera-sir",
@@ -246,27 +226,16 @@ export default function RootLayout({
                   label: "Maps",
                   href: "/dholera-sir/maps",
                 },
-
               ],
             },
-
-            /*
-            {
-              label: "Projects",
-              href: "/projects",
-            },
-            */
-
             {
               label: "BECOME CHANNEL PARTNER",
               href: "/channel-partner",
             },
-
             {
               label: "Sell Your Property",
               href: "/sell-your-property",
             },
-
             {
               label: "Contact Us",
               href: "/contact",
